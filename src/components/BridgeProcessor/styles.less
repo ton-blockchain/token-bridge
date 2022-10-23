@@ -1,0 +1,295 @@
+@r: .BridgeProcessor;
+
+@{r} {
+	&-transfer,
+	&-getTonCoin,
+	&-done,
+	&-cancel,
+	&-info-text-openWallet {
+		-webkit-appearance: none;
+		background-color: @c-primary;
+		display: inline-block;
+		border-radius: 25px;
+		color: white;
+		font-size: 15px;
+		font-weight: 700;
+		line-height: 19px;
+		border: none;
+		padding: 16px 35px 15px;
+		white-space: nowrap;
+
+		.isPointer &:hover,
+		.isTouch &:active {
+			background-color: rgba(@c-primary, 0.85);
+		}
+
+		&[disabled] {
+			pointer-events: none;
+			background-color: @c-text-secondary-light;
+		}
+
+		&.showLoader {
+			pointer-events: none;
+		}
+
+		@media (max-width: 800px) {
+			font-size: 14px;
+			padding: 14px 32px 13px;
+		}
+
+		&.showLoader:after {
+			content: "";
+			position: absolute;
+			transform: translate(8px, 3px);
+			width: 12px;
+			height: 12px;
+			border: 3px solid white;
+			border-left: 3px solid transparent;
+			border-radius: 50%;
+			animation: loading-animation-spin @d-loader infinite linear;
+
+			@keyframes loading-animation-spin {
+				to {
+					transform: translate(8px, 3px) rotate(1turn);
+				}
+			}
+		}
+	}
+
+	&-cancel {
+		margin-top: -10px;
+		margin-bottom: 40px;
+		background-color: @c-background;
+		color: @c-error;
+		box-shadow: inset 0 0 0 2px @c-error;
+
+		.isPointer &:hover,
+		.isTouch &:active {
+			background-color: rgba(@c-error, 0.1);
+		}
+	}
+
+	&-getTonCoin,
+	&-done {
+		margin-top: 30px;
+	}
+
+	&-infoWrapper {
+		text-align: left;
+		width: fit-content;
+		font-size: 17px;
+		line-height: 25px;
+
+		@media (max-width: 800px) {
+			font-size: 15px;
+			line-height: 23px;
+		}
+
+		@media (max-width: 400px) {
+			font-size: 14px;
+			line-height: 21px;
+		}
+	}
+
+	&-infoLine {
+		position: relative;
+		margin-top: 28px;
+
+		&:first-child {
+			margin-top: 0;
+		}
+
+		@media (max-width: 550px) {
+			padding-left: 28px;
+			margin-top: 20px;
+		}
+	}
+
+	&-info-icon {
+		position: absolute;
+		left: -28px;
+		margin-top: 4px;
+		width: 18px;
+		height: 18px;
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: center;
+
+		@media (max-width: 550px) {
+			left: 0;
+		}
+
+		&.done {
+			background-image: url("~@/assets/pics/progress/done.svg");
+		}
+
+		&.pending {
+			background-image: url("~@/assets/pics/progress/loader.svg");
+			animation: rotating @d-loader linear infinite;
+		}
+
+		&.none {
+			background-image: url("~@/assets/pics/progress/dot.svg");
+		}
+	}
+
+	&-info-text-send {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: center;
+		text-align: left;
+		line-height: 27px;
+
+		@media (max-width: 800px) {
+			line-height: 25px;
+		}
+
+		@media (max-width: 400px) {
+			line-height: 23px;
+		}
+	}
+
+	&-info-text-send-buttons {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: center;
+
+		@media (max-width: 550px) {
+			padding-right: 28px;
+		}
+	}
+
+	&-info-text-openWallet {
+		margin: 22px 0 20px;
+	}
+
+	&-info-text-copy,
+	&-info-text-generateQRCode {
+		color: @c-primary;
+		text-decoration: underline;
+		-webkit-appearance: none;
+		background-color: transparent;
+		border: none;
+		padding: 0;
+		margin: 0;
+		letter-spacing: -0.3px;
+
+		.isPointer &:hover,
+		.isTouch &:active {
+			text-decoration: none;
+		}
+	}
+
+	&-info-text-generateQRCode,
+	&-info-text-scanQRCode {
+		font-size: 15px;
+
+		@media (max-width: 800px) {
+			font-size: 14px;
+		}
+
+		@media (max-width: 400px) {
+			font-size: 13px;
+		}
+	}
+
+	&-info-text-scanQRCode {
+		margin-top: -3px;
+		color: @c-text-light;
+	}
+
+	&-info-text-copy {
+		position: relative;
+		padding-left: 18px;
+		word-break: break-word;
+
+		&:before {
+			content: "";
+			position: absolute;
+			left: -3px;
+			display: inline-block;
+			height: 20px;
+			width: 20px;
+			background-image: url("~@/assets/pics/copy.svg");
+			background-repeat: no-repeat;
+			background-size: contain;
+			top: 1px;
+		}
+
+		&.success:after {
+			content: "Copied";
+		}
+
+		&.failure:after {
+			background: @c-error;
+			content: "Failed";
+		}
+
+		&.success:after,
+		&.failure:after {
+			content: "Copied";
+			position: absolute;
+			padding: 4px;
+			font-size: 12px;
+			color: white;
+			background: @c-primary;
+			border-radius: 4px;
+			top: -22px;
+			left: 7px;
+			white-space: nowrap;
+			animation: fade-tooltip @d-tooltip linear both;
+
+			@keyframes fade-tooltip {
+				0% {
+					transform: translate(-50%, 0);
+					opacity: 0;
+				}
+				20% {
+					opacity: 1;
+				}
+				60% {
+					opacity: 1;
+				}
+				100% {
+					transform: translate(-50%, -5px);
+					opacity: 0;
+				}
+			}
+		}
+	}
+
+	&-info-text-QRCode {
+		margin-top: 16px;
+		width: 100%;
+		height: 225px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-bottom: 7px;
+
+		:deep(canvas) {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+		}
+	}
+
+	@keyframes rotating {
+		from {
+			-ms-transform: rotate(0deg);
+			-moz-transform: rotate(0deg);
+			-webkit-transform: rotate(0deg);
+			-o-transform: rotate(0deg);
+			transform: rotate(0deg);
+		}
+		to {
+			-ms-transform: rotate(360deg);
+			-moz-transform: rotate(360deg);
+			-webkit-transform: rotate(360deg);
+			-o-transform: rotate(360deg);
+			transform: rotate(360deg);
+		}
+	}
+}

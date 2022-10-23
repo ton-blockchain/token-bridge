@@ -1,0 +1,148 @@
+{
+  "logoLabel": "Бридж",
+  "connectWallet": "Подключить Кошелек",
+  "testnetMessage": "Работа в режиме тестовой сети",
+  "providers": {
+    "metamask": "Metamask",
+    "walletConnect": "WalletConnect",
+    "walletLink": "Coinbase Wallet"
+  },
+  "networks": {
+    "ton": {
+      "currency": "Toncoin",
+      "transactionCompleted": "Транзакция TON успешно завершена",
+      "transactionSend1": "Пожалуйста, отправьте ",
+      "transactionSend2": "Toncoin на адрес",
+      "transactionSendComment": "с комментарием",
+      "openWallet": "Открыть Кошелек",
+      "generateQRCode": "Сгенерировать QR-код",
+      "scanQRCode": "или отсканируйте QR-код ниже",
+      "errors": {
+        "invalidAddress": "Не валидный TON адрес"
+      },
+      "main": {
+        "name": "The Open Network",
+        "nameSwitcher": "The Open\nNetwork",
+        "nameShort": "TON",
+        "coin": "Toncoin",
+        "coinShort": "Toncoin"
+      },
+      "test": {
+        "name": "TON Testnet",
+        "nameSwitcher": "TON\nTestnet",
+        "nameShort": "TON",
+        "coin": "Toncoin",
+        "coinShort": "Toncoin"
+      }
+    },
+    "eth": {
+      "currency": "ETH",
+      "pageTitle": "TON-ETH Бридж",
+      "gasFee": "Комиссия Ethereum (газ) ~ {fee} ETH",
+      "transactionCompleted": "Транзакция Ethereum успешно завершена",
+      "transactionWait": "Пожалуйста, подождите пока обрабатывается транзакция Ethereum",
+      "transactionSend": "Пожалуйста, подтвердите Ethereum транзакцию в {provider}",
+      "blocksConfirmations": "Собрано {count} подтверждений блоков Ethereum",
+      "errors": {
+        "invalidAddress": "Не валидный ETH адрес",
+        "lowBalance": "У вас должны быть ETH в кошельке чтобы оплатить газ в сети Ethereum"
+      },
+      "main": {
+        "name": "Ethereum Network",
+        "nameSwitcher": "Ethereum\nNetwork",
+        "nameShort": "ETH",
+        "coin": "TONCOIN (ERC20)",
+        "coinShort": "TONCOIN"
+      },
+      "test": {
+        "name": "Ethereum Rinkeby",
+        "nameSwitcher": "Ethereum\nRinkeby",
+        "nameShort": "ETH",
+        "coin": "TONCOIN (ERC20)",
+        "coinShort": "TONCOIN"
+      }
+    },
+    "bsc": {
+      "currency": "BNB",
+      "pageTitle": "TON-BSC Бридж",
+      "gasFee": "Комиссия BSC (газ) ~ {fee} BNB",
+      "transactionCompleted": "Транзакция BSC успешно завершена",
+      "transactionWait": "Пожалуйста, подождите пока обрабатывается транзакция BSC",
+      "transactionSend": "Пожалуйста, подтвердите BSC транзакцию в {provider}",
+      "blocksConfirmations": "Собрано {count} подтверждений блоков BSC",
+      "errors": {
+        "invalidAddress": "Не валидный BSC адрес",
+        "lowBalance": "У вас должны быть BNB в кошельке чтобы оплатить газ в сети BSC"
+      },
+      "main": {
+        "name": "Binance Smart Chain",
+        "nameSwitcher": "Binance\nSmart Chain",
+        "nameShort": "BSC",
+        "coin": "TONCOIN (BEP-20)",
+        "coinShort": "TONCOIN"
+      },
+      "test": {
+        "name": "BSC Testnet",
+        "nameSwitcher": "BSC\nTestnet",
+        "nameShort": "BSC",
+        "coin": "TONCOIN (BEP-20)",
+        "coinShort": "TONCOIN"
+      }
+    }
+  },
+  "sendToken": "Токен",
+  "amountOfTon": "Количество {tokenSymbol}",
+  "tokenAddress": "Адрес токена",
+  "addressInputLabel": "Адрес получения",
+  "willReceive": "Вы получите {fee} {coin}",
+  "bridgeFeeAbove10": "Комиссия бриджа - {fee} TON",
+  "bridgeFeeBelow10": "Комиссия бриджа - 5 TON + 0.25% of amount",
+  "sourceCode": "Исходный код",
+  "howItWorks": "Как это работает",
+  "documentation": "Документация",
+
+  "transferHistory": "История",
+  "disconnectWallet": "Отключить",
+
+  "transfer": "Перевод",
+  "getToncoin": "Получить {coin}",
+  "done": "Готово",
+  "cancel": "Отменить",
+
+  "blocksConfirmationsCollected": "Собраны подтверждения блоков",
+  "blocksConfirmationsWaiting": "Пожалуйста, подождите подтверждения блоков",
+  "oraclesConfirmations": "Собрано {count} подтверждений оракулов",
+  "oraclesConfirmationsCollected": "Собраны подтверждения оракулов",
+  "oraclesConfirmationsWaiting": "Пожалуйста, подождите подтверждения оракулов",
+  "getCoinsByProvider": "Получите {toCoin} в {provider}",
+  "coinsSent": "{toCoin} были отправлены на ваш адрес",
+  "getCoins": "Получите {toCoin} в {toNetwork}",
+
+  "errors": {
+    "alertTitleError": "Ошибка",
+    "alertButtonClose": "Закрыть",
+    "notValidAmount": "Введено не валидное число",
+    "amountBelow10": "Количество должно быть не менее 10 TON",
+    "needPersonalAddress": "Пожалуйста, введите СВОЙ адрес для получения",
+    "toncoinBalance": "У вас всего {balance} {coin}",
+    "installMetamask": "Пожалуйста, установите MetaMask",
+    "wrongProviderNetwork": "Переключите сеть на {network} в {provider}",
+    "cantGetAddress": "Не могу получить адрес аккаунта",
+    "providerIsDisconnected": "{provider} отключился"
+  },
+
+  "history": {
+    "title": "История",
+    "recentHistory": "История",
+    "age": "Дата",
+    "amountFrom": "Количество / Откуда (сеть)",
+    "amountTo": "Получено / Куда (сеть)",
+    "fee": "Газ / Бридж комиссии",
+    "status": "Статус",
+    "completed": "завершено",
+    "getToncoin": "Получить {coin}",
+    "connect": "Подключить",
+    "oracles": "{count} оракулов",
+    "notFound": "Переводы не найдены"
+  }
+}

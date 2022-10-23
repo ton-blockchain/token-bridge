@@ -1,0 +1,289 @@
+@r: .History;
+
+@{r} {
+	position: relative;
+	z-index: @z-history;
+	background: @c-background;
+	width: 100%;
+	min-height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+
+	&-content {
+		padding: 120px 44px;
+		max-width: 936px;
+		box-sizing: content-box;
+		width: 100%;
+
+		@media (max-width: 850px) {
+			padding: 100px 16px 40px;
+		}
+	}
+
+	&-header {
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		margin-bottom: 30px;
+
+		@media (max-width: 850px) {
+			display: block;
+		}
+
+		h2 {
+			font-weight: bold;
+			font-size: 25px;
+			line-height: 34px;
+			color: @c-text-light;
+			margin-right: 20px;
+
+			@media (max-width: 850px) {
+				font-size: 20px;
+				line-height: 30px;
+				margin-right: 0;
+			}
+		}
+
+		&Address,
+		&AddressShort {
+			height: 20px;
+			font-size: 15px;
+			color: @c-label;
+
+			a {
+				display: inline-block;
+				text-decoration: underline;
+				color: @c-label;
+
+				.isPointer &:hover,
+				.isTouch &:active {
+					text-decoration: none;
+				}
+
+				&:after {
+					content: "";
+					position: absolute;
+					display: inline-block;
+					height: 20px;
+					width: 20px;
+					background-image: url("~@/assets/pics/link.svg");
+					background-repeat: no-repeat;
+					background-size: contain;
+					vertical-align: -3px;
+				}
+			}
+		}
+
+		@media (max-width: 850px) {
+			&Address {
+				display: none;
+			}
+		}
+
+		@media (min-width: 851px) {
+			&AddressShort {
+				display: none;
+			}
+		}
+	}
+
+	&-grid {
+		border-collapse: collapse;
+		margin: 0;
+		padding: 0;
+		width: 100%;
+		font-weight: 600;
+		font-size: 15px;
+		line-height: 20px;
+		color: @c-text;
+
+		tr {
+			border-bottom: 1px solid rgba(#888, 0.2);
+		}
+
+		th {
+			font-weight: bold;
+			font-size: 15px;
+			line-height: 20px;
+			letter-spacing: -0.3px;
+			color: @c-text-light;
+			padding: 20px 15px;
+			text-align: left;
+			vertical-align: top;
+		}
+
+		td {
+			padding: 10px 15px;
+			text-align: left;
+			vertical-align: top;
+		}
+	}
+
+	&-list {
+		width: 100%;
+		font-weight: 600;
+		font-size: 14px;
+		line-height: 18px;
+		color: @c-text;
+
+		&Row {
+			border-top: 1px solid rgba(#888, 0.2);
+			padding: 12px 0 2px;
+		}
+
+		&Title {
+			font-weight: bold;
+			color: @c-text-light;
+			letter-spacing: -0.2px;
+			margin-bottom: 2px;
+		}
+
+		&Value {
+			color: @c-text;
+			margin-bottom: 16px;
+		}
+	}
+
+	&-grid,
+	&-list {
+		a {
+			color: @c-text-light;
+			text-decoration: underline;
+
+			.isPointer &:hover,
+			.isTouch &:active {
+				text-decoration: none;
+			}
+		}
+
+		span,
+		button {
+			&.mint {
+				position: relative;
+				display: inline-block;
+				-webkit-appearance: none;
+				background-color: @c-primary;
+				border-radius: 25px;
+				font-weight: 700;
+				color: white;
+				font-size: 15px;
+				line-height: 19px;
+				border: none;
+				padding: 8px 16px 8px;
+				white-space: nowrap;
+
+				&.blocked {
+					pointer-events: none;
+				}
+
+				&.showLoader {
+					color: transparent;
+
+					&:after {
+						content: "";
+						position: absolute;
+						left: 50%;
+						top: 50%;
+						margin-left: -6px;
+						margin-top: -6px;
+						width: 12px;
+						height: 12px;
+						border: 3px solid white;
+						border-left: 3px solid transparent;
+						border-radius: 50%;
+						animation: loading-animation-spin @d-loader infinite linear;
+
+						@keyframes loading-animation-spin {
+							to {
+								transform: rotate(1turn);
+							}
+						}
+					}
+				}
+
+				.isPointer &:hover,
+				.isTouch &:active {
+					background-color: rgba(@c-primary, 0.85);
+				}
+
+				@media (max-width: 850px) {
+					font-size: 14px;
+				}
+			}
+
+			&.pending,
+			&.completed {
+				display: inline-block;
+				padding: 4px 10px 6px;
+				background: rgba(@c-text-light, 7%);
+				border-radius: 8px;
+			}
+
+			&.pending {
+				color: @c-primary;
+				background: rgba(@c-primary, 7%);
+			}
+		}
+	}
+
+	@media (max-width: 850px) {
+		&-grid {
+			display: none;
+		}
+	}
+
+	@media (min-width: 851px) {
+		&-list {
+			display: none;
+		}
+	}
+
+	&-loader {
+		position: relative;
+		display: block;
+		left: 50%;
+		margin-left: -18px;
+		top: 40px;
+		width: 36px;
+		height: 36px;
+		border: 5px solid @c-primary;
+		border-right-color: white;
+		border-radius: 50%;
+		animation: loading-animation-spin 1500ms infinite linear;
+
+		@keyframes loading-animation-spin {
+			to {
+				transform: rotate(1turn);
+			}
+		}
+	}
+
+	&-noTransfers {
+		text-align: center;
+		color: @c-text-light;
+		font-weight: bold;
+		line-height: 1.25;
+		font-size: 25px;
+		margin-top: 40px;
+
+		@media (max-width: 850px) {
+			font-size: 20px;
+			line-height: 30px;
+			margin-right: 0;
+			text-align: left;
+		}
+	}
+
+	&Transition-enter,
+	&Transition-leave-to {
+		opacity: 0;
+	}
+	&Transition-enter-active {
+		transition: @d-modal opacity;
+	}
+	&Transition-enter-to,
+	&Transition-leave {
+		opacity: 1;
+	}
+}

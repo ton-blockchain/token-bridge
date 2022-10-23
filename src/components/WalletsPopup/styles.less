@@ -1,0 +1,138 @@
+@r: .WalletsPopup;
+
+@{r} {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: @z-wallet-popup;
+
+	&-panel {
+		position: relative;
+		background: @c-background;
+		border-radius: 20px;
+		box-shadow: 0px 8px 24px @c-panel-shadow;
+		box-sizing: border-box;
+		padding: 53px 16px 24px 16px;
+		width: 260px;
+
+		ul {
+			list-style-type: none;
+			margin: 0;
+			word-break: break-word;
+			white-space: normal;
+			text-align: left;
+		}
+
+		li + li {
+			margin-top: 10px;
+		}
+
+		li {
+			button {
+				position: relative;
+				padding: 0 16px;
+				color: @c-text-light;
+				font-size: 15px;
+				line-height: 56px;
+				font-weight: 700;
+				cursor: pointer;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				width: 100%;
+				border: 1px solid @c-provider-border;
+				background: @c-provider-background;
+				border-radius: 16px;
+
+				&[disabled] {
+					pointer-events: none;
+				}
+
+				.isPointer &:hover,
+				.isTouch &:active {
+					color: @c-primary;
+				}
+
+				em {
+					content: "";
+					position: relative;
+					background-size: contain;
+					background-repeat: no-repeat;
+					background-position: center;
+					width: 24px;
+					height: 24px;
+				}
+
+				&[data-icon="metamask"] em {
+					background-image: url("~@/assets/pics/providers/metamask.svg");
+				}
+
+				&[data-icon="walletConnect"] em {
+					background-image: url("~@/assets/pics/providers/walletConnect.svg");
+				}
+
+				&[data-icon="walletLink"] em {
+					background-image: url("~@/assets/pics/providers/walletlink.svg");
+				}
+
+				&.showLoader:after {
+					content: "";
+					position: absolute;
+					right: 50px;
+					margin-top: 1px;
+					width: 12px;
+					height: 12px;
+					border: 3px solid @c-primary;
+					border-left: 3px solid transparent;
+					border-radius: 50%;
+					animation: loading-animation-spin @d-loader infinite linear;
+
+					@keyframes loading-animation-spin {
+						to {
+							transform: rotate(1turn);
+						}
+					}
+				}
+			}
+		}
+
+		&Close {
+			position: absolute;
+			right: 16px;
+			top: 16px;
+			background-image: url("~@/assets/pics/close.svg");
+			background-size: contain;
+			background-repeat: no-repeat;
+			background-position: center;
+			width: 24px;
+			height: 24px;
+		}
+	}
+
+	&-overlay {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background: @c-overlay;
+	}
+
+	&Transition-enter,
+	&Transition-leave-to {
+		opacity: 0;
+	}
+	&Transition-enter-active,
+	&Transition-leave-active {
+		transition: @d-modal opacity;
+	}
+	&Transition-enter-to,
+	&Transition-leave {
+		opacity: 1;
+	}
+}

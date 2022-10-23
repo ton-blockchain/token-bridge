@@ -1,0 +1,98 @@
+{
+	"name": "ton-token-bridge",
+	"version": "0.1.0",
+	"private": true,
+	"license": "GPL-3.0",
+	"scripts": {
+		"serve": "clear && vue-cli-service serve",
+		"build": "vue-cli-service build",
+		"lint": "vue-cli-service lint",
+		"lint:fix": "vue-cli-service lint -- --fix",
+		"i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\""
+	},
+	"dependencies": {
+		"@walletconnect/web3-provider": "^1.8.0",
+		"core-js": "^3.8.3",
+		"detect-it": "^4.0.1",
+		"ethers": "^5.5.2",
+		"lodash.debounce": "^4.0.8",
+		"nanoevents": "^7.0.1",
+		"node-polyfill-webpack-plugin": "^2.0.1",
+		"qr-code-styling": "^1.6.0-rc.1",
+		"tonweb": "^0.0.54",
+		"vue": "^3.2.13",
+		"vue-i18n": "^9.1.0",
+		"vue-router": "^4.0.3",
+		"vue-uuid": "^3.0.0",
+		"vuex": "^4.0.0",
+		"web3": "^1.7.5"
+	},
+	"devDependencies": {
+		"@intlify/vue-i18n-loader": "^3.0.0",
+		"@types/detect-it": "^4.0.1",
+		"@types/lodash.debounce": "^4.0.7",
+		"@typescript-eslint/eslint-plugin": "^5.4.0",
+		"@typescript-eslint/parser": "^5.4.0",
+		"@vue/cli-plugin-babel": "~5.0.0",
+		"@vue/cli-plugin-eslint": "~5.0.0",
+		"@vue/cli-plugin-router": "~5.0.0",
+		"@vue/cli-plugin-typescript": "~5.0.0",
+		"@vue/cli-plugin-vuex": "~5.0.0",
+		"@vue/cli-service": "~5.0.0",
+		"@vue/eslint-config-typescript": "^9.1.0",
+		"eslint": "^7.32.0",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-plugin-prettier": "^4.0.0",
+		"eslint-plugin-simple-import-sort": "^8.0.0",
+		"eslint-plugin-unused-imports": "^2.0.0",
+		"eslint-plugin-vue": "^8.0.3",
+		"less": "^4.0.0",
+		"less-loader": "^8.0.0",
+		"typescript": "~4.5.5",
+		"vue-cli-plugin-i18n": "~2.3.1"
+	},
+	"eslintConfig": {
+		"root": true,
+		"env": {
+			"node": true
+		},
+		"plugins": [
+			"unused-imports",
+			"simple-import-sort"
+		],
+		"extends": [
+			"plugin:vue/essential",
+			"eslint:recommended",
+			"@vue/typescript/recommended",
+			"plugin:prettier/recommended"
+		],
+		"parserOptions": {
+			"ecmaVersion": 2020
+		},
+		"rules": {
+			"vue/multi-word-component-names": "off",
+			"@typescript-eslint/no-non-null-assertion": "off",
+			"@typescript-eslint/no-explicit-any": "off",
+			"@typescript-eslint/ban-ts-comment": "off",
+			"no-unused-vars": "warn",
+			"unused-imports/no-unused-imports": "error",
+			"unused-imports/no-unused-vars": [
+				"warn",
+				{
+					"vars": "all",
+					"varsIgnorePattern": "^_",
+					"args": "after-used",
+					"argsIgnorePattern": "^_"
+				}
+			],
+			"simple-import-sort/imports": "error",
+			"simple-import-sort/exports": "error"
+		}
+	},
+	"browserslist": [
+		"> 1%",
+		"last 2 versions",
+		"not dead",
+		"not ie 11"
+	]
+}

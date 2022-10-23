@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>dot</title>
+    <g id="Desktop" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Bridge-2.0-v2---Testnet---ETH-to-TON---transaction-completed" transform="translate(-302.000000, -1013.000000)">
+            <g id="progress" transform="translate(302.000000, 900.000000)">
+                <g id="wait" transform="translate(0.000000, 110.000000)">
+                    <g id="dot" transform="translate(0.000000, 3.000000)">
+                        <rect id="Path" x="0" y="0" width="18" height="18"></rect>
+                        <circle fill="#1D98DC" cx="9" cy="9" r="4"></circle>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

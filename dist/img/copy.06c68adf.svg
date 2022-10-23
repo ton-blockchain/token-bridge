@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>copy</title>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="string-/-with-copy-button" transform="translate(3.000000, -3.000000)">
+            <g id="copy" transform="translate(-3.000000, 3.000000)">
+                <rect id="Path" x="0" y="0" width="20" height="20"></rect>
+                <path d="M6.75,7.5 L14.75,7.5 C15.3022847,7.5 15.75,7.94771525 15.75,8.5 L15.75,16.5 C15.75,17.0522847 15.3022847,17.5 14.75,17.5 L6.75,17.5 C6.19771525,17.5 5.75,17.0522847 5.75,16.5 L5.75,8.5 C5.75,7.94771525 6.19771525,7.5 6.75,7.5 Z M3,14.75 L3,6.75 C3,5.6454305 3.8954305,4.75 5,4.75 L13.25,4.75 L13.25,4.75" stroke="#1D98DC" stroke-width="1.5" stroke-linejoin="round"></path>
+            </g>
+        </g>
+    </g>
+</svg>

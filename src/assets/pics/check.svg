@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="17px" viewBox="0 0 16 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>check</title>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="list-option-/-check-/-selected" transform="translate(-209.000000, -14.000000)">
+            <g id="check" transform="translate(209.000000, 14.500000)">
+                <rect id="Path" x="0" y="0" width="16" height="16"></rect>
+                <polyline id="Path-6" stroke="#1D98DC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="2.5 7 7 11.5 14 4.5"></polyline>
+            </g>
+        </g>
+    </g>
+</svg>

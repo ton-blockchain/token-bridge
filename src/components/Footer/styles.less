@@ -1,0 +1,18 @@
+@r: .Footer;
+
+@{r} {
+	text-align: center;
+	font-size: 12px;
+	color: @c-label;
+	padding-bottom: 10px;
+
+	a {
+		color: @c-label;
+		text-decoration: underline;
+
+		.isPointer &:hover,
+		.isTouch &:active {
+			text-decoration: none;
+		}
+	}
+}

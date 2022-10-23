@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="34px" height="34px" viewBox="0 0 34 34" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>change dir</title>
+    <g id="Desktop" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Bridge-2.0-v2---ETH-to-TON---providers-list" transform="translate(-495.000000, -528.000000)">
+            <g id="choose-network" transform="translate(262.000000, 490.000000)">
+                <g id="change-dir-button" transform="translate(226.000000, 31.000000)">
+                    <g id="change-dir" transform="translate(7.000000, 7.000000)">
+                        <rect id="Path" x="0" y="0" width="34" height="34"></rect>
+                        <path d="M19,5.5 L30,17 L19,28.5 M30,17 L2.5,17" id="Combined-Shape" stroke="#AAAAAA" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
