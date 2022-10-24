@@ -1,7 +1,7 @@
 {
   "logoLabel": "Bridge",
   "connectWallet": "Connect Wallet",
-  "testnetMessage": "This is the testnet version",
+  "testnetMessage": "This is the testnet version. Dont send real coins!",
   "providers": {
     "metamask": "Metamask",
     "walletConnect": "WalletConnect",

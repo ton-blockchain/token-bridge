@@ -1,7 +1,7 @@
 {
   "logoLabel": "Бридж",
   "connectWallet": "Подключить Кошелек",
-  "testnetMessage": "Работа в режиме тестовой сети",
+  "testnetMessage": "Работа в режиме тестовой сети. Не отправляйте реальные монеты!",
   "providers": {
     "metamask": "Metamask",
     "walletConnect": "WalletConnect",
