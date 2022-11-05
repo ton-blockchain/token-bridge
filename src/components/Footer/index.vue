@@ -1,6 +1,6 @@
 <template>
   <footer class="Footer">
-    v3.0.2,
+    v3.0.3,
     <a href="https://github.com/ton-blockchain/token-bridge" target="_blank">{{
         $t("sourceCode")
       }}</a
