@@ -55,8 +55,8 @@
         "coinShort": "TONCOIN"
       },
       "test": {
-        "name": "Ethereum Rinkeby",
-        "nameSwitcher": "Ethereum\nRinkeby",
+        "name": "Ethereum Goerli",
+        "nameSwitcher": "Ethereum\nGoerli",
         "nameShort": "ETH",
         "coin": "TONCOIN (ERC20)",
         "coinShort": "TONCOIN"

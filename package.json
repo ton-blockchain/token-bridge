@@ -31,63 +31,15 @@
 		"@intlify/vue-i18n-loader": "^3.0.0",
 		"@types/detect-it": "^4.0.1",
 		"@types/lodash.debounce": "^4.0.7",
-		"@typescript-eslint/eslint-plugin": "^5.4.0",
-		"@typescript-eslint/parser": "^5.4.0",
 		"@vue/cli-plugin-babel": "~5.0.0",
-		"@vue/cli-plugin-eslint": "~5.0.0",
 		"@vue/cli-plugin-router": "~5.0.0",
 		"@vue/cli-plugin-typescript": "~5.0.0",
 		"@vue/cli-plugin-vuex": "~5.0.0",
 		"@vue/cli-service": "~5.0.0",
-		"@vue/eslint-config-typescript": "^9.1.0",
-		"eslint": "^7.32.0",
-		"eslint-config-prettier": "^8.3.0",
-		"eslint-plugin-prettier": "^4.0.0",
-		"eslint-plugin-simple-import-sort": "^8.0.0",
-		"eslint-plugin-unused-imports": "^2.0.0",
-		"eslint-plugin-vue": "^8.0.3",
 		"less": "^4.0.0",
 		"less-loader": "^8.0.0",
 		"typescript": "~4.5.5",
 		"vue-cli-plugin-i18n": "~2.3.1"
-	},
-	"eslintConfig": {
-		"root": true,
-		"env": {
-			"node": true
-		},
-		"plugins": [
-			"unused-imports",
-			"simple-import-sort"
-		],
-		"extends": [
-			"plugin:vue/essential",
-			"eslint:recommended",
-			"@vue/typescript/recommended",
-			"plugin:prettier/recommended"
-		],
-		"parserOptions": {
-			"ecmaVersion": 2020
-		},
-		"rules": {
-			"vue/multi-word-component-names": "off",
-			"@typescript-eslint/no-non-null-assertion": "off",
-			"@typescript-eslint/no-explicit-any": "off",
-			"@typescript-eslint/ban-ts-comment": "off",
-			"no-unused-vars": "warn",
-			"unused-imports/no-unused-imports": "error",
-			"unused-imports/no-unused-vars": [
-				"warn",
-				{
-					"vars": "all",
-					"varsIgnorePattern": "^_",
-					"args": "after-used",
-					"argsIgnorePattern": "^_"
-				}
-			],
-			"simple-import-sort/imports": "error",
-			"simple-import-sort/exports": "error"
-		}
 	},
 	"browserslist": [
 		"> 1%",

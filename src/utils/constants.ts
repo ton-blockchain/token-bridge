@@ -5,7 +5,7 @@ export const PARAMS: Params = {
     "ton://transfer/<BRIDGE_ADDRESS>?amount=<AMOUNT>&text=swapTo%23<TO_ADDRESS>",
   tonExplorerUrl: {
     main: "https://tonscan.org/address/<ADDRESS>",
-    test: "https://tonscan.org/address/<ADDRESS>",
+    test: "https://testnet.tonscan.org/address/<ADDRESS>",
   },
   networks: {
     eth: {
@@ -20,8 +20,9 @@ export const PARAMS: Params = {
         tonBridgeV2EVMAddress: "",
         tonCollectorAddressV2: "",
         tonMultisigAddressV2: "",
-        tonCenterUrl: "https://wallet.toncenter.com/api/v2/jsonRPC",
-        tonCenterApiKey: "",
+        tonCenterUrl: "https://toncenter.com/api/v2/jsonRPC",
+        tonCenterApiKey:
+          "d843619b379084d133f061606beecbf72ae2bf60e0622e808f2a3f631673599b",
         rpcEndpoint:
           "https://mainnet.infura.io/v3/d29ee9db9b7b4bbc8fa5d28047a3ff47",
         chainId: 1,
@@ -32,11 +33,11 @@ export const PARAMS: Params = {
       },
       test: {
         getGasUrl: "https://ethereumgas.toncenter.com",
-        explorerUrl: "https://rinkeby.etherscan.io/token/<ADDRESS>",
-        wTonAddress: "0x2968721bF293BAa3A91503DCc9853954FaF19b48",
-        tonBridgeAddress: "Uf/SoN57VskmwQGVKybKMZg2IgjF9u70tOGpwBB5t/oEjisw",
-        tonCollectorAddress: "Uf/TePiQBYXpZIhG/1qp2KDakFXvOojsqkcfHr2s2VykU4Gw",
-        tonMultisigAddress: "Uf/oakB9qww5xc4v5mAA6V9fNjwt/p1IzpVBvqDctzK7ll5w",
+        explorerUrl: "https://goerli.etherscan.io/token/<ADDRESS>",
+        wTonAddress: "0xDB15ffaf2c88F2d89Db9365a5160D5b8c9448Ea6",
+        tonBridgeAddress: "Ef-56ZiqKUbtp_Ax2Qg4Vwh7yXXJCO8cNJAb229J6XXe4-aC",
+        tonCollectorAddress: "EQCA1W_I267-luVo9CzV7iCcrA1OO5vVeXD0QHACvBn1jIVU",
+        tonMultisigAddress: "kf-OV1dpgFVEzEmyvAETT8gnhqZ1IqHn8RzT6dmEmvnze-9n",
         tonBridgeV2EVMAddress: "0x4E1edf0df291308e127F42af57E95519BDd78412",
         tonBridgeAddressV2: "Ef8KQJu6icsG2p9kEmWvjr7OfXZriklfH07r0Bome7-oj6bq",
         tonCollectorAddressV2:
@@ -45,10 +46,10 @@ export const PARAMS: Params = {
           "Ef_J6OpV-tAdJjby1fvE6oD2-Put6VL4fuFn-g4qDVQDXPAi",
         tonCenterUrl: "https://testnet.toncenter.com/api/v2/jsonRPC",
         tonCenterApiKey:
-          "7af9a174f418944c718347b6e0937aed5a3d72b92fd2d7746a05c3da15667b9f",
+          "d843619b379084d133f061606beecbf72ae2bf60e0622e808f2a3f631673599b",
         rpcEndpoint:
-          "https://rinkeby.infura.io/v3/1f24ea6b55e9432d993a9c0ff68eeee5",
-        chainId: 4,
+          "https://goerli.infura.io/v3/1f24ea6b55e9432d993a9c0ff68eeee5",
+        chainId: 5,
         blocksConfirmations: 12,
         defaultGwei: 25,
         coinsPerGweiTo: 0.004,
@@ -68,8 +69,9 @@ export const PARAMS: Params = {
         tonBridgeAddressV2: "",
         tonCollectorAddressV2: "",
         tonMultisigAddressV2: "",
-        tonCenterUrl: "https://wallet.toncenter.com/api/v2/jsonRPC",
-        tonCenterApiKey: "",
+        tonCenterUrl: "https://toncenter.com/api/v2/jsonRPC",
+        tonCenterApiKey:
+          "d843619b379084d133f061606beecbf72ae2bf60e0622e808f2a3f631673599b",
         rpcEndpoint: "https://bsc-dataseed.binance.org/",
         chainId: 56,
         blocksConfirmations: 12,
@@ -81,10 +83,10 @@ export const PARAMS: Params = {
         getGasUrl:
           "https://gbsc.blockscan.com/gasapi.ashx?apikey=key&method=gasoracle",
         explorerUrl: "https://testnet.bscscan.com/token/<ADDRESS>",
-        wTonAddress: "0x278e8F657070Cbf97779608Fb1F37964091a19cF",
-        tonBridgeAddress: "Uf+MfJJlkjBjsPiW7wH/6F0mrUgU7D1j6ciyZCcFsqF3TW9E",
-        tonCollectorAddress: "Ef_sDJFMO8YCxhCH6cYymz4xit6yCCrrjhlItxLt_Ico7da9",
-        tonMultisigAddress: "Ef9HDJQ5bbwUhDV3FOpDuLqwQf27AGc2eoJMXMEGQ2kMah8G",
+        wTonAddress: "0xdb15ffaf2c88f2d89db9365a5160d5b8c9448ea6",
+        tonBridgeAddress: "Ef_GmJntTDokxfhLGF1jRvMGC8Jav2V5keoNj4El2jzhHsID",
+        tonCollectorAddress: "EQDBNfV4DQzSyzNMw6BCTSZSoUi-CzWcYNsfhKxoDqfrwFtS",
+        tonMultisigAddress: "kf83VnnXuaqQV1Ts2qvUr6agacM0ydOux5NNa1mcU-cEO693",
         tonBridgeV2EVMAddress: "0x8E2D0A5ec1F139Df98De28F520421191F41572e9",
         tonBridgeAddressV2: "Ef_pm4G662VWNKhFi_B8RfoGM8vbeYyzudPkJCdg1m1hRzBA",
         tonCollectorAddressV2:
@@ -93,7 +95,7 @@ export const PARAMS: Params = {
           "Ef-PRBrDlM-U0Ng6djQDZU14CdL1tn3xbxfsVO-BWpK2WWYY",
         tonCenterUrl: "https://testnet.toncenter.com/api/v2/jsonRPC",
         tonCenterApiKey:
-          "7af9a174f418944c718347b6e0937aed5a3d72b92fd2d7746a05c3da15667b9f",
+          "d843619b379084d133f061606beecbf72ae2bf60e0622e808f2a3f631673599b",
         rpcEndpoint: "https://data-seed-prebsc-1-s1.binance.org:8545/",
         chainId: 97,
         blocksConfirmations: 12,

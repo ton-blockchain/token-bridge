@@ -247,7 +247,7 @@ import { ERC20Contract } from "@/utils/services/ERC20.contract";
 
 import { ComponentData, ParamsNetwork } from "./types";
 
-const PAIRS = [/* "eth", */ "bsc"];
+const PAIRS = ["eth", "bsc"];
 const fromNano = TonWeb.utils.fromNano;
 const toNano = TonWeb.utils.toNano;
 
@@ -281,7 +281,7 @@ export default defineComponent({
       hash: "",
 
       isFromTon: true,
-      pair: "bsc",
+      pair: "eth",
       token: "ton",
       amountInput: "",
       toAddress: "",

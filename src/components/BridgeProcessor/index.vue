@@ -758,7 +758,7 @@ export default defineComponent({
     getSwapTonToEthIdForTon(d: SwapData): string {
       let encodedParams;
 
-      if (this.pair === "eth") {
+      if (this.pair === "eth" && !this.isTestnet) {
         encodedParams = this.provider.web3!.eth.abi.encodeParameters(
           ["int", "address", "uint256", "int8", "bytes32", "bytes32", "uint64"],
           [
@@ -773,7 +773,7 @@ export default defineComponent({
         );
       }
 
-      if (this.pair === "bsc") {
+      if (this.pair === "bsc" || this.isTestnet) {
         encodedParams = this.provider.web3!.eth.abi.encodeParameters(
           [
             "int",
