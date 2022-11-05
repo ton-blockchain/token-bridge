@@ -245,7 +245,7 @@ import { supportsLocalStorage } from "@/utils/helpers";
 import { Provider } from "@/utils/providers/provider";
 import { ERC20Contract } from "@/utils/services/ERC20.contract";
 
-import { ComponentData, ParamsNetwork } from "./types";
+import { ComponentData } from "./types";
 
 const PAIRS = ["eth", "bsc"];
 const fromNano = TonWeb.utils.fromNano;
@@ -519,7 +519,9 @@ export default defineComponent({
             ) {
               try {
                 const wrappedTokenData = await getWrappedTokenData(
-                  new TonWeb(new TonWeb.HttpProvider(this.params.tonCenterUrl)),
+                  new TonWeb(new TonWeb.HttpProvider(this.params.tonCenterUrl, {
+                    apiKey: this.params.tonCenterApiKey
+                  })),
                   this.tokenAddress
                 );
                 if (wrappedTokenData.symbol) {
