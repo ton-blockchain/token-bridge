@@ -150,6 +150,43 @@ function serializeEthToTon(ethToTon: EthToTon) {
   return bits.array;
 }
 
+const findLogOutMsg = (outMessages?: any[]): any => {
+  if (!outMessages) return null;
+  for (const outMsg of outMessages) {
+    if (outMsg.destination === '') return outMsg;
+  }
+  return null;
+}
+
+const getRawMessageBytes = (logMsg: any): Uint8Array | null => {
+  const message = logMsg.message.substr(0, logMsg.message.length - 1); // remove '\n' from end
+  const bytes = TonWeb.utils.base64ToBytes(message);
+  if (bytes.length !== 28) {
+    return null;
+  }
+  return bytes;
+}
+
+const getTextMessageBytes = (logMsg: any): Uint8Array | null => {
+  const message =  logMsg.msg_data?.text;
+  const textBytes = TonWeb.utils.base64ToBytes(message);
+  const bytes = new Uint8Array(textBytes.length + 4);
+  bytes.set(textBytes, 4);
+  return bytes;
+}
+
+const getMessageBytes = (logMsg: any): Uint8Array | null => {
+  const msgType = logMsg.msg_data['@type'];
+  if (msgType === 'msg.dataText') {
+    return getTextMessageBytes(logMsg);
+  } else if (msgType === 'msg.dataRaw') {
+    return getRawMessageBytes(logMsg);
+  } else {
+    console.error('Unknown log msg type ' + msgType);
+    return null;
+  }
+}
+
 function getQueryId(ethToTon: EthToTon): BN {
 
   // web3@1.3.4 has an error in the algo for computing SHA
@@ -197,4 +234,6 @@ export {
   parseOffchainUriCell,
   serializeEthToTon,
   supportsLocalStorage,
+  findLogOutMsg,
+  getMessageBytes
 };
