@@ -82,6 +82,7 @@
 
           <CustomInput
             key="token"
+            :disabled="isInputsBlocked || !this.isTestnet"
             :label="$t('sendToken')"
             type="text"
             :dropdown="[
@@ -457,7 +458,6 @@ export default defineComponent({
       this.isTestnet =
         this.$route.query.testnet.toString().toLowerCase() === "true";
     }
-    if (!this.isTestnet) throw new Error("Mainnet coming soon"); // todo: temporary disabled mainnet
     if (this.$route.query.recover || this.$route.query.recovery) {
       const isRecover =
         (this.$route.query.recover?.toString() || "").toLowerCase() === "true";
