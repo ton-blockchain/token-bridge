@@ -1,7 +1,7 @@
 <template>
   <footer class="Footer">
-    v3.0.1,
-    <a href="https://github.com/ton-blockchain/bridge" target="_blank">{{
+    v3.0.2,
+    <a href="https://github.com/ton-blockchain/token-bridge" target="_blank">{{
         $t("sourceCode")
       }}</a
     >,
