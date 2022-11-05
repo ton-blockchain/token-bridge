@@ -869,13 +869,42 @@ export default defineComponent({
         );
       console.log("ton txs", transactions.length);
 
-      const findLogOutMsg = (outMessages?: any[]) => {
+      const findLogOutMsg = (outMessages?: any[]): any => {
         if (!outMessages) return null;
         for (const outMsg of outMessages) {
-          if (outMsg.destination === "") return outMsg;
+          if (outMsg.destination === '') return outMsg;
         }
         return null;
-      };
+      }
+
+      const getRawMessageBytes = (logMsg: any): Uint8Array | null => {
+        const message = logMsg.message.substr(0, logMsg.message.length - 1); // remove '\n' from end
+        const bytes = TonWeb.utils.base64ToBytes(message);
+        if (bytes.length !== 28) {
+          return null;
+        }
+        return bytes;
+      }
+
+      const getTextMessageBytes = (logMsg: any): Uint8Array | null => {
+        const message =  logMsg.msg_data?.text;
+        const textBytes = TonWeb.utils.base64ToBytes(message);
+        const bytes = new Uint8Array(textBytes.length + 4);
+        bytes.set(textBytes, 4);
+        return bytes;
+      }
+
+      const getMessageBytes = (logMsg: any): Uint8Array | null => {
+        const msgType = logMsg.msg_data['@type'];
+        if (msgType === 'msg.dataText') {
+          return getTextMessageBytes(logMsg);
+        } else if (msgType === 'msg.dataRaw') {
+          return getRawMessageBytes(logMsg);
+        } else {
+          console.error('Unknown log msg type ' + msgType);
+          return null;
+        }
+      }
 
       for (const t of transactions) {
         const logMsg = findLogOutMsg(t.out_msgs);
@@ -884,17 +913,27 @@ export default defineComponent({
             if (t.utime * 1000 < myCreateTime) continue;
           }
 
-          const message = logMsg.message.substr(0, logMsg.message.length - 1); // remove '\n' from end
-          const bytes = TonWeb.utils.base64ToBytes(message);
-          if (bytes.length !== 28) {
+          const bytes = getMessageBytes(logMsg);
+          if (bytes === null) {
             continue;
           }
-          const destinationAddress = this.makeAddress(
-            "0x" + TonWeb.utils.bytesToHex(bytes.slice(0, 20))
-          );
+
+          const destinationAddress = this.makeAddress('0x' + TonWeb.utils.bytesToHex(bytes.slice(0, 20)));
           const amountHex = TonWeb.utils.bytesToHex(bytes.slice(20, 28));
           const amount = new BN(amountHex, 16);
           const senderAddress = new TonWeb.utils.Address(t.in_msg.source);
+
+          const addressFromInMsg = t.in_msg.message.slice('swapTo#'.length);
+          if (destinationAddress.toLowerCase() !== addressFromInMsg.toLowerCase()) {
+            console.error('address from in_msg doesnt match ', addressFromInMsg, destinationAddress);
+            continue;
+          }
+          const amountFromInMsg = new BN(t.in_msg.value);
+          const amountFromInMsgAfterFee = amountFromInMsg.sub(this.getFeeAmountForTon(amountFromInMsg));
+          if (!amount.eq(amountFromInMsgAfterFee)) {
+            console.error('amount from in_msg doesnt match ', amount.toString(), amountFromInMsgAfterFee.toString(), amountFromInMsg.toString());
+            continue;
+          }
 
           const event: SwapData = {
             receiver: destinationAddress,
@@ -917,9 +956,8 @@ export default defineComponent({
 
           console.log(JSON.stringify(event));
 
-          const amountAfterFee = myAmount.sub(
-            this.getFeeAmountForTon(myAmount)
-          );
+          // todo: const myAmountNano = new BN(myAmount * 1e9);
+          const amountAfterFee = myAmount.sub(this.getFeeAmountForTon(myAmount));
 
           if (
             amount.eq(amountAfterFee) &&
