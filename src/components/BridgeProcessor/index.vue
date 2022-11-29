@@ -805,7 +805,30 @@ export default defineComponent({
     getSwapTonToEthIdForJettons(d: BurnData): string {
       let encodedParams;
       if (this.pair === "eth") {
-        // TODO
+        encodedParams = this.provider.web3!.eth.abi.encodeParameters(
+            [
+              "int",
+              "address",
+              "address",
+              "address",
+              "uint256",
+              "int8",
+              "bytes32",
+              "bytes32",
+              "uint64",
+            ],
+            [
+              0xda7a,
+              this.params.tonBridgeV2EVMAddress,
+              d.receiver,
+              d.token,
+              d.amount,
+              d.tx.address_.workchain,
+              d.tx.address_.address_hash,
+              d.tx.tx_hash,
+              d.tx.lt,
+            ]
+        );
       }
 
       if (this.pair === "bsc") {
