@@ -524,9 +524,9 @@ export default defineComponent({
                   })),
                   this.tokenAddress
                 );
-                if (wrappedTokenData.symbol) {
-                  this.tokenSymbol = wrappedTokenData.symbol;
-                }
+                // if (wrappedTokenData.symbol) {
+                //   this.tokenSymbol = wrappedTokenData.symbol;
+                // }
               } catch (error) {
                 console.error(error);
                 this.tokenSymbol = "";

@@ -40,4 +40,29 @@ async function burnJetton({
   ]);
 }
 
-export { burnJetton };
+async function mintJetton({
+  tonwebWallet,
+  queryId,
+  bridgeTonAddress,
+}: {
+  tonwebWallet: any;
+  queryId: string;
+  bridgeTonAddress: string;
+}) {
+  const mintOP = 8; // burn op
+
+  const mintPayload = new TonWeb.boc.Cell();
+  mintPayload.bits.writeUint(mintOP, 32);
+  mintPayload.bits.writeUint(new TonWeb.utils.BN(queryId), 64);
+
+  await tonwebWallet.provider.send("ton_sendTransaction", [
+    {
+      to: bridgeTonAddress,
+      value: TonWeb.utils.toNano("1").toString(),
+      data: TonWeb.utils.bytesToBase64(await mintPayload.toBoc()),
+      dataType: "boc",
+    },
+  ]);
+}
+
+export { burnJetton, mintJetton };

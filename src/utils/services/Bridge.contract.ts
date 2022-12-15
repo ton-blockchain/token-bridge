@@ -43,20 +43,17 @@ export class BridgeContract {
     address,
     token,
     amount,
-    tonAddr,
+    to_address_hash
   }: {
     address: string;
     token: string;
     amount: string;
-    tonAddr: {
-      workchain: number;
-      address_hash: string;
-    };
+    to_address_hash: string;
   }): Promise<any> {
     const contract = this._getContract(address);
     return contract
       .connect((this.provider as any).provider.getSigner()!)
-      .lock(token, amount, tonAddr);
+      .lock(token, amount, to_address_hash);
   }
 
   unlock({
@@ -69,13 +66,10 @@ export class BridgeContract {
   }: {
     bridgeAddress: string;
     receiver: string; // address
-    token: string;
+    token: string; // address
     amount: string; // uint64
     tx: {
-      address_: {
-        workchain: number;
-        address_hash: string;
-      };
+      address_hash: string;
       tx_hash: string;
       lt: number;
     };
@@ -89,7 +83,7 @@ export class BridgeContract {
           receiver, // address
           token,
           amount, // uint64
-          tx,
+          tx
         },
         signatures
       );

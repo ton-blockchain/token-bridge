@@ -54,9 +54,7 @@ async function getWrappedTokenData(tonweb: any, jettonWalletAddress: string) {
   const chainId = wrappedTokenData[0].toString();
   const tokenAddress = "0x" + wrappedTokenData[1].toString("hex");
   const decimals = wrappedTokenData[2].toString();
-  const name = Buffer.from(wrappedTokenData[3].bits.array).toString();
-  const symbol = Buffer.from(wrappedTokenData[4].bits.array).toString();
-  return { chainId, tokenAddress, decimals, name, symbol };
+  return { chainId, tokenAddress, decimals };
 }
 
 async function getJettonWalletAddress({

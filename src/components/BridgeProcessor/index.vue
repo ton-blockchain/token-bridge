@@ -177,7 +177,7 @@ import {
   getJettonWalletData,
   getWrappedTokenData,
 } from "@/api/toncCenter";
-import { burnJetton } from "@/api/tonWallet";
+import {burnJetton, mintJetton} from "@/api/tonWallet";
 import { onCopyClick } from "@/utils";
 import { PARAMS } from "@/utils/constants";
 import {
@@ -187,7 +187,6 @@ import {
   getQueryId,
   makeAddress,
   parseEthSignature,
-  serializeEthToTon,
 } from "@/utils/helpers";
 import { Provider } from "@/utils/providers/provider";
 import { BridgeContract } from "@/utils/services/Bridge.contract";
@@ -296,9 +295,15 @@ export default defineComponent({
       return pairParams[this.netTypeName as keyof typeof pairParams];
     },
     isGetTonCoinVisible(): boolean {
-      return (
-        this.isFromTon && !this.state.toCurrencySent && this.state.step === 4
-      );
+      if (this.token === "ton") {
+        return (
+            this.isFromTon && !this.state.toCurrencySent && this.state.step === 4
+        );
+      } else {
+        return (
+            !this.state.toCurrencySent && this.state.step === 4
+        );
+      }
     },
     isDoneVisible(): boolean {
       return this.state.step > 4;
@@ -415,16 +420,12 @@ export default defineComponent({
     },
     getStepInfoText4(): string {
       if (this.state.step === 4) {
-        if (this.isFromTon) {
-          return this.state.toCurrencySent
+        return this.state.toCurrencySent
             ? this.$t(`networks.${this.pair}.transactionWait`)
             : this.$t("getCoinsByProvider", {
-                provider: this.provider.title,
+                provider: this.token === 'ton' ? this.provider.title : 'TON Wallet',
                 toCoin: this.toCoin,
               });
-        } else {
-          return this.$t("coinsSent", { toCoin: this.toCoin });
-        }
       } else if (this.state.step > 4) {
         return this.$t("coinsSent", { toCoin: this.toCoin });
       } else {
@@ -477,14 +478,21 @@ export default defineComponent({
     onCopyClick,
     makeAddress,
     parseEthSignature,
-    serializeEthToTon,
     getQueryId,
     ...mapMutations({ setAlert: "setAlert" }),
     async mint() {
-      if (this.token === "ton") {
-        await this.mintForTon();
+      if (this.isFromTon) {
+        if (this.token === "ton") {
+          await this.mintForTon();
+        } else {
+          await this.unlockForJettons();
+        }
       } else {
-        await this.unlockForJettons();
+        if (this.token === "ton") {
+          throw new Error('can never happen');
+        } else {
+          await this.mintJetton();
+        }
       }
     },
     onTokenChange(newValue: string) {
@@ -750,10 +758,14 @@ export default defineComponent({
           this.state.votes!.length >=
             (this.providerDataForJettons!.oraclesTotal * 2) / 3
         ) {
-          this.state.step = this.isFromTon ? 4 : 5;
-          if (this.isFromTon) {
-            this.$emit("ready-to-mint");
-          }
+          this.state.step = 4;
+          this.$emit("ready-to-mint");
+        }
+      }
+
+      if (this.state.step === 4) {
+        if (!this.isFromTon) {
+           // todo
         }
       }
     },
@@ -803,16 +815,14 @@ export default defineComponent({
       return Web3.utils.sha3(encodedParams as string) as string;
     },
     getSwapTonToEthIdForJettons(d: BurnData): string {
-      let encodedParams;
-      if (this.pair === "eth") {
-        encodedParams = this.provider.web3!.eth.abi.encodeParameters(
+
+        const encodedParams = this.provider.web3!.eth.abi.encodeParameters(
             [
               "int",
               "address",
               "address",
               "address",
               "uint256",
-              "int8",
               "bytes32",
               "bytes32",
               "uint64",
@@ -823,40 +833,11 @@ export default defineComponent({
               d.receiver,
               d.token,
               d.amount,
-              d.tx.address_.workchain,
-              d.tx.address_.address_hash,
+              d.tx.address_hash,
               d.tx.tx_hash,
               d.tx.lt,
             ]
         );
-      }
-
-      if (this.pair === "bsc") {
-        encodedParams = this.provider.web3!.eth.abi.encodeParameters(
-          [
-            "int",
-            "address",
-            "address",
-            "address",
-            "uint256",
-            "int8",
-            "bytes32",
-            "bytes32",
-            "uint64",
-          ],
-          [
-            0xda7a,
-            this.params.tonBridgeV2EVMAddress,
-            d.receiver,
-            d.token,
-            d.amount,
-            d.tx.address_.workchain,
-            d.tx.address_.address_hash,
-            d.tx.tx_hash,
-            d.tx.lt,
-          ]
-        );
-      }
 
       return Web3.utils.sha3(encodedParams as string) as string;
     },
@@ -995,26 +976,24 @@ export default defineComponent({
           }
 
           const destinationAddress = this.makeAddress(
-            "0x" + TonWeb.utils.bytesToHex(bytes.slice(0, 20))
+              "0x" + TonWeb.utils.bytesToHex(bytes.slice(0, 20))
           );
-          const amountHex = TonWeb.utils.bytesToHex(bytes.slice(20, 28));
+          const amountHex = TonWeb.utils.bytesToHex(bytes.slice(20, 36));
           const amount = new TonWeb.utils.BN(amountHex, 16);
           const tokenAddress = this.makeAddress(
-            "0x" + TonWeb.utils.bytesToHex(bytes.slice(40, 60))
+              "0x" + TonWeb.utils.bytesToHex(bytes.slice(36, 56)),
           );
+          const userSenderAddressHex = TonWeb.utils.bytesToHex(bytes.slice(56, 56 + 32))
 
-          const senderAddress = new TonWeb.utils.Address(t.in_msg.source);
+          const minterSenderAddress = new TonWeb.utils.Address(t.in_msg.source);
 
           const event: BurnData = {
             receiver: destinationAddress,
             token: tokenAddress,
             amount: amount.toString(),
             tx: {
-              address_: {
-                workchain: senderAddress.wc,
-                address_hash:
-                  "0x" + TonWeb.utils.bytesToHex(senderAddress.hashPart),
-              },
+              address_hash:
+                  "0x" + userSenderAddressHex,
               tx_hash:
                 "0x" +
                 TonWeb.utils.bytesToHex(
@@ -1302,7 +1281,7 @@ export default defineComponent({
         receipt = await bridgeContract.unlock({
           bridgeAddress: this.params.tonBridgeV2EVMAddress,
           signatures,
-          ...this.state.burnData,
+          ...this.state.burnData
         });
         receipt = await receipt.wait();
         this.state.fromCurrencySent = true;
@@ -1393,6 +1372,7 @@ export default defineComponent({
 
       const addressTon = new TonWeb.utils.Address(toAddress);
       const wc = addressTon.wc;
+      if (wc !== 0) throw new Error('Only basechain wallets supported');
       const hashPart = TonWeb.utils.bytesToHex(addressTon.hashPart);
 
       let receipt;
@@ -1409,10 +1389,7 @@ export default defineComponent({
           address: this.params.tonBridgeV2EVMAddress,
           token: this.tokenAddress,
           amount: parseUnits(this.amount.toString(), decimals).toString(),
-          tonAddr: {
-            workchain: wc,
-            address_hash: "0x" + hashPart,
-          },
+          to_address_hash: "0x" + hashPart
         });
         receipt = await receipt.wait();
 
@@ -1466,6 +1443,7 @@ export default defineComponent({
         const wallet = wallets[0];
 
         const userTonAddress = new TonWeb.Address(wallet.address);
+        if (userTonAddress.wc !== 0) throw new Error('Only basechain wallets supported');
 
         const tokenAddress = this.tokenAddress;
 
@@ -1515,6 +1493,35 @@ export default defineComponent({
           userTonAddress,
           jettonWalletAddress,
           jettonAmountWithDecimals,
+        });
+        this.isBurningInProgress = false;
+      } catch (error) {
+        this.isBurningInProgress = false;
+
+        console.error(error);
+        this.resetState();
+      }
+    },
+    async mintJetton() {
+      if (!this.providerDataForJettons) return;
+      try {
+        this.isBurningInProgress = true;
+        const wallets =
+            (await this.providerDataForJettons.tonwebWallet.provider.send(
+                "ton_requestWallets",
+                []
+            )) as any;
+
+        const wallet = wallets[0];
+
+        const userTonAddress = new TonWeb.Address(wallet.address);
+        if (userTonAddress.wc !== 0) throw new Error('Only basechain wallets supported');
+
+        this.state.step = 5;
+        await mintJetton({
+          tonwebWallet: this.providerDataForJettons.tonwebWallet,
+          queryId: this.state.queryId,
+          bridgeTonAddress: this.params.tonBridgeAddressV2
         });
         this.isBurningInProgress = false;
       } catch (error) {
@@ -1605,7 +1612,7 @@ export default defineComponent({
         this.params.tonBridgeV2EVMAddress
       );
 
-      const oraclesTotal = (await bridgeContract.methods.getOracleSet().call())
+      const oraclesTotal = (await bridgeContract.methods.getFullOracleSet().call())
         .length;
 
       if (!(oraclesTotal > 0)) {

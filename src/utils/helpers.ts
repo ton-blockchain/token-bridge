@@ -139,17 +139,6 @@ function parseEthSignature(data: any) {
   };
 }
 
-function serializeEthToTon(ethToTon: EthToTon) {
-  const bits = new TonWeb.boc.BitString(8 + 256 + 16 + 8 + 256 + 64);
-  bits.writeUint(0, 8); // vote op
-  bits.writeUint(new BN(ethToTon.transactionHash.substr(2), 16), 256);
-  bits.writeInt(ethToTon.logIndex, 16);
-  bits.writeUint(ethToTon.to.workchain, 8);
-  bits.writeUint(new BN(ethToTon.to.address_hash, 16), 256);
-  bits.writeUint(new BN(ethToTon.value), 64);
-  return bits.array;
-}
-
 const findLogOutMsg = (outMessages?: any[]): any => {
   if (!outMessages) return null;
   for (const outMsg of outMessages) {
@@ -232,7 +221,6 @@ export {
   parseChainId,
   parseEthSignature,
   parseOffchainUriCell,
-  serializeEthToTon,
   supportsLocalStorage,
   findLogOutMsg,
   getMessageBytes

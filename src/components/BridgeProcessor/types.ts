@@ -33,10 +33,7 @@ type BurnData = {
   token: string;
   amount: string; // uint64
   tx: {
-    address_: {
-      workchain: number;
-      address_hash: string;
-    };
+    address_hash: string;
     tx_hash: string;
     lt: number;
   };
