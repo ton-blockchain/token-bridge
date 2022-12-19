@@ -87,12 +87,12 @@ export const PARAMS: Params = {
         tonBridgeAddress: "Ef_GmJntTDokxfhLGF1jRvMGC8Jav2V5keoNj4El2jzhHsID",
         tonCollectorAddress: "EQDBNfV4DQzSyzNMw6BCTSZSoUi-CzWcYNsfhKxoDqfrwFtS",
         tonMultisigAddress: "kf83VnnXuaqQV1Ts2qvUr6agacM0ydOux5NNa1mcU-cEO693",
-        tonBridgeV2EVMAddress: "0xe9299E232cB798ef3751F53587f730447DFa48f7",
-        tonBridgeAddressV2: "Uf-_TLSU_PJ4WSZRqI7iIzBNi6WiblqD65nBBRuemI2jvAyC",
+        tonBridgeV2EVMAddress: "0x64131a4E1a4dA27A6732f2A1F470Bf29C0d4589A",
+        tonBridgeAddressV2: "Ef9eJ0NlkleVSJknHEGEs3Iy3ZrLNWC-S1JZS4f5H1dmV8Mz",
         tonCollectorAddressV2:
-          "Ef_sDJFMO8YCxhCH6cYymz4xit6yCCrrjhlItxLt_Ico7da9",
+          "EQB8QUHt8BmGzT--4icpXxZe8rHWdCc4xSM-o0wSMQlzE5vx",
         tonMultisigAddressV2:
-          "kf-scC-iiJBrFGUeAEpjP3C_S8lYvN-I8O8HLiWQ1Qy9Kx6z",
+          "kf8xKONKxh5CQ_E81bxwEhVWVoELxgznxyeF6ijhFfUvxwct",
         tonCenterUrl: "https://testnet.toncenter.com/api/v2/jsonRPC",
         tonCenterApiKey:
           "d843619b379084d133f061606beecbf72ae2bf60e0622e808f2a3f631673599b",

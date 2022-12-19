@@ -301,9 +301,13 @@ export default defineComponent({
             this.isFromTon && !this.state.toCurrencySent && this.state.step === 4
         );
       } else {
-        return (
-            !this.state.toCurrencySent && this.state.step === 4
-        );
+        if (this.isFromTon) {
+          return (
+              !this.state.toCurrencySent && this.state.step === 4
+          );
+        } else {
+          return this.state.step == 3;
+        }
       }
     },
     isDoneVisible(): boolean {
@@ -400,41 +404,17 @@ export default defineComponent({
       }
     },
     getStepInfoText3(): string {
-      if (this.state.step === 3) {
-        const providerData =
-          this.token === "ton"
-            ? this.providerDataForTon
-            : this.providerDataForJettons;
-
-        const votesConfirmations =
-          (this.state.votes?.length || 0) +
-          "/" +
-          (providerData?.oraclesTotal || 0);
-        return this.$t("oraclesConfirmations", {
-          count: String(votesConfirmations),
-        });
-      } else if (this.state.step > 3) {
-        return this.$t("oraclesConfirmationsCollected");
+      if (this.token !== "ton" && !this.isFromTon) {
+        return this.getGetCoinsText(3);
       } else {
-        return this.$t("oraclesConfirmationsWaiting");
+        return this.getOraclesText(3);
       }
     },
     getStepInfoText4(): string {
-      if (this.state.step === 4) {
-        return this.state.toCurrencySent
-            ? this.$t(`networks.${this.pair}.transactionWait`)
-            : this.$t("getCoinsByProvider", {
-                provider: this.token === 'ton' ? this.provider.title : 'TON Wallet',
-                toCoin: this.toCoin,
-              });
-      } else if (this.state.step > 4) {
-        return this.$t("coinsSent", { toCoin: this.toCoin });
+      if (this.token !== "ton" && !this.isFromTon) {
+        return this.getOraclesText(4);
       } else {
-        const pair = this.isFromTon ? this.pair : "ton";
-        return this.$t("getCoins", {
-          toCoin: this.toCoin,
-          toNetwork: this.$t(`networks.${pair}.${this.netTypeName}.name`),
-        });
+        return this.getGetCoinsText(4);
       }
     },
   },
@@ -563,6 +543,46 @@ export default defineComponent({
           title: this.$t("errors.alertTitleError"),
           message: e.message,
           buttonLabel: this.$t("errors.alertButtonClose"),
+        });
+      }
+    },
+
+    getOraclesText(oraclesStep: number): string {
+      if (this.state.step === oraclesStep) {
+        const providerData =
+            this.token === "ton"
+                ? this.providerDataForTon
+                : this.providerDataForJettons;
+
+        const votesConfirmations =
+            (this.state.votes?.length || 0) +
+            "/" +
+            (providerData?.oraclesTotal || 0);
+        return this.$t("oraclesConfirmations", {
+          count: String(votesConfirmations),
+        });
+      } else if (this.state.step > oraclesStep) {
+        return this.$t("oraclesConfirmationsCollected");
+      } else {
+        return this.$t("oraclesConfirmationsWaiting");
+      }
+    },
+
+    getGetCoinsText(getCoinsStep: number): string {
+      if (this.state.step === getCoinsStep) {
+        return this.state.toCurrencySent
+            ? this.$t(`networks.${this.pair}.transactionWait`)
+            : this.$t("getCoinsByProvider", {
+              provider: this.token === 'ton' ? this.provider.title : 'TON Wallet',
+              toCoin: this.toCoin,
+            });
+      } else if (this.state.step > getCoinsStep) {
+        return this.$t("coinsSent", { toCoin: this.toCoin });
+      } else {
+        const pair = this.isFromTon ? this.pair : "ton";
+        return this.$t("getCoins", {
+          toCoin: this.toCoin,
+          toNetwork: this.$t(`networks.${pair}.${this.netTypeName}.name`),
         });
       }
     },
@@ -751,22 +771,37 @@ export default defineComponent({
       }
 
       if (this.state.step === 3) {
-        this.state.votes = this.isFromTon
-          ? await this.getEthVoteForJettons(this.state.swapId)
-          : await this.getTonVoteForJettons(this.state.queryId);
-        if (
-          this.state.votes &&
-          this.state.votes!.length >=
-            (this.providerDataForJettons!.oraclesTotal * 2) / 3
-        ) {
-          this.state.step = 4;
-          this.$emit("ready-to-mint");
+        if (this.token !== 'ton' && !this.isFromTon) {
+          const isPaid = await this.isJettonMintPaid(this.state.queryId);
+          console.log('isPaid', this.state.queryId, isPaid);
+          if (isPaid) {
+            this.state.step = 4;
+          }
+        } else {
+          this.state.votes = this.isFromTon
+              ? await this.getEthVoteForJettons(this.state.swapId)
+              : await this.getTonVoteForJettons(this.state.queryId);
+          if (
+              this.state.votes &&
+              this.state.votes!.length >=
+              (this.providerDataForJettons!.oraclesTotal * 2) / 3
+          ) {
+            this.state.step = 4;
+            this.$emit("ready-to-mint");
+          }
         }
       }
 
       if (this.state.step === 4) {
-        if (!this.isFromTon) {
-           // todo
+        if (this.token !== 'ton' && !this.isFromTon) {
+          this.state.votes = await this.getTonVoteForJettons(this.state.queryId);
+          if (
+              this.state.votes &&
+              this.state.votes!.length >=
+              (this.providerDataForJettons!.oraclesTotal * 2) / 3
+          ) {
+            this.state.step = 5;
+          }
         }
       }
     },
@@ -834,6 +869,25 @@ export default defineComponent({
         }
       }
       return null;
+    },
+
+    async isJettonMintPaid(queryId: string): Promise<boolean> {
+      const transactions: any[] =
+          await this.providerDataForJettons!.tonweb.provider.getTransactions(
+              this.params.tonBridgeAddressV2,
+              40,
+          );
+
+      console.log("ton txs", transactions.length);
+
+      for (const t of transactions) {
+        const event = TokenBridge.processPayJettonMintTransaction(t);
+        console.log(event);
+        if (event && event.queryId === queryId) {
+            return true;
+        }
+      }
+      return false;
     },
 
     async getSwapForJettons(
@@ -906,7 +960,7 @@ export default defineComponent({
       return result ? result.signatures : null;
     },
     async getEthVoteForJettons(voteId: string): Promise<null | EvmSignature[]> {
-      const result = await getEvmSignaturesFromCollector(this.providerDataForTon!.tonweb as any, this.params.tonCollectorAddressV2, voteId);
+      const result = await getEvmSignaturesFromCollector(this.providerDataForJettons!.tonweb as any, this.params.tonCollectorAddressV2, voteId);
       return result ? result.signatures : null;
     },
     async getTonVoteForTON(queryId: string): Promise<null | number[]> {
@@ -1302,7 +1356,6 @@ export default defineComponent({
         const userTonAddress = new TonWeb.Address(wallet.address);
         if (userTonAddress.wc !== 0) throw new Error('Only basechain wallets supported');
 
-        this.state.step = 5;
         await mintJetton({
           tonwebWallet: this.providerDataForJettons.tonwebWallet,
           queryId: this.state.queryId,

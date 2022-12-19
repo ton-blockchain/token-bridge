@@ -23,12 +23,12 @@ async function burnJetton({
   burnPayload.bits.writeUint(burnOP, 32);
   const customPayload = new TonWeb.boc.Cell();
   customPayload.bits.writeUint(destinationAddress, 160);
-
-  burnPayload.refs.push(customPayload);
-
   burnPayload.bits.writeUint(queryId, 64);
   burnPayload.bits.writeCoins(jettonAmountWithDecimals);
   burnPayload.bits.writeAddress(userTonAddress);
+  burnPayload.bits.writeBit(1);
+  burnPayload.refs.push(customPayload);
+
 
   await tonwebWallet.provider.send("ton_sendTransaction", [
     {
@@ -49,7 +49,7 @@ async function mintJetton({
   queryId: string;
   bridgeTonAddress: string;
 }) {
-  const mintOP = 8; // burn op
+  const mintOP = 8;
 
   const mintPayload = new TonWeb.boc.Cell();
   mintPayload.bits.writeUint(mintOP, 32);

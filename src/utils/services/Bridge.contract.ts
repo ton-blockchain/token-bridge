@@ -77,10 +77,14 @@ export class BridgeContract {
       .connect((this.provider as any).provider.getSigner()!)
       .unlock(
         {
-          ethReceiver, // address
+          receiver: ethReceiver, // address
           token,
-          jettonAmount, // uint64
-          tx
+          amount: jettonAmount,
+          tx: {
+            address_hash: tx.address_.address_hash,
+            tx_hash: tx.tx_hash,
+            lt: tx.lt
+          }
         },
         signatures
       );
