@@ -234,7 +234,7 @@ import TonWeb from "tonweb";
 import { defineComponent, markRaw, StyleValue } from "vue";
 import Web3 from "web3";
 
-import { getWrappedTokenData } from "@/api/toncCenter";
+import { getWrappedTokenData } from "@/ton-bridge-lib/BridgeJettonUtils";
 import BridgeProcessor from "@/components/BridgeProcessor/index.vue";
 import CustomInput from "@/components/CustomInput/index.vue";
 import Footer from "@/components/Footer/index.vue";

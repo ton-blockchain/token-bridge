@@ -3,11 +3,11 @@ import {Address} from "tonweb/dist/types/utils/address";
 
 const OFFCHAIN_CONTENT_PREFIX = 0x01;
 
-const parseUri = (bytes: any) => {
+export const parseUri = (bytes: any) => {
     return new TextDecoder().decode(bytes);
 };
 
-const parseOffchainUriCell = (cell: any) => {
+export const parseOffchainUriCell = (cell: any) => {
     if (cell.bits.array[0] !== OFFCHAIN_CONTENT_PREFIX) {
         throw new Error("no OFFCHAIN_CONTENT_PREFIX");
     }
@@ -30,7 +30,7 @@ const parseOffchainUriCell = (cell: any) => {
     return parseUri(bytes.slice(1)); // slice OFFCHAIN_CONTENT_PREFIX
 };
 
-const readIntFromBitString = (bs: any, cursor: any, bits: any) => {
+export const readIntFromBitString = (bs: any, cursor: any, bits: any) => {
     let n = BigInt(0);
     for (let i = 0; i < bits; i++) {
         n *= BigInt(2);
@@ -39,7 +39,7 @@ const readIntFromBitString = (bs: any, cursor: any, bits: any) => {
     return n;
 };
 
-const parseAddress = (cell: any) => {
+export const parseAddress = (cell: any) => {
     let n = readIntFromBitString(cell.bits, 3, 8);
     if (n > BigInt(127)) {
         n = n - BigInt(256);
@@ -50,7 +50,7 @@ const parseAddress = (cell: any) => {
     return new TonWeb.Address(s);
 };
 
-async function getJettonWalletData(tonweb: any, jettonWalletAddress: string) {
+export async function getJettonWalletData(tonweb: any, jettonWalletAddress: string) {
     const jettonWalletData = await tonweb.provider.call2(
         jettonWalletAddress,
         "get_wallet_data"
@@ -69,7 +69,7 @@ async function getJettonWalletData(tonweb: any, jettonWalletAddress: string) {
     };
 }
 
-async function getJettonData(tonweb: any, jettonMinterAddress: string) {
+export async function getJettonData(tonweb: any, jettonMinterAddress: string) {
     const jettonData = await tonweb.provider.call2(
         jettonMinterAddress,
         "get_jetton_data",
@@ -90,7 +90,7 @@ async function getJettonData(tonweb: any, jettonMinterAddress: string) {
     };
 }
 
-async function getWrappedTokenData(tonweb: any, jettonWalletAddress: string) {
+export async function getWrappedTokenData(tonweb: any, jettonWalletAddress: string) {
     const wrappedTokenData = await tonweb.provider.call2(
         jettonWalletAddress,
         "get_wrapped_token_data",
@@ -103,7 +103,7 @@ async function getWrappedTokenData(tonweb: any, jettonWalletAddress: string) {
     return {chainId, tokenAddress, decimals};
 }
 
-async function getJettonWalletAddress({
+export async function getJettonWalletAddress({
                                           tonweb,
                                           userTonAddress,
                                           tokenAddress,

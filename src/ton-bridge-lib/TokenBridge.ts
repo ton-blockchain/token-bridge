@@ -38,7 +38,6 @@ export interface LockEvent extends EvmTransaction {
     transactionIndex: number;
 }
 
-// BurnData in front
 export interface BurnEvent extends TonTransaction { // ton event
     type: 'Burn';
     ethReceiver: string; // EVM-address, 160bit

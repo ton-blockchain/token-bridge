@@ -170,36 +170,37 @@ import { mapMutations } from "vuex";
 import Web3 from "web3";
 import { AbiItem } from "web3-utils";
 
-import BRIDGE from "@/abi/BRIDGE.json";
-import WTON_BRIDGE from "@/abi/WTON_BRIDGE.json";
+import BRIDGE from "@/ton-bridge-lib/abi/TokenBridge.json";
+import WTON_BRIDGE from "@/ton-bridge-lib/abi/WTON.json";
 import {
   getJettonWalletAddress,
   getJettonWalletData,
   getWrappedTokenData,
-} from "@/api/toncCenter";
+} from "@/ton-bridge-lib/BridgeJettonUtils";
 import {burnJetton, mintJetton} from "@/api/tonWallet";
 import { onCopyClick } from "@/utils";
 import { PARAMS } from "@/utils/constants";
 import {
-  findLogOutMsg,
-  getMessageBytes,
-  getNumber,
-  getQueryId,
-  makeAddress,
-  parseEthSignature,
-} from "@/utils/helpers";
+  getEvmSignaturesFromCollector,
+  parseEvmSignature
+} from "@/ton-bridge-lib/BridgeCollector";
+import {
+  getQueryId
+} from "@/ton-bridge-lib/BridgeCommon";
 import { Provider } from "@/utils/providers/provider";
 import { BridgeContract } from "@/utils/services/Bridge.contract";
 import { ERC20Contract } from "@/utils/services/ERC20.contract";
 
 import {
-  BurnData,
   ComponentData,
   ProviderDataForJettons,
   ProviderDataForTON,
-  SwapData,
-  VoteEth,
 } from "./types";
+import {SwapTonToEth, ToncoinBridge} from "@/ton-bridge-lib/ToncoinBridge";
+import {BurnEvent, TokenBridge} from "@/ton-bridge-lib/TokenBridge";
+import {EvmSignature} from "@/ton-bridge-lib/BridgeCollector";
+import {findLogOutMsg, getMessageBytes, getNumber, makeAddress} from "@/ton-bridge-lib/BridgeTonUtils";
+import {getVotesInMultisig} from "@/ton-bridge-lib/BridgeMultisig";
 
 const fromNano = TonWeb.utils.fromNano;
 
@@ -477,7 +478,7 @@ export default defineComponent({
   methods: {
     onCopyClick,
     makeAddress,
-    parseEthSignature,
+    parseEvmSignature,
     getQueryId,
     ...mapMutations({ setAlert: "setAlert" }),
     async mint() {
@@ -769,77 +770,12 @@ export default defineComponent({
         }
       }
     },
-    getSwapTonToEthIdForTon(d: SwapData): string {
-      let encodedParams;
-
-      if (this.pair === "eth" && !this.isTestnet) {
-        encodedParams = this.provider.web3!.eth.abi.encodeParameters(
-          ["int", "address", "uint256", "int8", "bytes32", "bytes32", "uint64"],
-          [
-            0xda7a,
-            d.receiver,
-            d.amount,
-            d.tx.address_.workchain,
-            d.tx.address_.address_hash,
-            d.tx.tx_hash,
-            d.tx.lt,
-          ]
-        );
-      }
-
-      if (this.pair === "bsc" || this.isTestnet) {
-        encodedParams = this.provider.web3!.eth.abi.encodeParameters(
-          [
-            "int",
-            "address",
-            "address",
-            "uint256",
-            "int8",
-            "bytes32",
-            "bytes32",
-            "uint64",
-          ],
-          [
-            0xda7a,
-            this.params.wTonAddress,
-            d.receiver,
-            d.amount,
-            d.tx.address_.workchain,
-            d.tx.address_.address_hash,
-            d.tx.tx_hash,
-            d.tx.lt,
-          ]
-        );
-      }
-
-      return Web3.utils.sha3(encodedParams as string) as string;
+    getSwapTonToEthIdForTon(d: SwapTonToEth): string {
+      const target = this.pair === "eth" && !this.isTestnet ? undefined : this.params.wTonAddress;
+      return ToncoinBridge.getDataId(this.provider.web3!, d, target)
     },
-    getSwapTonToEthIdForJettons(d: BurnData): string {
-
-        const encodedParams = this.provider.web3!.eth.abi.encodeParameters(
-            [
-              "int",
-              "address",
-              "address",
-              "address",
-              "uint256",
-              "bytes32",
-              "bytes32",
-              "uint64",
-            ],
-            [
-              0xda7a,
-              this.params.tonBridgeV2EVMAddress,
-              d.receiver,
-              d.token,
-              d.amount,
-              d.tx.address_hash,
-              d.tx.tx_hash,
-              d.tx.lt,
-            ]
-        );
-
-      return Web3.utils.sha3(encodedParams as string) as string;
+    getSwapTonToEthIdForJettons(d: BurnEvent): string {
+      return TokenBridge.getDataId(this.provider.web3!, d, this.params.tonBridgeV2EVMAddress, this.params.chainId);
     },
 
     getFeeAmountForTon(amount: BN): BN {
@@ -854,7 +790,7 @@ export default defineComponent({
       myAmount: BN,
       myToAddress: string,
       myCreateTime: number
-    ): Promise<null | SwapData> {
+    ): Promise<null | SwapTonToEth> {
       console.log(
         "getTransactions",
         this.params.tonBridgeAddress,
@@ -877,59 +813,20 @@ export default defineComponent({
 
 
       for (const t of transactions) {
-        const logMsg = findLogOutMsg(t.out_msgs);
-        if (logMsg) {
-          if (!this.isRecover && !(this.lt && this.hash)) {
-            if (t.utime * 1000 < myCreateTime) continue;
-          }
+        if (!this.isRecover && !(this.lt && this.hash)) {
+          if (t.utime * 1000 < myCreateTime) continue;
+        }
 
-          const bytes = getMessageBytes(logMsg);
-          if (bytes === null) {
-            continue;
-          }
+        const event = ToncoinBridge.processTonTransaction(t);
 
-          const destinationAddress = this.makeAddress('0x' + TonWeb.utils.bytesToHex(bytes.slice(0, 20)));
-          const amountHex = TonWeb.utils.bytesToHex(bytes.slice(20, 28));
-          const amount = new BN(amountHex, 16);
-          const senderAddress = new TonWeb.utils.Address(t.in_msg.source);
-
-          const addressFromInMsg = t.in_msg.message.slice('swapTo#'.length);
-          if (destinationAddress.toLowerCase() !== addressFromInMsg.toLowerCase()) {
-            console.error('address from in_msg doesnt match ', addressFromInMsg, destinationAddress);
-            continue;
-          }
-          const amountFromInMsg = new BN(t.in_msg.value);
-          const amountFromInMsgAfterFee = amountFromInMsg.sub(this.getFeeAmountForTon(amountFromInMsg));
-          if (!amount.eq(amountFromInMsgAfterFee)) {
-            console.error('amount from in_msg doesnt match ', amount.toString(), amountFromInMsgAfterFee.toString(), amountFromInMsg.toString());
-            continue;
-          }
-
-          const event: SwapData = {
-            receiver: destinationAddress,
-            amount: amount.toString(),
-            tx: {
-              address_: {
-                // sender address
-                workchain: senderAddress.wc,
-                address_hash:
-                  "0x" + TonWeb.utils.bytesToHex(senderAddress.hashPart),
-              },
-              tx_hash:
-                "0x" +
-                TonWeb.utils.bytesToHex(
-                  TonWeb.utils.base64ToBytes(t.transaction_id.hash)
-                ),
-              lt: t.transaction_id.lt,
-            },
-          };
+        if (event) {
 
           console.log(JSON.stringify(event));
 
           const amountAfterFee = myAmount.sub(this.getFeeAmountForTon(myAmount));
 
           if (
-            amount.eq(amountAfterFee) &&
+            new BN(event.amount).eq(amountAfterFee) &&
             event.receiver.toLowerCase() === myToAddress.toLowerCase()
           ) {
             return event;
@@ -938,11 +835,12 @@ export default defineComponent({
       }
       return null;
     },
+
     async getSwapForJettons(
       // myAmount: BN,
       myToAddress: string,
       myCreateTime: number
-    ): Promise<null | BurnData> {
+    ): Promise<null | BurnEvent> {
       console.log(
         "getTransactions",
         this.params.tonBridgeAddressV2,
@@ -964,49 +862,18 @@ export default defineComponent({
       console.log("ton txs", transactions.length);
 
       for (const t of transactions) {
-        const logMsg = findLogOutMsg(t.out_msgs);
-        if (logMsg) {
-          if (!this.isRecover && !(this.lt && this.hash)) {
-            if (t.utime * 1000 < myCreateTime) continue;
-          }
+        if (!this.isRecover && !(this.lt && this.hash)) {
+          if (t.utime * 1000 < myCreateTime) continue;
+        }
 
-          const bytes = getMessageBytes(logMsg);
-          if (bytes === null) {
-            continue;
-          }
+        const event = TokenBridge.processTonTransaction(t);
 
-          const destinationAddress = this.makeAddress(
-              "0x" + TonWeb.utils.bytesToHex(bytes.slice(0, 20))
-          );
-          const amountHex = TonWeb.utils.bytesToHex(bytes.slice(20, 36));
-          const amount = new TonWeb.utils.BN(amountHex, 16);
-          const tokenAddress = this.makeAddress(
-              "0x" + TonWeb.utils.bytesToHex(bytes.slice(36, 56)),
-          );
-          const userSenderAddressHex = TonWeb.utils.bytesToHex(bytes.slice(56, 56 + 32))
-
-          const minterSenderAddress = new TonWeb.utils.Address(t.in_msg.source);
-
-          const event: BurnData = {
-            receiver: destinationAddress,
-            token: tokenAddress,
-            amount: amount.toString(),
-            tx: {
-              address_hash:
-                  "0x" + userSenderAddressHex,
-              tx_hash:
-                "0x" +
-                TonWeb.utils.bytesToHex(
-                  TonWeb.utils.base64ToBytes(t.transaction_id.hash)
-                ),
-              lt: t.transaction_id.lt,
-            },
-          };
+        if (event) {
 
           console.log(JSON.stringify(event));
 
           if (
-            event.receiver.toLowerCase() === myToAddress.toLowerCase() &&
+            event.ethReceiver.toLowerCase() === myToAddress.toLowerCase() &&
             this.state.jettonEvmAddress.toLocaleLowerCase() ===
               event.token.toLocaleLowerCase()
           ) {
@@ -1034,114 +901,19 @@ export default defineComponent({
       }
       return null;
     },
-    async getEthVoteForTON(voteId: string): Promise<null | VoteEth[]> {
-      console.log("getEthVote ", voteId);
-
-      const result = await this.providerDataForTon!.tonweb.provider.call(
-        this.params.tonCollectorAddress,
-        "get_external_voting_data",
-        [["num", voteId]]
-      );
-      if (result.exit_code === 309) {
-        return null;
-      }
-
-      let list;
-      try {
-        list = result.stack[0][1].elements;
-      } catch (e) {
-        console.log("getEthVote, corrupted result", result);
-        return null;
-      }
-      const status = {
-        signatures: list.map(this.parseEthSignature),
-      };
-
-      return status.signatures;
+    async getEthVoteForTON(voteId: string): Promise<null | EvmSignature[]> {
+      const result = await getEvmSignaturesFromCollector(this.providerDataForTon!.tonweb as any, this.params.tonCollectorAddress, voteId);
+      return result ? result.signatures : null;
     },
-    async getEthVoteForJettons(voteId: string): Promise<null | VoteEth[]> {
-      console.log("getEthVote ", voteId);
-
-      const result = await this.providerDataForJettons!.tonweb.provider.call(
-        this.params.tonCollectorAddressV2,
-        "get_external_voting_data",
-        [["num", voteId]]
-      );
-      if (result.exit_code === 309) {
-        return null;
-      }
-
-      let list;
-      try {
-        list = result.stack[0][1].elements;
-      } catch (e) {
-        console.log("getEthVote, corrupted result", result);
-        return null;
-      }
-
-      const status = {
-        signatures: list.map(this.parseEthSignature),
-      };
-
-      return status.signatures;
+    async getEthVoteForJettons(voteId: string): Promise<null | EvmSignature[]> {
+      const result = await getEvmSignaturesFromCollector(this.providerDataForTon!.tonweb as any, this.params.tonCollectorAddressV2, voteId);
+      return result ? result.signatures : null;
     },
     async getTonVoteForTON(queryId: string): Promise<null | number[]> {
-      console.log("getTonVote ", queryId);
-
-      const result = await this.providerDataForTon!.tonweb.provider.call(
-        this.params.tonMultisigAddress,
-        "get_query_state",
-        [["num", queryId]]
-      );
-
-      let a, b;
-      try {
-        a = getNumber(result.stack[0]);
-        b = getNumber(result.stack[1]);
-      } catch (e) {
-        console.log("getTonVote, corrupted result", result);
-        return null;
-      }
-      console.log("getTonVote", result, a, b);
-
-      const arr: number[] = [];
-      const count =
-        a === -1
-          ? this.providerDataForTon!.oraclesTotal
-          : b.toString(2).split("0").join("").length; // count of bits
-      for (let i = 0; i < count; i++) {
-        arr.push(1);
-      }
-      return arr;
+      return getVotesInMultisig(this.providerDataForTon!.tonweb as any, this.params.tonMultisigAddress, queryId, this.providerDataForTon!.oraclesTotal);
     },
     async getTonVoteForJettons(queryId: string): Promise<null | number[]> {
-      console.log("getTonVote ", queryId);
-
-      const result = await this.providerDataForJettons!.tonweb.provider.call(
-        this.params.tonMultisigAddressV2,
-        "get_query_state",
-        [["num", queryId]]
-      );
-
-      let a, b;
-      try {
-        a = getNumber(result.stack[0]);
-        b = getNumber(result.stack[1]);
-      } catch (e) {
-        console.log("getTonVote, corrupted result", result);
-        return null;
-      }
-      console.log("getTonVote", result, a, b);
-
-      const arr: number[] = [];
-      const count =
-        a === -1
-          ? this.providerDataForJettons!.oraclesTotal
-          : b.toString(2).split("0").join("").length; // count of bits
-      for (let i = 0; i < count; i++) {
-        arr.push(1);
-      }
-      return arr;
+      return getVotesInMultisig(this.providerDataForJettons!.tonweb as any, this.params.tonMultisigAddressV2, queryId, this.providerDataForJettons!.oraclesTotal);
     },
     onDoneClick() {
       this.deleteState();
@@ -1206,7 +978,7 @@ export default defineComponent({
 
       let receipt;
       try {
-        let signatures = (this.state.votes! as VoteEth[]).map((v) => {
+        let signatures = (this.state.votes! as EvmSignature[]).map((v) => {
           return {
             signer: v.publicKey,
             signature: ethers.utils.joinSignature({ r: v.r, s: v.s, v: v.v }),
@@ -1259,7 +1031,7 @@ export default defineComponent({
         this.$emit("mint-failed");
         return;
       }
-      let signatures = (this.state.votes! as VoteEth[]).map((v) => {
+      let signatures = (this.state.votes! as EvmSignature[]).map((v) => {
         return {
           signer: v.publicKey,
           signature: ethers.utils.joinSignature({ r: v.r, s: v.s, v: v.v }),
@@ -1342,16 +1114,23 @@ export default defineComponent({
 
         this.state.blockNumber = receipt.blockNumber;
         this.ethToTon = {
+          type: 'SwapEthToTon',
           transactionHash: receipt.transactionHash,
           logIndex: receipt.events.SwapEthToTon.logIndex,
+          blockNumber: receipt.blockNumber,
           blockTime: 0,
           blockHash: "",
+
           from: fromAddress,
           to: {
             workchain: wc,
             address_hash: hashPart,
           },
-          value: this.amount,
+          value: this.amount.toString(),
+
+          rawData: receipt.rawData,
+          topics: receipt.topics,
+          transactionIndex: receipt.transactionIndex
         };
         this.isBurningInProgress = false;
         this.state.step = 2;
@@ -1413,8 +1192,10 @@ export default defineComponent({
         )?.logIndex;
 
         this.ethToTon = {
+          type: 'SwapEthToTon',
           transactionHash: receipt.transactionHash,
           logIndex,
+          blockNumber: receipt.blockNumber,
           blockTime: 0,
           blockHash: "",
           from: fromAddress,
@@ -1422,7 +1203,11 @@ export default defineComponent({
             workchain: wc,
             address_hash: hashPart,
           },
-          value: this.amount,
+          value: this.amount.toString(),
+
+          rawData: receipt.rawData,
+          topics: receipt.topics,
+          transactionIndex: receipt.transactionIndex
         };
 
         this.state.step = 2;

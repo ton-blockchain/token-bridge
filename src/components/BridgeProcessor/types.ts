@@ -1,50 +1,9 @@
 import BN from "bn.js";
 import TonWeb from "tonweb";
 import { Contract } from "web3-eth-contract";
-
-type EthToTon = {
-  transactionHash: string;
-  logIndex: number;
-  to: {
-    workchain: number;
-    address_hash: string;
-  };
-  value: BN;
-  blockTime: number;
-  blockHash: string;
-  from: string;
-};
-
-type SwapData = {
-  receiver: string;
-  amount: string;
-  tx: {
-    address_: {
-      workchain: number;
-      address_hash: string;
-    };
-    tx_hash: string;
-    lt: number;
-  };
-};
-
-type BurnData = {
-  receiver: string; // address
-  token: string;
-  amount: string; // uint64
-  tx: {
-    address_hash: string;
-    tx_hash: string;
-    lt: number;
-  };
-};
-
-type VoteEth = {
-  publicKey: string;
-  r: string;
-  s: string;
-  v: number | undefined;
-};
+import {SwapEthToTonEvent, SwapTonToEth} from "@/ton-bridge-lib/ToncoinBridge";
+import {EvmSignature} from "@/ton-bridge-lib/BridgeCollector";
+import {BurnEvent} from "@/ton-bridge-lib/TokenBridge";
 
 type ProviderDataForTON = {
   oraclesTotal: number;
@@ -71,9 +30,9 @@ type State = {
   fromCurrencySent: boolean;
   toCurrencySent: boolean;
   step: number;
-  votes: VoteEth[] | number[] | null;
-  swapData: SwapData | null;
-  burnData: BurnData | null;
+  votes: EvmSignature[] | number[] | null;
+  swapData: SwapTonToEth | null;
+  burnData: BurnEvent | null;
   createTime: number;
   blockNumber: number;
 };
@@ -84,7 +43,7 @@ type ComponentData = {
   providerDataForTon: ProviderDataForTON | null;
   providerDataForJettons: ProviderDataForJettons | null;
   state: State;
-  ethToTon: EthToTon | null;
+  ethToTon: SwapEthToTonEvent | null;
   isInitInProgress: boolean;
   isMintingInProgress: boolean;
   isApprovingInProgress: boolean;
@@ -95,12 +54,8 @@ type ComponentData = {
 };
 
 export {
-  BurnData,
   ComponentData,
-  EthToTon,
   ProviderDataForJettons,
   ProviderDataForTON,
   State,
-  SwapData,
-  VoteEth,
 };

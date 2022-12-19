@@ -1,8 +1,9 @@
 import { Contract } from "ethers";
 
-import BRIDGE from "@/abi/BRIDGE.json";
+import BRIDGE from "@/ton-bridge-lib/abi/TokenBridge.json";
 
 import { Provider } from "../providers/provider";
+import {TonAddress, TonTxID} from "@/ton-bridge-lib/BridgeCommon";
 export class BridgeContract {
   contracts: { [key: string]: Contract } = {};
 
@@ -58,21 +59,17 @@ export class BridgeContract {
 
   unlock({
     bridgeAddress,
-    receiver,
+    ethReceiver,
     token,
-    amount,
+    jettonAmount,
     tx,
     signatures,
   }: {
     bridgeAddress: string;
-    receiver: string; // address
+    ethReceiver: string; // address
     token: string; // address
-    amount: string; // uint64
-    tx: {
-      address_hash: string;
-      tx_hash: string;
-      lt: number;
-    };
+    jettonAmount: string; // uint64
+    tx: TonTxID;
     signatures: any;
   }): Promise<any> {
     const contract = this._getContract(bridgeAddress);
@@ -80,9 +77,9 @@ export class BridgeContract {
       .connect((this.provider as any).provider.getSigner()!)
       .unlock(
         {
-          receiver, // address
+          ethReceiver, // address
           token,
-          amount, // uint64
+          jettonAmount, // uint64
           tx
         },
         signatures

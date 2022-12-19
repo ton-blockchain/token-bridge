@@ -19,7 +19,6 @@ const BN = TonWeb.utils.BN;
 const BURN_INPUT_LENGTH = 202;
 const BURN_INPUT_PREFIX = '0xe057fbff';
 
-// EthToTon in front
 export interface SwapEthToTonEvent extends EvmTransaction {
     type: 'SwapEthToTon';
     transactionHash: string;
@@ -37,7 +36,6 @@ export interface SwapEthToTonEvent extends EvmTransaction {
     transactionIndex: number;
 }
 
-// SwapData in front
 export interface SwapTonToEth extends TonTransaction {
     type: 'SwapTonToEth';
     receiver: string; // address

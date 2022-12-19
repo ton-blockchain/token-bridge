@@ -1,7 +1,7 @@
 import BN from "bn.js";
 import { BigNumber, Contract } from "ethers";
 
-import ERC20 from "@/abi/ERC20.json";
+import ERC20 from "@/ton-bridge-lib/abi/ERC20.json";
 
 import { Provider } from "../providers/provider";
 
