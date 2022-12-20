@@ -160,14 +160,14 @@ export class TokenBridge {
         return payload;
     }
 
-    static isValidBurn = (tx: any, bridgeAddress: string): boolean => {
+    static isValidLock = (tx: any, bridgeAddress: string): boolean => {
         if (tx.to.toLowerCase() !== bridgeAddress.toLowerCase()) return false;
         if (tx.from.toLowerCase() === bridgeAddress.toLowerCase()) return false;
         if (tx.isError !== '0') return false;
         if (tx.txreceipt_status !== '1') return false;
         if (!tx.input) return false;
         if (tx.input.length !== LOCK_INPUT_LENGTH) return false;
-        if (!tx.input.startsWith(LOCK_INPUT_LENGTH)) return false;
+        if (!tx.input.startsWith(LOCK_INPUT_PREFIX)) return false;
         if (tx.confirmations < BLOCK_CONFIRMATIONS_COUNT) return false;
         return true;
     }
