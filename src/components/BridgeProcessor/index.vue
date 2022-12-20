@@ -713,11 +713,18 @@ export default defineComponent({
           this.state.blockNumber;
 
         if (blocksConfirmations > this.params.blocksConfirmations) {
+          const receipt = await this.provider.web3!.eth.getTransactionReceipt(
+              this.ethToTon!.transactionHash
+          );
+          this.ethToTon!.blockNumber = receipt.blockNumber;
           const block = await this.provider.web3!.eth.getBlock(
-            this.state.blockNumber
+              receipt.blockNumber
           );
           this.ethToTon!.blockTime = Number(block.timestamp);
           this.ethToTon!.blockHash = block.hash;
+          const log = ToncoinBridge.findLog(this.provider.web3!, this.ethToTon!.from, this.ethToTon!.value, this.ethToTon!.to.workchain.toString(), this.ethToTon!.to.address_hash, receipt.logs);
+          if (!log) throw new Error('cant find log');
+          this.ethToTon!.logIndex = log.logIndex;
 
           this.state.queryId = this.getQueryId(this.ethToTon!).toString();
           this.state.step = 3;
@@ -758,12 +765,20 @@ export default defineComponent({
           this.state.blockNumber;
 
         if (blocksConfirmations > this.params.blocksConfirmations) {
+          const receipt = await this.provider.web3!.eth.getTransactionReceipt(
+              this.ethToTon!.transactionHash
+          );
+          this.ethToTon!.blockNumber = receipt.blockNumber;
           const block = await this.provider.web3!.eth.getBlock(
-            this.state.blockNumber
+            receipt.blockNumber
           );
 
           this.ethToTon!.blockTime = Number(block.timestamp);
           this.ethToTon!.blockHash = block.hash;
+
+          const log = TokenBridge.findLog(this.provider.web3!, this.ethToTon!.from, this.ethToTon!.value, this.ethToTon!.to.address_hash, this.tokenAddress.toLowerCase(), receipt.logs);
+          if (!log) throw new Error('cant find log');
+          this.ethToTon!.logIndex = log.logIndex;
 
           this.state.queryId = this.getQueryId(this.ethToTon!).toString();
           this.state.step = 3;
@@ -1209,6 +1224,7 @@ export default defineComponent({
       const hashPart = TonWeb.utils.bytesToHex(addressTon.hashPart);
 
       let receipt;
+      let amountUnits: string;
 
       try {
         const erc20Contract = new ERC20Contract(this.provider);
@@ -1217,11 +1233,13 @@ export default defineComponent({
           address: this.tokenAddress,
         });
 
+        amountUnits = parseUnits(this.amount.toString(), decimals).toString();
+
         const bridgeContract = new BridgeContract(this.provider);
         receipt = await bridgeContract.lock({
           address: this.params.tonBridgeV2EVMAddress,
           token: this.tokenAddress,
-          amount: parseUnits(this.amount.toString(), decimals).toString(),
+          amount: amountUnits,
           to_address_hash: "0x" + hashPart
         });
         receipt = await receipt.wait();
@@ -1257,7 +1275,7 @@ export default defineComponent({
             workchain: wc,
             address_hash: hashPart,
           },
-          value: this.amount.toString(),
+          value: amountUnits,
 
           rawData: receipt.rawData,
           topics: receipt.topics,
