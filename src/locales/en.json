@@ -116,10 +116,11 @@
   "oraclesConfirmationsCollected": "The confirmations of the oracles are collected",
   "oraclesConfirmationsWaiting": "Wait a bit for the oracles to confirm the transfer",
   "getCoinsByProvider": "Get {toCoin}s by {provider}",
-  "coinsSent": "{toCoin}s have been sent to your address",
+  "coinsSent": "{toCoin}s have been sent",
   "getCoins": "Get {toCoin}s in {toNetwork}",
 
   "otherTokens": "Other tokens",
+  "tokens": "token",
 
   "errors": {
     "alertTitleError": "Error",

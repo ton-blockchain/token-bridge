@@ -41,9 +41,9 @@
 
     <div class="BridgeProcessor-infoWrapper" v-if="state.step > 0">
 
-      <!-- Step 1 -->
+      <!-- Step 1 - Transfer Toncoin to bridge or Confirm action in wallet -->
 
-      <div v-if="token === 'ton'" class="BridgeProcessor-infoLine">
+      <div class="BridgeProcessor-infoLine">
         <div
             class="BridgeProcessor-info-icon"
             :class="{
@@ -52,6 +52,8 @@
             done: state.step > 1,
           }"
         ></div>
+
+        <!-- Toncoin transfer info and QR -->
         <div
             class="BridgeProcessor-info-text"
             v-if="!getStepInfoText1.isOnlyText"
@@ -120,7 +122,7 @@
         </div>
       </div>
 
-      <!-- Step 2 -->
+      <!-- Step 2 - Block confirmations -->
 
       <div class="BridgeProcessor-infoLine" v-if="!isFromTon">
         <div
@@ -134,7 +136,7 @@
         <div class="BridgeProcessor-info-text">{{ getStepInfoText2 }}</div>
       </div>
 
-      <!-- Step 3 -->
+      <!-- Step 3 - Pay jettons mint or Oracles confirmations -->
 
       <div class="BridgeProcessor-infoLine">
         <div
@@ -148,7 +150,7 @@
         <div class="BridgeProcessor-info-text">{{ getStepInfoText3 }}</div>
       </div>
 
-      <!--  Step 4 -->
+      <!--  Step 4 - Get tokens or Oracles confirmation -->
 
       <div class="BridgeProcessor-infoLine">
         <div
@@ -392,7 +394,7 @@ export default defineComponent({
             text: this.state.fromCurrencySent
                 ? this.$t(`networks.${this.pair}.transactionWait`)
                 : this.$t(`networks.${this.pair}.transactionSend`, {
-                  ethereumProvider: this.ethereumProvider.title,
+                  provider: this.ethereumProvider.title,
                 }),
           };
         }
@@ -552,19 +554,20 @@ export default defineComponent({
     },
 
     getGetCoinsText(getCoinsStep: number): string {
+      const toCoins = this.toCoin || this.$t("tokens")
       if (this.state.step === getCoinsStep) {
         return this.state.toCurrencySent
             ? this.$t(`networks.${this.pair}.transactionWait`)
             : this.$t("getCoinsByProvider", {
               provider: this.token === 'ton' ? this.ethereumProvider.title : 'TON Wallet',
-              toCoin: this.toCoin,
+              toCoin: toCoins,
             });
       } else if (this.state.step > getCoinsStep) {
-        return this.$t("coinsSent", {toCoin: this.toCoin});
+        return this.$t("coinsSent", {toCoin: toCoins});
       } else {
         const pair = this.isFromTon ? this.pair : "ton";
         return this.$t("getCoins", {
-          toCoin: this.toCoin,
+          toCoin: toCoins,
           toNetwork: this.$t(`networks.${pair}.${this.netTypeName}.name`),
         });
       }
@@ -1055,6 +1058,7 @@ export default defineComponent({
     },
     /**
      * Mint Wrapped ERC-20 Toncoin in EVM network
+     * Last step in transfer
      */
     async mintWrappedToncoin(): Promise<void> {
       if (this.isMintingInProgress) return;
@@ -1095,6 +1099,7 @@ export default defineComponent({
     },
     /**
      * Burn Wrapped ERC-20 Toncoin in EVM network
+     * First step in transfer
      */
     async burnWrappedToncoin(): Promise<void> {
       if (this.isBurningInProgress) {
@@ -1147,7 +1152,7 @@ export default defineComponent({
         this.ethToTon = {
           type: 'SwapEthToTon',
           transactionHash: receipt.transactionHash,
-          logIndex: receipt.events.SwapEthToTon.logIndex,
+          logIndex: -1,
           blockNumber: receipt.blockNumber,
           blockTime: 0,
           blockHash: "",
@@ -1244,6 +1249,7 @@ export default defineComponent({
     },
     /**
      * Lock ERC-20 token in EVM network
+     * First step in transfer
      */
     async lockToken(amountUnits: BN): Promise<void> {
       if (this.isBurningInProgress) {
@@ -1269,11 +1275,11 @@ export default defineComponent({
         if (wc !== 0) throw new Error('Only basechain wallets supported');
         hashPart = bytesToHex(addressTon.hashPart);
 
-        receipt = await this.providerDataForJettons!.bridgeContract.methods.lock({
-          token: this.tokenAddress,
-          amount: amountUnits.toString(),
-          to_address_hash: "0x" + hashPart
-        })
+        receipt = await this.providerDataForJettons!.bridgeContract.methods.lock(
+          this.tokenAddress, // token
+          amountUnits.toString(), // amount
+          "0x" + hashPart // to_address_hash
+        )
             .send({from: fromAddress})
             .on("transactionHash", () => {
               this.state.fromCurrencySent = true;
@@ -1290,15 +1296,11 @@ export default defineComponent({
 
         this.state.blockNumber = receipt.blockNumber;
 
-        const logIndex = receipt?.events?.find(
-            (v: any) => v.event === "Lock"
-        )?.logIndex;
-
         this.state.blockNumber = receipt.blockNumber;
         this.ethToTon = {
           type: 'SwapEthToTon',
           transactionHash: receipt.transactionHash,
-          logIndex,
+          logIndex: -1,
           blockNumber: receipt.blockNumber,
           blockTime: 0,
           blockHash: "",
@@ -1316,6 +1318,7 @@ export default defineComponent({
 
         this.isBurningInProgress = false;
         this.state.step = 2;
+        this.saveState();
       } else {
         this.isBurningInProgress = false;
         console.error("transaction fail", receipt);
@@ -1323,6 +1326,7 @@ export default defineComponent({
     },
     /**
      * Unlock ERC-20 token in EVM network
+     * Last step in transfer
      */
     async unlockToken(): Promise<void> {
       if (this.isMintingInProgress) return;
@@ -1335,13 +1339,24 @@ export default defineComponent({
       try {
         const signatures = prepareEthSignatures(this.state.votes as EvmSignature[]);
 
-        if (!this.state.burnData) throw new Error('No burn data');
+        const burnData: BurnEvent = this.state.burnData;
+        if (!burnData) throw new Error('No burn data');
+
 
         receipt =
-            await this.providerDataForJettons!.bridgeContract.methods.unlock({
-              ...this.state.burnData,
+            await this.providerDataForJettons!.bridgeContract.methods.unlock(
+                {
+                  receiver: burnData.ethReceiver,
+                  token: burnData.token,
+                  amount: burnData.jettonAmount,
+                  tx: {
+                    address_hash: burnData.tx.address_.address_hash,
+                    tx_hash: burnData.tx.tx_hash,
+                    lt: burnData.tx.lt
+                  }
+                },
               signatures,
-            })
+            )
                 .send({from: this.ethereumProvider.myAddress})
                 .on("transactionHash", () => {
                   this.state.toCurrencySent = true;
@@ -1365,6 +1380,7 @@ export default defineComponent({
     },
     /**
      * Pay mint jetton in TON Network
+     * Last action in transfer
      */
     async mintJetton(): Promise<void> {
       if (this.isBurningInProgress) {
@@ -1391,6 +1407,7 @@ export default defineComponent({
     },
     /**
      * Burn jetton in TON network
+     * First step in transfer
      */
     async burnJetton(amountUnits: BN, jettonWalletAddress: Address): Promise<void> {
       if (this.isBurningInProgress) {
@@ -1411,6 +1428,7 @@ export default defineComponent({
           jettonAmountWithDecimals: amountUnits
         });
         this.isBurningInProgress = false;
+        this.saveState();
       } catch (error) {
         this.isBurningInProgress = false;
 
@@ -1539,7 +1557,7 @@ export default defineComponent({
 
       const userTonBalance: string = await tonweb.provider.getBalance(walletAddress);
       console.log('userTonBalance', userTonBalance.toString())
-      if (new TonWeb.utils.BN(userTonBalance).lt(toNano("1"))) {
+      if (new BN(userTonBalance).lt(toNano("1"))) {
         this.setAlert({
           title: this.$t("errors.alertTitleError"),
           message: "You need at least 1 TON on wallet balance",
@@ -1588,20 +1606,26 @@ export default defineComponent({
         // Check balances
 
         if (!this.isFromTon) { // EVM->TON Toncoin Transfer, check that user have `amount` of ERC-20 wrapped toncoins before Burn
-          const userErcBalance = new BN(
-              await this.providerDataForToncoin.wtonContract.methods
-                  .balanceOf(this.ethereumProvider.myAddress)
-                  .call()
-          );
-          if (toNano(this.amount).gt(userErcBalance)) {
-            this.$emit("error", {
-              input: "amount",
-              message: this.$t("errors.toncoinBalance", {
-                coin: "TONCOIN",
-                balance: fromNano(userErcBalance).toString(),
-              }),
-            });
+          try {
+            const userErcBalance = new BN(
+                await this.providerDataForToncoin.wtonContract.methods
+                    .balanceOf(this.ethereumProvider.myAddress)
+                    .call()
+            );
+            if (toNano(this.amount).gt(userErcBalance)) {
+              this.$emit("error", {
+                input: "amount",
+                message: this.$t("errors.toncoinBalance", {
+                  coin: "TONCOIN",
+                  balance: fromNano(userErcBalance).toString(),
+                }),
+              });
 
+              this.isInitInProgress = false;
+              return;
+            }
+          } catch (e) {
+            console.error(e);
             this.isInitInProgress = false;
             return;
           }
@@ -1618,6 +1642,7 @@ export default defineComponent({
         } else {
           await this.burnWrappedToncoin(); // invoke Ethereum wallet to burn ERC-20 wrapped toncoins
         }
+
       } else { // Token transfer
 
         // Check balances
@@ -1626,64 +1651,81 @@ export default defineComponent({
         let jettonWalletAddress: Address;
 
         if (!this.isFromTon) { // EVM->TON Token transfer, check that user have `amount` of ERC-20 tokens before Lock
-          const erc20Contract = new ERC20Contract(this.ethereumProvider);
-          const decimals = await erc20Contract.decimals({
-            address: this.tokenAddress,
-          });
-          amountUnits = new BN(
-              parseUnits(this.amount, decimals).toString()
-          );
-          const balance = new BN(
-              (
-                  await erc20Contract.balanceOf({
-                    address: this.tokenAddress,
-                    account: this.ethereumProvider.myAddress,
-                  })
-              ).toString()
-          );
-          if (!balance.gte(amountUnits)) {
-            this.$emit("error", {
-              input: "amount",
-              message: this.$t("errors.toncoinBalance", {
-                coin: this.tokenSymbol,
-                balance: formatUnits(balance.toString(), decimals),
-              }),
+          try {
+            const erc20Contract = new ERC20Contract(this.ethereumProvider);
+            const decimals = await erc20Contract.decimals({
+              address: this.tokenAddress,
             });
+            amountUnits = new BN(
+                parseUnits(this.amount, decimals).toString()
+            );
+            const balance = new BN(
+                (
+                    await erc20Contract.balanceOf({
+                      address: this.tokenAddress,
+                      account: this.ethereumProvider.myAddress,
+                    })
+                ).toString()
+            );
+            if (!balance.gte(amountUnits)) {
+              this.$emit("error", {
+                input: "amount",
+                message: this.$t("errors.toncoinBalance", {
+                  coin: this.tokenSymbol,
+                  balance: formatUnits(balance.toString(), decimals),
+                }),
+              });
 
+              this.isInitInProgress = false;
+              return;
+            }
+          } catch (e) {
+            console.error(e);
             this.isInitInProgress = false;
             return;
           }
         } else { // TON->EVM Token transfer, check that user have `amount` of Jettons before Burn
 
-          jettonWalletAddress = await getJettonWalletAddress({
-            tonweb: this.providerDataForJettons.tonweb,
-            userTonAddress: this.providerDataForJettons.myAddreess,
-            tokenAddress: this.tokenAddress,
-          });
-
-          const {decimals, tokenAddress: jettonEvmAddress} =
-              await getWrappedTokenData(
-                  this.providerDataForJettons.tonweb,
-                  this.tokenAddress
-              );
-          this.state.jettonEvmAddress = jettonEvmAddress;
-
-          const balance = await getJettonWalletBalance(
-              this.providerDataForJettons.tonweb,
-              jettonWalletAddress!.toString(true, true, true)
-          );
-
-          amountUnits = new BN(parseUnits(this.amount, decimals).toString());
-
-          if (!balance.gte(amountUnits)) {
-            this.$emit("error", {
-              input: "amount",
-              message: this.$t("errors.toncoinBalance", {
-                coin: this.tokenSymbol,
-                balance: formatUnits(balance.toString(), decimals),
-              }),
+          try {
+            jettonWalletAddress = await getJettonWalletAddress({
+              tonweb: this.providerDataForJettons.tonweb,
+              userTonAddress: new TonWeb.Address(this.providerDataForJettons.myAddress),
+              tokenAddress: this.tokenAddress,
             });
 
+            const {decimals, tokenAddress: jettonEvmAddress} =
+                await getWrappedTokenData(
+                    this.providerDataForJettons.tonweb,
+                    this.tokenAddress
+                );
+            this.state.jettonEvmAddress = jettonEvmAddress;
+            console.log("myAddress", this.providerDataForJettons.myAddress.toString())
+            console.log("decimals", decimals.toString())
+            console.log("jettonEvmAddress", jettonEvmAddress.toString())
+            console.log("jettonWalletAddress", jettonWalletAddress.toString(true, true, true))
+
+            const balance = await getJettonWalletBalance(
+                this.providerDataForJettons.tonweb,
+                jettonWalletAddress!.toString(true, true, true)
+            );
+            console.log("balance", balance.toString())
+
+            amountUnits = new BN(parseUnits(this.amount, decimals).toString());
+
+            if (!balance.gte(amountUnits)) {
+              this.$emit("error", {
+                input: "amount",
+                message: this.$t("errors.toncoinBalance", {
+                  coin: this.tokenSymbol,
+                  balance: formatUnits(balance.toString(), decimals),
+                }),
+              });
+
+              this.isInitInProgress = false;
+              return;
+            }
+          } catch (e) {
+            console.error(e);
             this.isInitInProgress = false;
             return;
           }
@@ -1697,11 +1739,9 @@ export default defineComponent({
         this.state.step = 1;
 
         if (this.isFromTon) { // TON->EVM token transfer - Burn jettons
-          this.saveState();
           await this.burnJetton(amountUnits, jettonWalletAddress); // invoke TON wallet to burn jettons
 
         } else { // EVM->TON token transfer - Lock ERC-20 Tokens
-          this.saveState();
           await this.lockToken(amountUnits); // invoke Ethereum wallet to lock ERC-20 tokens
         }
       }

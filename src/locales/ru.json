@@ -116,10 +116,11 @@
   "oraclesConfirmationsCollected": "Собраны подтверждения оракулов",
   "oraclesConfirmationsWaiting": "Пожалуйста, подождите подтверждения оракулов",
   "getCoinsByProvider": "Получите {toCoin} в {provider}",
-  "coinsSent": "{toCoin} были отправлены на ваш адрес",
+  "coinsSent": "{toCoin} были отправлены",
   "getCoins": "Получите {toCoin} в {toNetwork}",
 
   "otherTokens": "Другие токены",
+  "tokens": "токены",
 
   "errors": {
     "alertTitleError": "Ошибка",
