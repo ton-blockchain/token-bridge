@@ -1,100 +1,116 @@
 <template>
   <div class="BridgeProcessor">
+    <!-- Transfer Button -->
+
     <button
-      class="BridgeProcessor-transfer"
-      :disabled="!isInputsValid"
-      :class="{
+        class="BridgeProcessor-transfer"
+        :disabled="!isInputsValid"
+        :class="{
         showLoader:
           isInitInProgress || isBurningInProgress || isLockingInProgress,
       }"
-      v-if="state.step === 0 && (isFromTon || hasApprove || token === 'ton')"
-      @click="onTransferClick"
+        v-if="state.step === 0 && (isFromTon || hasApprove || token === 'ton')"
+        @click="onTransferClick"
     >
       {{ $t("transfer") }}
     </button>
 
+    <!-- Approve ERC-20 Button -->
+
     <button
-      class="BridgeProcessor-transfer"
-      :class="{ showLoader: isApprovingInProgress }"
-      v-if="state.step === 0 && !isFromTon && !hasApprove && token !== 'ton'"
-      @click="approve"
+        class="BridgeProcessor-transfer"
+        :disabled="!isInputsValid"
+        :class="{ showLoader: isApprovingInProgress }"
+        v-if="state.step === 0 && !isFromTon && !hasApprove && token !== 'ton'"
+        @click="onApproveClick"
     >
       Approve
     </button>
 
+    <!-- Cancel Transfer Button -->
+
     <button
-      v-if="isCancelVisible"
-      class="BridgeProcessor-cancel"
-      @click="onCancelClick"
+        v-if="isCancelButtonVisible"
+        class="BridgeProcessor-cancel"
+        @click="onCancelClick"
     >
       {{ $t("cancel") }}
     </button>
 
+    <!-- Transfer Steps -->
+
     <div class="BridgeProcessor-infoWrapper" v-if="state.step > 0">
+
+      <!-- Step 1 -->
+
       <div v-if="token === 'ton'" class="BridgeProcessor-infoLine">
         <div
-          class="BridgeProcessor-info-icon"
-          :class="{
+            class="BridgeProcessor-info-icon"
+            :class="{
             none: state.step < 1,
             pending: state.step === 1,
             done: state.step > 1,
           }"
         ></div>
         <div
-          class="BridgeProcessor-info-text"
-          v-if="!getStepInfoText1.isOnlyText"
+            class="BridgeProcessor-info-text"
+            v-if="!getStepInfoText1.isOnlyText"
         >
           <div class="BridgeProcessor-info-text-send">
             <div>
               {{ getStepInfoText1.send1 }}
               <button
-                class="BridgeProcessor-info-text-copy"
-                @click="onCopyClick"
+                  class="BridgeProcessor-info-text-copy"
+                  @click="onCopyClick"
               >
                 {{ getStepInfoText1.amountReadable }}
               </button>
-              {{ getStepInfoText1.send2 }}<br />
+              {{ getStepInfoText1.send2 }}<br/>
               <button
-                class="BridgeProcessor-info-text-copy"
-                @click="onCopyClick"
+                  class="BridgeProcessor-info-text-copy"
+                  @click="onCopyClick"
               >
-                {{ getStepInfoText1.toAddress }}</button
-              ><br />
-              {{ getStepInfoText1.withComment }}<br />
+                {{ getStepInfoText1.toAddress }}
+              </button
+              >
+              <br/>
+              {{ getStepInfoText1.withComment }}<br/>
               <button
-                class="BridgeProcessor-info-text-copy"
-                @click="onCopyClick"
+                  class="BridgeProcessor-info-text-copy"
+                  @click="onCopyClick"
               >
-                {{ getStepInfoText1.comment }}</button
-              ><br />
+                {{ getStepInfoText1.comment }}
+              </button
+              >
+              <br/>
             </div>
 
             <div class="BridgeProcessor-info-text-send-buttons">
               <a
-                :href="getStepInfoText1.openWalletUrl"
-                class="BridgeProcessor-info-text-openWallet"
-                target="_blank"
-                >{{ getStepInfoText1.openWalletLabel }}</a
+                  :href="getStepInfoText1.openWalletUrl"
+                  class="BridgeProcessor-info-text-openWallet"
+                  target="_blank"
+              >{{ getStepInfoText1.openWalletLabel }}</a
               >
 
               <button
-                class="BridgeProcessor-info-text-generateQRCode"
-                v-if="!isQRCodeShown"
-                @click="generateQRCode"
+                  class="BridgeProcessor-info-text-generateQRCode"
+                  v-if="!isQRCodeShown"
+                  @click="generateQRCode"
               >
                 {{ getStepInfoText1.generateQRCode }}
               </button>
               <div
-                class="BridgeProcessor-info-text-scanQRCode"
-                v-if="isQRCodeShown"
+                  class="BridgeProcessor-info-text-scanQRCode"
+                  v-if="isQRCodeShown"
               >
                 {{ getStepInfoText1.scanQRCode }}
               </div>
 
               <div
-                class="BridgeProcessor-info-text-QRCode"
-                ref="qrcode"
-                v-show="isQRCodeShown"
+                  class="BridgeProcessor-info-text-QRCode"
+                  ref="qrcode"
+                  v-show="isQRCodeShown"
               ></div>
             </div>
           </div>
@@ -103,10 +119,13 @@
           {{ getStepInfoText1.text }}
         </div>
       </div>
+
+      <!-- Step 2 -->
+
       <div class="BridgeProcessor-infoLine" v-if="!isFromTon">
         <div
-          class="BridgeProcessor-info-icon"
-          :class="{
+            class="BridgeProcessor-info-icon"
+            :class="{
             none: state.step < 2,
             pending: state.step === 2,
             done: state.step > 2,
@@ -114,10 +133,13 @@
         ></div>
         <div class="BridgeProcessor-info-text">{{ getStepInfoText2 }}</div>
       </div>
+
+      <!-- Step 3 -->
+
       <div class="BridgeProcessor-infoLine">
         <div
-          class="BridgeProcessor-info-icon"
-          :class="{
+            class="BridgeProcessor-info-icon"
+            :class="{
             none: state.step < 3,
             pending: state.step === 3,
             done: state.step > 3,
@@ -125,10 +147,13 @@
         ></div>
         <div class="BridgeProcessor-info-text">{{ getStepInfoText3 }}</div>
       </div>
+
+      <!--  Step 4 -->
+
       <div class="BridgeProcessor-infoLine">
         <div
-          class="BridgeProcessor-info-icon"
-          :class="{
+            class="BridgeProcessor-info-icon"
+            :class="{
             none: state.step < 4,
             pending: state.step === 4,
             done: state.step > 4,
@@ -136,21 +161,26 @@
         ></div>
         <div class="BridgeProcessor-info-text">{{ getStepInfoText4 }}</div>
       </div>
+
     </div>
 
-    <button
-      v-if="isGetTonCoinVisible"
-      class="BridgeProcessor-getTonCoin"
-      :class="{ showLoader: isMintingInProgress }"
-      @click="mint"
-    >
-      {{ $t("getToncoin", { coin: toCoin }) }}
-    </button>
+    <!-- Get/Mint Toncoin Button -->
 
     <button
-      v-if="isDoneVisible"
-      class="BridgeProcessor-done"
-      @click="onDoneClick"
+        v-if="isMintToncoinButtonVisible"
+        class="BridgeProcessor-getTonCoin"
+        :class="{ showLoader: isMintingInProgress }"
+        @click="mint"
+    >
+      {{ $t("getToncoin", {coin: toCoin}) }}
+    </button>
+
+    <!-- Done Button -->
+
+    <button
+        v-if="isDoneButtonVisible"
+        class="BridgeProcessor-done"
+        @click="onDoneClick"
     >
       {{ $t("done") }}
     </button>
@@ -158,67 +188,59 @@
 </template>
 
 <script lang="ts">
-import { MaxInt256 } from "@ethersproject/constants";
-import { formatUnits, parseUnits } from "@ethersproject/units";
+import {MaxInt256} from "@ethersproject/constants";
+import {formatUnits, parseUnits} from "@ethersproject/units";
 import BN from "bn.js";
-import { ethers } from "ethers";
-import { debounce } from "lodash";
-import QRCodeStyling, { Options } from "qr-code-styling";
+import {debounce} from "lodash";
+import QRCodeStyling, {Options} from "qr-code-styling";
 import TonWeb from "tonweb";
-import { defineComponent, PropType } from "vue";
-import { mapMutations } from "vuex";
+import {defineComponent, PropType} from "vue";
+import {mapMutations} from "vuex";
 import Web3 from "web3";
-import { AbiItem } from "web3-utils";
+import {AbiItem} from "web3-utils";
 
 import BRIDGE from "@/ton-bridge-lib/abi/TokenBridge.json";
 import WTON_BRIDGE from "@/ton-bridge-lib/abi/WTON.json";
-import {
-  getJettonWalletAddress,
-  getJettonWalletData,
-  getWrappedTokenData,
-} from "@/ton-bridge-lib/BridgeJettonUtils";
+import {getJettonWalletAddress, getJettonWalletBalance, getWrappedTokenData,} from "@/ton-bridge-lib/BridgeJettonUtils";
 import {burnJetton, mintJetton} from "@/api/tonWallet";
-import { onCopyClick } from "@/utils";
-import { PARAMS } from "@/utils/constants";
+import {onCopyClick} from "@/utils";
+import {PARAMS} from "@/utils/constants";
 import {
+  EvmSignature,
   getEvmSignaturesFromCollector,
-  parseEvmSignature
+  parseEvmSignature,
+  prepareEthSignatures
 } from "@/ton-bridge-lib/BridgeCollector";
-import {
-  getQueryId
-} from "@/ton-bridge-lib/BridgeCommon";
-import { Provider } from "@/utils/providers/provider";
-import { BridgeContract } from "@/utils/services/Bridge.contract";
-import { ERC20Contract } from "@/utils/services/ERC20.contract";
+import {getQueryId} from "@/ton-bridge-lib/BridgeCommon";
+import {Provider} from "@/utils/providers/provider";
+import {ERC20Contract} from "@/utils/services/ERC20.contract";
 
-import {
-  ComponentData,
-  ProviderDataForJettons,
-  ProviderDataForTON,
-} from "./types";
+import {ComponentData, ProviderDataForJettons, ProviderDataForToncoin,} from "./types";
 import {SwapTonToEth, ToncoinBridge} from "@/ton-bridge-lib/ToncoinBridge";
 import {BurnEvent, TokenBridge} from "@/ton-bridge-lib/TokenBridge";
-import {EvmSignature} from "@/ton-bridge-lib/BridgeCollector";
-import {findLogOutMsg, getMessageBytes, getNumber, makeAddress} from "@/ton-bridge-lib/BridgeTonUtils";
+import {makeAddress} from "@/ton-bridge-lib/BridgeTonUtils";
 import {getVotesInMultisig} from "@/ton-bridge-lib/BridgeMultisig";
+import {bytesToHex, hexToBN} from "@/ton-bridge-lib/Paranoid";
+import {Address} from "tonweb/dist/types/utils/address";
 
 const fromNano = TonWeb.utils.fromNano;
+const toNano = TonWeb.utils.toNano;
 
 export default defineComponent({
   props: {
-    isTestnet: {
+    isTestnet: { // immutable parameter from url
       type: Boolean,
       required: true,
     },
-    isRecover: {
+    isRecover: { // immutable parameter from url
       type: Boolean,
       required: true,
     },
-    lt: {
+    lt: { // immutable parameter from url
       type: Number,
       required: true,
     },
-    hash: {
+    hash: { // immutable parameter from url
       type: String,
       required: true,
     },
@@ -226,26 +248,31 @@ export default defineComponent({
       type: Boolean,
       required: true,
     },
-    pair: {
+    pair: { // "eth" or "bsc"
       type: String,
       required: true,
     },
-    tokenAddress: { type: String, required: true },
-    tokenSymbol: { type: String, required: true },
-    amount: {
-      type: Object as PropType<BN>,
-      required: true,
+    tokenAddress: { // Ethereum or TON token address
+      type: String,
+      required: true
     },
-    token: {
+    tokenSymbol: {
+      type: String,
+      required: true
+    },
+    amount: { // float as string
       type: String,
       required: true,
     },
-
-    toAddress: {
+    token: { // "ton" or "otherTokens"
       type: String,
       required: true,
     },
-    provider: {
+    toAddress: { // Ethereum or TON to address
+      type: String,
+      required: true,
+    },
+    ethereumProvider: { // Ethereum provider
       type: Object as PropType<Provider>,
       required: true,
     },
@@ -257,14 +284,14 @@ export default defineComponent({
 
   data(): ComponentData {
     return {
-      updateStateIntervalForTon: null,
-      updateStateIntervalForJettons: null,
-      providerDataForTon: null,
+      updateStateIntervalForToncoin: null, // setInterval ID
+      updateStateIntervalForJettons: null, // setInterval ID
+      providerDataForToncoin: null,
       providerDataForJettons: null,
       ethToTon: null,
       isInitInProgress: false,
       isMintingInProgress: false,
-      isApprovingInProgress: false,
+      isApprovingInProgress: false, // approving ERC-20 token in token transfer
       isBurningInProgress: false,
       isLockingInProgress: false,
 
@@ -277,8 +304,8 @@ export default defineComponent({
         jettonEvmAddress: "",
         fromCurrencySent: false,
         toCurrencySent: false,
-        step: 0,
-        votes: null,
+        step: 0, // 0-5 step
+        votes: [], // EvmSignature[] for ton->evm, number[] for evm->ton
         swapData: null,
         burnData: null,
         createTime: 0,
@@ -288,15 +315,18 @@ export default defineComponent({
   },
 
   computed: {
+    isToncoinTransfer(): boolean {
+      return this.token === "ton";
+    },
     netTypeName(): string {
       return this.isTestnet ? "test" : "main";
     },
-    params() {
+    params(): ParamsNetwork {
       const pairParams = PARAMS.networks[this.pair];
       return pairParams[this.netTypeName as keyof typeof pairParams];
     },
-    isGetTonCoinVisible(): boolean {
-      if (this.token === "ton") {
+    isMintToncoinButtonVisible(): boolean {
+      if (this.isToncoinTransfer) {
         return (
             this.isFromTon && !this.state.toCurrencySent && this.state.step === 4
         );
@@ -310,38 +340,38 @@ export default defineComponent({
         }
       }
     },
-    isDoneVisible(): boolean {
+    isDoneButtonVisible(): boolean {
       return this.state.step > 4;
     },
-    isCancelVisible(): boolean {
+    isCancelButtonVisible(): boolean {
       return this.isFromTon && this.state.step === 1;
     },
-    fromCoin() {
+    fromCoin(): string {
       return this.isFromTon
-        ? this.$t(`networks.ton.${this.netTypeName}.coinShort`)
-        : this.$t(`networks.${this.pair}.${this.netTypeName}.coinShort`);
-    },
-    toCoin() {
-      if (this.token === "ton") {
-        return !this.isFromTon
           ? this.$t(`networks.ton.${this.netTypeName}.coinShort`)
           : this.$t(`networks.${this.pair}.${this.netTypeName}.coinShort`);
+    },
+    toCoin(): string {
+      if (this.isToncoinTransfer) {
+        return !this.isFromTon
+            ? this.$t(`networks.ton.${this.netTypeName}.coinShort`)
+            : this.$t(`networks.${this.pair}.${this.netTypeName}.coinShort`);
       } else {
         return this.tokenSymbol;
       }
     },
-    getStepInfoText1() {
+    getStepInfoText1(): any {
       if (this.state.step === 1) {
         if (this.isFromTon) {
-          if (this.token === "ton") {
+          if (this.isToncoinTransfer) {
             const url = PARAMS.tonTransferUrl
-              .replace("<BRIDGE_ADDRESS>", this.params.tonBridgeAddress)
-              .replace("<AMOUNT>", this.amount.toString())
-              .replace("<TO_ADDRESS>", this.toAddress);
+                .replace("<BRIDGE_ADDRESS>", this.params.tonBridgeAddress)
+                .replace("<AMOUNT>", toNano(this.amount).toString())
+                .replace("<TO_ADDRESS>", this.toAddress);
             return {
               isOnlyText: false,
               send1: this.$t("networks.ton.transactionSend1"),
-              amountReadable: fromNano(this.amount),
+              amountReadable: this.amount,
               send2: this.$t("networks.ton.transactionSend2"),
               toAddress: this.params.tonBridgeAddress,
               withComment: this.$t("networks.ton.transactionSendComment"),
@@ -349,20 +379,20 @@ export default defineComponent({
               openWalletLabel: this.$t("networks.ton.openWallet"),
               openWalletUrl: url,
               generateQRCode: this.isQRCodeShown
-                ? ""
-                : this.$t("networks.ton.generateQRCode"),
+                  ? ""
+                  : this.$t("networks.ton.generateQRCode"),
               scanQRCode: this.isQRCodeShown
-                ? this.$t("networks.ton.scanQRCode")
-                : "",
+                  ? this.$t("networks.ton.scanQRCode")
+                  : "",
             };
           } else return {};
         } else {
           return {
             isOnlyText: true,
             text: this.state.fromCurrencySent
-              ? this.$t(`networks.${this.pair}.transactionWait`)
-              : this.$t(`networks.${this.pair}.transactionSend`, {
-                  provider: this.provider.title,
+                ? this.$t(`networks.${this.pair}.transactionWait`)
+                : this.$t(`networks.${this.pair}.transactionSend`, {
+                  ethereumProvider: this.ethereumProvider.title,
                 }),
           };
         }
@@ -379,23 +409,23 @@ export default defineComponent({
         return "";
       }
       const providerData =
-        this.token === "ton"
-          ? this.providerDataForTon
-          : this.providerDataForJettons;
+          this.isToncoinTransfer
+              ? this.providerDataForToncoin
+              : this.providerDataForJettons;
 
       if (this.state.step === 2) {
         let blocksConfirmations =
-          (providerData?.blockNumber || this.state.blockNumber) -
-          this.state.blockNumber;
+            (providerData?.blockNumber || this.state.blockNumber) -
+            this.state.blockNumber;
         blocksConfirmations = Math.max(
-          Math.min(blocksConfirmations, this.params.blocksConfirmations),
-          0
+            Math.min(blocksConfirmations, this.params.blocksConfirmations),
+            0
         );
         return this.$t(`networks.${this.pair}.blocksConfirmations`, {
           count:
-            String(blocksConfirmations) +
-            "/" +
-            String(this.params.blocksConfirmations),
+              String(blocksConfirmations) +
+              "/" +
+              String(this.params.blocksConfirmations),
         });
       } else if (this.state.step > 2) {
         return this.$t("blocksConfirmationsCollected");
@@ -404,14 +434,14 @@ export default defineComponent({
       }
     },
     getStepInfoText3(): string {
-      if (this.token !== "ton" && !this.isFromTon) {
+      if (!this.isToncoinTransfer && !this.isFromTon) {
         return this.getGetCoinsText(3);
       } else {
         return this.getOraclesText(3);
       }
     },
     getStepInfoText4(): string {
-      if (this.token !== "ton" && !this.isFromTon) {
+      if (!this.isToncoinTransfer && !this.isFromTon) {
         return this.getOraclesText(4);
       } else {
         return this.getGetCoinsText(4);
@@ -435,23 +465,23 @@ export default defineComponent({
     },
   },
 
-  mounted() {
+  mounted(): void {
     this.$watch(
-      () => [this.amount],
-      debounce(async ([newAmount]: any) => {
-        this.checkApprove(newAmount);
-      }, 300)
+        () => [this.amount, this.tokenAddress, this.isFromTon, this.isInputsValid, this.ethereumProvider],
+        debounce(async ([newAmount]: any) => {
+          this.checkAllowance(newAmount);
+        }, 300)
     );
 
     this.$emit("ready");
   },
 
-  beforeDestroy() {
+  beforeDestroy(): void {
     clearInterval(
-      this.updateStateIntervalForTon as ReturnType<typeof setInterval>
+        this.updateStateIntervalForToncoin as ReturnType<typeof setInterval>
     );
     clearInterval(
-      this.updateStateIntervalForJettons as ReturnType<typeof setInterval>
+        this.updateStateIntervalForJettons as ReturnType<typeof setInterval>
     );
   },
 
@@ -460,102 +490,55 @@ export default defineComponent({
     makeAddress,
     parseEvmSignature,
     getQueryId,
-    ...mapMutations({ setAlert: "setAlert" }),
-    async mint() {
+    ...mapMutations({setAlert: "setAlert"}),
+    async mint(): Promise<void> {
       if (this.isFromTon) {
-        if (this.token === "ton") {
-          await this.mintForTon();
+        if (this.isToncoinTransfer) {
+          await this.mintWrappedToncoin();
         } else {
-          await this.unlockForJettons();
+          await this.unlockToken();
         }
       } else {
-        if (this.token === "ton") {
+        if (this.isToncoinTransfer) {
           throw new Error('can never happen');
         } else {
           await this.mintJetton();
         }
       }
     },
-    onTokenChange(newValue: string) {
+    onTokenChange(newValue: string): void {
       clearInterval(
-        this.updateStateIntervalForTon as ReturnType<typeof setInterval>
+          this.updateStateIntervalForToncoin as ReturnType<typeof setInterval>
       );
       clearInterval(
-        this.updateStateIntervalForJettons as ReturnType<typeof setInterval>
+          this.updateStateIntervalForJettons as ReturnType<typeof setInterval>
       );
 
       if (newValue === "ton") {
-        this.updateStateForTon();
-        this.updateStateIntervalForTon = setInterval(
-          this.updateStateForTon,
-          5000
+        this.updateStateForToncoin();
+        this.updateStateIntervalForToncoin = setInterval(
+            this.updateStateForToncoin,
+            5000
         );
       } else {
         this.updateStateForJettons();
         this.updateStateIntervalForJettons = setInterval(
-          this.updateStateForJettons,
-          5000
+            this.updateStateForJettons,
+            5000
         );
       }
     },
 
-    async checkApprove(amount: BN) {
-      if (!this.isFromTon && this.token !== "ton" && this.tokenAddress) {
-        console.log("checkApprove");
-        const erc20Contract = new ERC20Contract(this.provider);
-        if (Web3.utils.isAddress(this.tokenAddress)) {
-          const userErcBalance = await erc20Contract.allowance({
-            address: this.tokenAddress,
-            spender: this.params.tonBridgeV2EVMAddress,
-            owner: this.provider.myAddress,
-          });
-          if (amount.gt(new BN(userErcBalance.toString()))) {
-            this.hasApprove = false;
-          } else {
-            this.hasApprove = true;
-            console.log("this.hasApprove", this.hasApprove);
-          }
-        } else {
-          this.hasApprove = false;
-        }
-      }
-    },
-
-    async approve() {
-      this.isApprovingInProgress = true;
-      const erc20Contract = new ERC20Contract(this.provider);
-
-      const amount = MaxInt256.toString();
-      try {
-        const tx = await erc20Contract.approve({
-          address: this.tokenAddress,
-          spender: this.params.tonBridgeV2EVMAddress,
-          amount,
-        });
-        await tx.wait();
-        this.hasApprove = true;
-        this.isApprovingInProgress = false;
-      } catch (e: any) {
-        console.error(e);
-        this.isApprovingInProgress = false;
-
-        this.setAlert({
-          title: this.$t("errors.alertTitleError"),
-          message: e.message,
-          buttonLabel: this.$t("errors.alertButtonClose"),
-        });
-      }
-    },
 
     getOraclesText(oraclesStep: number): string {
       if (this.state.step === oraclesStep) {
         const providerData =
-            this.token === "ton"
-                ? this.providerDataForTon
+            this.isToncoinTransfer
+                ? this.providerDataForToncoin
                 : this.providerDataForJettons;
 
         const votesConfirmations =
-            (this.state.votes?.length || 0) +
+            this.state.votes.length +
             "/" +
             (providerData?.oraclesTotal || 0);
         return this.$t("oraclesConfirmations", {
@@ -573,11 +556,11 @@ export default defineComponent({
         return this.state.toCurrencySent
             ? this.$t(`networks.${this.pair}.transactionWait`)
             : this.$t("getCoinsByProvider", {
-              provider: this.token === 'ton' ? this.provider.title : 'TON Wallet',
+              provider: this.token === 'ton' ? this.ethereumProvider.title : 'TON Wallet',
               toCoin: this.toCoin,
             });
       } else if (this.state.step > getCoinsStep) {
-        return this.$t("coinsSent", { toCoin: this.toCoin });
+        return this.$t("coinsSent", {toCoin: this.toCoin});
       } else {
         const pair = this.isFromTon ? this.pair : "ton";
         return this.$t("getCoins", {
@@ -587,13 +570,13 @@ export default defineComponent({
       }
     },
 
-    generateQRCode() {
+    generateQRCode(): void {
       this.isQRCodeShown = true;
 
       const url = PARAMS.tonTransferUrl
-        .replace("<BRIDGE_ADDRESS>", this.params.tonBridgeAddress)
-        .replace("<AMOUNT>", this.amount.toString())
-        .replace("<TO_ADDRESS>", this.toAddress);
+          .replace("<BRIDGE_ADDRESS>", this.params.tonBridgeAddress)
+          .replace("<AMOUNT>", toNano(this.amount).toString())
+          .replace("<TO_ADDRESS>", this.toAddress);
 
       const options: Partial<Options> = {
         data: url,
@@ -625,14 +608,32 @@ export default defineComponent({
       const qrCode = new QRCodeStyling(options);
       qrCode.append(this.$refs.qrcode as HTMLElement);
     },
-    resetState() {
+    async initProvider(isToncoinTransfer: boolean): Promise<boolean> {
+      if (isToncoinTransfer) {
+        if (!this.providerDataForToncoin) {
+          this.providerDataForToncoin = await this.initProviderForToncoin();
+          if (!this.providerDataForToncoin) {
+            return false;
+          }
+        }
+      } else {
+        if (!this.providerDataForJettons) {
+          this.providerDataForJettons = await this.initProviderForJettons();
+          if (!this.providerDataForJettons) {
+            return false;
+          }
+        }
+      }
+      return true;
+    },
+    resetState(): void {
       this.state.swapId = "";
       this.state.queryId = "0";
       this.state.jettonEvmAddress = "";
       this.state.fromCurrencySent = false;
       this.state.toCurrencySent = false;
       this.state.step = 0;
-      this.state.votes = null;
+      this.state.votes = [];
       this.state.swapData = null;
       this.state.burnData = null;
       this.state.createTime = 0;
@@ -642,87 +643,82 @@ export default defineComponent({
 
       this.$emit("reset-state");
     },
-    async loadState({ processingState }: any): Promise<boolean> {
-      if (!processingState) {
+    async loadState(state: any): Promise<boolean> {
+      if (!state || !state.processingState) {
         return false;
       }
 
       this.isInitInProgress = true;
-
-      if (
-        (processingState as any).token === "ton" &&
-        !this.providerDataForTon
-      ) {
-        this.providerDataForTon = await this.initProviderForTON();
-      } else if (!this.providerDataForJettons) {
-        this.providerDataForJettons = await this.initProviderForJettons();
+      const isToncoinTransfer = state.token === 'ton';
+      if (!(await this.initProvider(isToncoinTransfer))) {
+        this.isInitInProgress = false;
+        return;
       }
 
       this.isInitInProgress = false;
 
-      if (!this.providerDataForTon && !this.providerDataForJettons) {
-        return false;
-      }
-      Object.assign(this.state, processingState);
-      this.ethToTon = processingState.ethToTon;
+      Object.assign(this.state, state.processingState);
+      this.ethToTon = state.processingState.ethToTon;
 
-      if ((processingState as any).token === "ton") {
-        this.updateStateForTon();
+      if (isToncoinTransfer) {
+        await this.updateStateForToncoin();
       } else {
-        this.updateStateForJettons();
+        await this.updateStateForJettons();
       }
 
       return true;
     },
-    saveState() {
+    saveState(): void {
       this.$emit("save-state", {
         ...this.state,
-        isFromTon: this.isFromTon,
-        token: this.token,
-        tokenAddress: this.tokenAddress,
         ethToTon: this.ethToTon,
       });
     },
-    deleteState() {
+    deleteState(): void {
       this.$emit("delete-state");
     },
-    async updateStateForTon() {
+    async updateStateForToncoin(): Promise<void> {
+      const provider = this.providerDataForToncoin!;
+      const web3 = this.ethereumProvider.web3!;
+
+      // Step 1 - TON->EVM - find Toncoin transfer in TON network
+
       if (this.state.step === 1 && this.isFromTon) {
-        const swap = await this.getSwapForTON(
-          this.amount,
-          this.toAddress,
-          this.state.createTime
+        const swap = await this.getSwapForToncoin(
+            toNano(this.amount),
+            this.toAddress,
+            this.state.createTime
         );
         if (swap) {
-          this.state.swapId = this.getSwapTonToEthIdForTon(swap);
+          this.state.swapId = this.getSwapTonToEthIdForToncoin(swap);
           this.state.swapData = swap;
           this.state.step = 3;
         }
       }
 
-      if (this.state.step === 2 && !this.isFromTon) {
-        const blockNumber = await this.provider.web3!.eth.getBlockNumber();
-        this.providerDataForTon!.blockNumber = blockNumber;
+      // Step 2 - EVM->TON - collect block confirmations after Burn wrapped Toncoins in EVM-network
 
-        console.log(
-          this.providerDataForTon?.blockNumber,
-          this.state.blockNumber
-        );
+      if (this.state.step === 2 && !this.isFromTon) {
+        const blockNumber = await web3.eth.getBlockNumber();
+        provider.blockNumber = blockNumber;
+
+        console.log(blockNumber, this.state.blockNumber);
+
         const blocksConfirmations =
-          (this.providerDataForTon?.blockNumber || this.state.blockNumber) -
-          this.state.blockNumber;
+            (blockNumber || this.state.blockNumber) -
+            this.state.blockNumber;
 
         if (blocksConfirmations > this.params.blocksConfirmations) {
-          const receipt = await this.provider.web3!.eth.getTransactionReceipt(
+          const receipt = await web3.eth.getTransactionReceipt(
               this.ethToTon!.transactionHash
           );
           this.ethToTon!.blockNumber = receipt.blockNumber;
-          const block = await this.provider.web3!.eth.getBlock(
+          const block = await web3.eth.getBlock(
               receipt.blockNumber
           );
           this.ethToTon!.blockTime = Number(block.timestamp);
           this.ethToTon!.blockHash = block.hash;
-          const log = ToncoinBridge.findLog(this.provider.web3!, this.ethToTon!.from, this.ethToTon!.value, this.ethToTon!.to.workchain.toString(), this.ethToTon!.to.address_hash, receipt.logs);
+          const log = ToncoinBridge.findLog(web3, this.ethToTon!.from, this.ethToTon!.value, this.ethToTon!.to.workchain.toString(), this.ethToTon!.to.address_hash, receipt.logs);
           if (!log) throw new Error('cant find log');
           this.ethToTon!.logIndex = log.logIndex;
 
@@ -731,52 +727,63 @@ export default defineComponent({
         }
       }
 
+      // Step 3 - Collect oracles votes
+
       if (this.state.step === 3) {
         this.state.votes = this.isFromTon
-          ? await this.getEthVoteForTON(this.state.swapId)
-          : await this.getTonVoteForTON(this.state.queryId);
+            ? await this.getEthVoteForToncoin(this.state.swapId)
+            : await this.getTonVoteForToncoin(this.state.queryId);
         if (
-          this.state.votes &&
-          this.state.votes!.length >=
-            (this.providerDataForTon!.oraclesTotal * 2) / 3
+            this.state.votes.length >=
+            (provider.oraclesTotal * 2) / 3
         ) {
           this.state.step = this.isFromTon ? 4 : 5;
-          if (this.isFromTon) {
-            this.$emit("ready-to-mint");
-          }
         }
       }
     },
-    async updateStateForJettons() {
+    async updateStateForJettons(): Promise<void> {
+      const provider = this.providerDataForJettons!;
+      const web3 = this.ethereumProvider.web3!;
+
+      // Step 1 - TON->EVM - find jetton burn in TON network
+
       if (this.state.step === 1 && this.isFromTon) {
-        await this.getSwapForJettons(this.toAddress, this.state.createTime);
+        const burn = await this.getSwapForJettons(
+            this.toAddress,
+            this.state.createTime
+        );
+        if (burn) {
+          this.state.swapId = this.getSwapTonToEthIdForJettons(burn);
+          this.state.burnData = burn;
+          this.state.step = 3;
+        }
       }
 
-      if (this.state.step === 2 && !this.isFromTon) {
-        const blockNumber = await this.provider.web3!.eth.getBlockNumber();
-        this.providerDataForJettons!.blockNumber = blockNumber;
+      // Step 2 - EVM->TON - collect block confirmations after Lock tokens in EVM-network
 
-        console.log(
-          this.providerDataForJettons?.blockNumber,
-          this.state.blockNumber
-        );
+      if (this.state.step === 2 && !this.isFromTon) {
+        const blockNumber = await web3.eth.getBlockNumber();
+        provider.blockNumber = blockNumber;
+
+        console.log(blockNumber, this.state.blockNumber);
+
         const blocksConfirmations =
-          (this.providerDataForJettons?.blockNumber || this.state.blockNumber) -
-          this.state.blockNumber;
+            (blockNumber || this.state.blockNumber) -
+            this.state.blockNumber;
 
         if (blocksConfirmations > this.params.blocksConfirmations) {
-          const receipt = await this.provider.web3!.eth.getTransactionReceipt(
+          const receipt = await web3.eth.getTransactionReceipt(
               this.ethToTon!.transactionHash
           );
           this.ethToTon!.blockNumber = receipt.blockNumber;
-          const block = await this.provider.web3!.eth.getBlock(
-            receipt.blockNumber
+          const block = await web3.eth.getBlock(
+              receipt.blockNumber
           );
 
           this.ethToTon!.blockTime = Number(block.timestamp);
           this.ethToTon!.blockHash = block.hash;
 
-          const log = TokenBridge.findLog(this.provider.web3!, this.ethToTon!.from, this.ethToTon!.value, this.ethToTon!.to.address_hash, this.tokenAddress.toLowerCase(), receipt.logs);
+          const log = TokenBridge.findLog(web3, this.ethToTon!.from, this.ethToTon!.value, this.ethToTon!.to.address_hash, this.tokenAddress.toLowerCase(), receipt.logs);
           if (!log) throw new Error('cant find log');
           this.ethToTon!.logIndex = log.logIndex;
 
@@ -785,99 +792,104 @@ export default defineComponent({
         }
       }
 
+      // Step 3
+
       if (this.state.step === 3) {
-        if (this.token !== 'ton' && !this.isFromTon) {
+        if (this.isFromTon) { // TON->EVM - Collect oracles votes for jetton burn
+          this.state.votes = await this.getEthVoteForJettons(this.state.swapId);
+
+          if (
+              this.state.votes.length >=
+              (provider.oraclesTotal * 2) / 3
+          ) {
+            this.state.step = 4;
+          }
+        } else { // EVM->TON - find mint pay in TON Network
           const isPaid = await this.isJettonMintPaid(this.state.queryId);
           console.log('isPaid', this.state.queryId, isPaid);
           if (isPaid) {
             this.state.step = 4;
           }
-        } else {
-          this.state.votes = this.isFromTon
-              ? await this.getEthVoteForJettons(this.state.swapId)
-              : await this.getTonVoteForJettons(this.state.queryId);
-          if (
-              this.state.votes &&
-              this.state.votes!.length >=
-              (this.providerDataForJettons!.oraclesTotal * 2) / 3
-          ) {
-            this.state.step = 4;
-            this.$emit("ready-to-mint");
-          }
         }
       }
 
-      if (this.state.step === 4) {
-        if (this.token !== 'ton' && !this.isFromTon) {
-          this.state.votes = await this.getTonVoteForJettons(this.state.queryId);
-          if (
-              this.state.votes &&
-              this.state.votes!.length >=
-              (this.providerDataForJettons!.oraclesTotal * 2) / 3
-          ) {
-            this.state.step = 5;
-          }
+      // Step 4 - Collect oracles votes for mint jetton in TON network
+
+      if (this.state.step === 4 && !this.isFromTon) {
+        this.state.votes = await this.getTonVoteForJettons(this.state.queryId);
+        if (
+            this.state.votes.length >=
+            (provider.oraclesTotal * 2) / 3
+        ) {
+          this.state.step = 5;
         }
       }
     },
-    getSwapTonToEthIdForTon(d: SwapTonToEth): string {
+    getSwapTonToEthIdForToncoin(d: SwapTonToEth): string {
       const target = this.pair === "eth" && !this.isTestnet ? undefined : this.params.wTonAddress;
-      return ToncoinBridge.getDataId(this.provider.web3!, d, target)
+      return ToncoinBridge.getDataId(this.ethereumProvider.web3!, d, target)
     },
     getSwapTonToEthIdForJettons(d: BurnEvent): string {
-      return TokenBridge.getDataId(this.provider.web3!, d, this.params.tonBridgeV2EVMAddress, this.params.chainId);
+      return TokenBridge.getDataId(this.ethereumProvider.web3!, d, this.params.tonBridgeV2EVMAddress, this.params.chainId);
     },
 
-    getFeeAmountForTon(amount: BN): BN {
-      const rest = amount.sub(this.providerDataForTon!.feeFlat);
+    getFeeAmountForToncoin(amount: BN): BN {
+      const provider = this.providerDataForToncoin!;
+      const rest = amount.sub(provider.feeFlat);
       const percentFee = rest
-        .mul(this.providerDataForTon!.feeFactor)
-        .div(this.providerDataForTon!.feeBase);
-      return this.providerDataForTon!.feeFlat.add(percentFee);
+          .mul(provider.feeFactor)
+          .div(provider.feeBase);
+      return provider.feeFlat.add(percentFee);
     },
 
-    async getSwapForTON(
-      myAmount: BN,
-      myToAddress: string,
-      myCreateTime: number
+    async getSwapForToncoin(
+        myAmount: BN,
+        myToAddress: string,
+        myCreateTime: number
     ): Promise<null | SwapTonToEth> {
-      console.log(
-        "getTransactions",
-        this.params.tonBridgeAddress,
-        this.lt && this.hash ? 1 : this.isRecover ? 200 : 40,
-        this.lt || undefined,
-        this.hash || undefined,
-        undefined,
-        this.lt && this.hash ? true : undefined
-      );
-      const transactions =
-        await this.providerDataForTon!.tonweb.provider.getTransactions(
-          this.params.tonBridgeAddress,
-          this.lt && this.hash ? 1 : this.isRecover ? 200 : 40,
-          this.lt || undefined,
-          this.hash || undefined,
-          undefined,
-          this.lt && this.hash ? true : undefined
-        );
-      console.log("ton txs", transactions.length);
+      const amountAfterFee = myAmount.sub(this.getFeeAmountForToncoin(myAmount));
 
+      const specifiedTransaction = this.lt && this.hash; // get specified transaction by its lt and hash
+      const isRecover = this.isRecover; // ignore createTime and find in more transactions
+
+      const provider = this.providerDataForToncoin!.tonweb.provider;
+
+      let transactions;
+
+      if (specifiedTransaction) {
+        console.log('Get Toncoin specified tx ' + this.lt + ':' + this.hash);
+        transactions = await provider.getTransactions(
+            this.params.tonBridgeAddress,
+            1,
+            this.lt,
+            this.hash,
+            undefined,
+            true
+        );
+      } else {
+        const limit = isRecover ? 200 : 40;
+        console.log(`Find Toncoin swap - get ${limit} ton txs`);
+        transactions = await provider.getTransactions(
+            this.params.tonBridgeAddress,
+            limit
+        );
+      }
+
+      console.log(`Find Toncoin swap - got ton ${transactions.length} txs`);
 
       for (const t of transactions) {
-        if (!this.isRecover && !(this.lt && this.hash)) {
+        if (!isRecover && !specifiedTransaction) {
           if (t.utime * 1000 < myCreateTime) continue;
         }
 
         const event = ToncoinBridge.processTonTransaction(t);
 
         if (event) {
-
           console.log(JSON.stringify(event));
 
-          const amountAfterFee = myAmount.sub(this.getFeeAmountForTon(myAmount));
-
           if (
-            new BN(event.amount).eq(amountAfterFee) &&
-            event.receiver.toLowerCase() === myToAddress.toLowerCase()
+              new BN(event.amount).eq(amountAfterFee) &&
+              event.receiver.toLowerCase() === myToAddress.toLowerCase()
           ) {
             return event;
           }
@@ -887,136 +899,145 @@ export default defineComponent({
     },
 
     async isJettonMintPaid(queryId: string): Promise<boolean> {
+      const provider = this.providerDataForJettons!.tonweb.provider;
+      const isRecover = this.isRecover; // ignore createTime and find in more transactions
+      const limit = isRecover ? 200 : 40;
+      console.log(`Find Token paid - get ${limit} ton txs`);
+
       const transactions: any[] =
-          await this.providerDataForJettons!.tonweb.provider.getTransactions(
+          await provider.getTransactions(
               this.params.tonBridgeAddressV2,
-              40,
+              limit
           );
 
-      console.log("ton txs", transactions.length);
+      console.log(`Find Token paid - got ${transactions.length} ton txs`);
 
       for (const t of transactions) {
         const event = TokenBridge.processPayJettonMintTransaction(t);
-        console.log(event);
         if (event && event.queryId === queryId) {
-            return true;
+          console.log(event);
+          return true;
         }
       }
       return false;
     },
 
     async getSwapForJettons(
-      // myAmount: BN,
-      myToAddress: string,
-      myCreateTime: number
+        // myAmount: BN,
+        myToAddress: string,
+        myCreateTime: number
     ): Promise<null | BurnEvent> {
-      console.log(
-        "getTransactions",
-        this.params.tonBridgeAddressV2,
-        this.lt && this.hash ? 1 : this.isRecover ? 200 : 40,
-        this.lt || undefined,
-        this.hash || undefined,
-        undefined,
-        this.lt && this.hash ? true : undefined
-      );
-      const transactions: any[] =
-        await this.providerDataForJettons!.tonweb.provider.getTransactions(
-          this.params.tonBridgeAddressV2,
-          this.lt && this.hash ? 1 : this.isRecover ? 200 : 40,
-          this.lt || undefined,
-          this.hash || undefined,
-          undefined,
-          this.lt && this.hash ? true : undefined
+      const specifiedTransaction = this.lt && this.hash; // get specified transaction by its lt and hash
+      const isRecover = this.isRecover; // ignore createTime and find in more transactions
+
+      const provider = this.providerDataForJettons!.tonweb.provider;
+
+      let transactions;
+
+      if (specifiedTransaction) {
+        console.log('Get Token specified tx ' + this.lt + ':' + this.hash);
+        transactions = await provider.getTransactions(
+            this.params.tonBridgeAddressV2,
+            1,
+            this.lt,
+            this.hash,
+            undefined,
+            true
         );
-      console.log("ton txs", transactions.length);
+      } else {
+        const limit = isRecover ? 200 : 40;
+        console.log(`Find Token swap - get ${limit} ton txs`);
+        transactions = await provider.getTransactions(
+            this.params.tonBridgeAddressV2,
+            limit
+        );
+      }
+
+      console.log(`Find Token swap - got ton ${transactions.length} txs`);
 
       for (const t of transactions) {
-        if (!this.isRecover && !(this.lt && this.hash)) {
+        if (!isRecover && !specifiedTransaction) {
           if (t.utime * 1000 < myCreateTime) continue;
         }
 
         const event = TokenBridge.processTonTransaction(t);
 
         if (event) {
-
           console.log(JSON.stringify(event));
 
           if (
-            event.ethReceiver.toLowerCase() === myToAddress.toLowerCase() &&
-            this.state.jettonEvmAddress.toLocaleLowerCase() ===
-              event.token.toLocaleLowerCase()
+              event.ethReceiver.toLowerCase() === myToAddress.toLowerCase() &&
+              this.state.jettonEvmAddress.toLocaleLowerCase() === event.token.toLocaleLowerCase()
           ) {
-            if (event) {
-              const swapId = this.getSwapTonToEthIdForJettons(event);
-              let isVotingFinished = true;
-              try {
-                isVotingFinished =
-                  await this.providerDataForJettons!.bridgeContract.methods.finishedVotings(
-                    swapId
-                  ).call();
-              } catch (error) {
-                console.error(error);
-                return null;
-              }
-              if (!isVotingFinished) {
-                this.state.swapId = this.getSwapTonToEthIdForJettons(event);
-                this.state.burnData = event;
-                this.state.step = 3;
-              }
-            }
-            return null;
+            // const swapId = this.getSwapTonToEthIdForJettons(event);
+            // let isVotingFinished = true;
+            // try {
+            //   isVotingFinished =
+            //       await this.providerDataForJettons!.bridgeContract.methods.finishedVotings(
+            //           swapId
+            //       ).call();
+            // } catch (error) {
+            //   console.error(error);
+            //   return null;
+            // }
+            // if (!isVotingFinished) {
+            // }
+            return event;
           }
         }
       }
       return null;
     },
-    async getEthVoteForTON(voteId: string): Promise<null | EvmSignature[]> {
-      const result = await getEvmSignaturesFromCollector(this.providerDataForTon!.tonweb as any, this.params.tonCollectorAddress, voteId);
-      return result ? result.signatures : null;
+    async getEthVoteForToncoin(voteId: string): Promise<EvmSignature[]> {
+      const result = await getEvmSignaturesFromCollector(this.providerDataForToncoin!.tonweb as any, this.params.tonCollectorAddress, voteId);
+      return result ? result.signatures : [];
     },
-    async getEthVoteForJettons(voteId: string): Promise<null | EvmSignature[]> {
+    async getEthVoteForJettons(voteId: string): Promise<EvmSignature[]> {
       const result = await getEvmSignaturesFromCollector(this.providerDataForJettons!.tonweb as any, this.params.tonCollectorAddressV2, voteId);
-      return result ? result.signatures : null;
+      return result ? result.signatures : [];
     },
-    async getTonVoteForTON(queryId: string): Promise<null | number[]> {
-      return getVotesInMultisig(this.providerDataForTon!.tonweb as any, this.params.tonMultisigAddress, queryId, this.providerDataForTon!.oraclesTotal);
+    async getTonVoteForToncoin(queryId: string): Promise<number[]> {
+      return getVotesInMultisig(this.providerDataForToncoin!.tonweb as any, this.params.tonMultisigAddress, queryId, this.providerDataForToncoin!.oraclesTotal);
     },
-    async getTonVoteForJettons(queryId: string): Promise<null | number[]> {
+    async getTonVoteForJettons(queryId: string): Promise<number[]> {
       return getVotesInMultisig(this.providerDataForJettons!.tonweb as any, this.params.tonMultisigAddressV2, queryId, this.providerDataForJettons!.oraclesTotal);
     },
-    onDoneClick() {
+    onDoneClick(): void {
       this.deleteState();
       this.resetState();
     },
-    onCancelClick() {
+    onCancelClick(): void {
       this.deleteState();
       this.resetState();
     },
-    async checkProviderIsReady(): Promise<boolean> {
+    /**
+     * Validate that Ethereum provider connected, has valid chain and ETH balance > 0
+     */
+    async validateEthereumProvider(): Promise<boolean> {
       try {
-        if (!this.provider.isConnected) {
+        if (!this.ethereumProvider.isConnected) {
           const error = this.$t("errors.providerIsDisconnected", {
-            provider: this.provider.title,
+            provider: this.ethereumProvider.title,
           });
           throw new Error(error);
         }
 
-        if (!this.provider.myAddress) {
+        if (!this.ethereumProvider.myAddress) {
           throw new Error(this.$t("errors.cantGetAddress"));
         }
 
-        if (this.provider.chainId !== this.params.chainId) {
+        if (this.ethereumProvider.chainId !== this.params.chainId) {
           const error = this.$t("errors.wrongProviderNetwork", {
             network: this.$t(`networks.${this.pair}.${this.netTypeName}.name`),
-            provider: this.provider.title,
+            provider: this.ethereumProvider.title,
           });
           throw new Error(error);
         }
 
         if (
-          !new BN(
-            await this.provider.web3!.eth.getBalance(this.provider.myAddress)
-          ).gt(new BN("0"))
+            !new BN(
+                await this.ethereumProvider.web3!.eth.getBalance(this.ethereumProvider.myAddress)
+            ).gt(new BN("0"))
         ) {
           throw new Error(this.$t(`networks.${this.pair}.errors.lowBalance`));
         }
@@ -1032,48 +1053,33 @@ export default defineComponent({
 
       return true;
     },
-    async mintForTon() {
-      if (this.isMintingInProgress) {
-        return;
-      }
+    /**
+     * Mint Wrapped ERC-20 Toncoin in EVM network
+     */
+    async mintWrappedToncoin(): Promise<void> {
+      if (this.isMintingInProgress) return;
 
-      const isProviderReady = await this.checkProviderIsReady();
+      if (!(await this.validateEthereumProvider())) return;
 
-      if (!isProviderReady) {
-        this.$emit("mint-failed");
-        return;
-      }
       this.isMintingInProgress = true;
 
       let receipt;
       try {
-        let signatures = (this.state.votes! as EvmSignature[]).map((v) => {
-          return {
-            signer: v.publicKey,
-            signature: ethers.utils.joinSignature({ r: v.r, s: v.s, v: v.v }),
-          };
-        });
-
-        signatures = signatures.sort((a, b) => {
-          return new BN(a.signer.substr(2), 16).cmp(
-            new BN(b.signer.substr(2), 16)
-          );
-        });
+        const signatures = prepareEthSignatures(this.state.votes as EvmSignature[]);
 
         receipt =
-          await this.providerDataForTon!.wtonContract.methods.voteForMinting(
-            this.state.swapData!,
-            signatures
-          )
-            .send({ from: this.provider.myAddress })
-            .on("transactionHash", () => {
-              this.state.toCurrencySent = true;
-              this.isMintingInProgress = false;
-              this.deleteState();
-            });
+            await this.providerDataForToncoin!.wtonContract.methods.voteForMinting(
+                this.state.swapData!,
+                signatures
+            )
+                .send({from: this.ethereumProvider.myAddress})
+                .on("transactionHash", () => {
+                  this.state.toCurrencySent = true;
+                  this.isMintingInProgress = false;
+                  this.deleteState();
+                });
       } catch (e) {
         console.error(e);
-        this.$emit("mint-failed");
         this.isMintingInProgress = false;
         return;
       }
@@ -1083,94 +1089,50 @@ export default defineComponent({
       if (receipt.status) {
         this.state.step = 5;
         this.deleteState();
-        this.$emit("minted-successfully");
       } else {
         console.error("transaction fail", receipt);
-        this.$emit("mint-failed");
       }
     },
-    async unlockForJettons() {
-      if (this.isMintingInProgress) {
+    /**
+     * Burn Wrapped ERC-20 Toncoin in EVM network
+     */
+    async burnWrappedToncoin(): Promise<void> {
+      if (this.isBurningInProgress) {
         return;
       }
 
-      const isProviderReady = await this.checkProviderIsReady();
-
-      if (!isProviderReady) {
-        this.$emit("mint-failed");
+      if (!(await this.validateEthereumProvider())) {
         return;
       }
-      let signatures = (this.state.votes! as EvmSignature[]).map((v) => {
-        return {
-          signer: v.publicKey,
-          signature: ethers.utils.joinSignature({ r: v.r, s: v.s, v: v.v }),
-        };
-      });
 
-      signatures = signatures.sort((a, b) => {
-        return new BN(a.signer.substr(2), 16).cmp(
-          new BN(b.signer.substr(2), 16)
-        );
-      });
-
-      this.isMintingInProgress = true;
-      let receipt;
-
-      try {
-        if (!this.state.burnData) return;
-        const bridgeContract = new BridgeContract(this.provider);
-        receipt = await bridgeContract.unlock({
-          bridgeAddress: this.params.tonBridgeV2EVMAddress,
-          signatures,
-          ...this.state.burnData
-        });
-        receipt = await receipt.wait();
-        this.state.fromCurrencySent = true;
-        this.isMintingInProgress = false;
-        if (receipt.status) {
-          this.state.step = 5;
-          this.deleteState();
-          this.$emit("minted-successfully");
-          this.isMintingInProgress = false;
-        } else {
-          console.error("transaction fail", receipt);
-          this.$emit("mint-failed");
-          this.isMintingInProgress = false;
-        }
-      } catch (error) {
-        this.isMintingInProgress = false;
-
-        console.error(error);
-      }
-    },
-    async burnForTON(): Promise<void> {
-      const isProviderReady = await this.checkProviderIsReady();
-
-      if (!isProviderReady) {
-        return;
-      }
-      this.isBurningInProgress = true;
-      const fromAddress = this.provider.myAddress;
+      const fromAddress = this.ethereumProvider.myAddress;
       const toAddress = this.toAddress;
+      let amountUnits: string;
+      let wc: number;
+      let hashPart: string;
 
-      const addressTon = new TonWeb.utils.Address(toAddress);
-      const wc = addressTon.wc;
-      const hashPart = TonWeb.utils.bytesToHex(addressTon.hashPart);
+      this.isBurningInProgress = true;
 
       let receipt;
-
       try {
-        receipt = await this.providerDataForTon!.wtonContract.methods.burn(
-          this.amount,
-          {
-            workchain: wc,
-            address_hash: "0x" + hashPart,
-          }
+
+        const addressTon = new TonWeb.utils.Address(toAddress);
+        wc = addressTon.wc;
+        hashPart = bytesToHex(addressTon.hashPart);
+
+        amountUnits = toNano(this.amount).toString();
+
+        receipt = await this.providerDataForToncoin!.wtonContract.methods.burn(
+            amountUnits,
+            {
+              workchain: wc,
+              address_hash: "0x" + hashPart,
+            }
         )
-          .send({ from: fromAddress })
-          .on("transactionHash", () => {
-            this.state.fromCurrencySent = true;
-          });
+            .send({from: fromAddress})
+            .on("transactionHash", () => {
+              this.state.fromCurrencySent = true;
+            });
       } catch (e) {
         this.isBurningInProgress = false;
         console.error(e);
@@ -1195,7 +1157,7 @@ export default defineComponent({
             workchain: wc,
             address_hash: hashPart,
           },
-          value: this.amount.toString(),
+          value: amountUnits,
 
           rawData: receipt.rawData,
           topics: receipt.topics,
@@ -1208,43 +1170,114 @@ export default defineComponent({
         console.error("transaction fail", receipt);
       }
     },
-    async lockToken(): Promise<void> {
-      const isProviderReady = await this.checkProviderIsReady();
-
-      if (!isProviderReady) {
+    /**
+     * Check allowance of ERC-20 token for token bridge in EVM network
+     */
+    async checkAllowance(amount: string): Promise<void> {
+      console.log('checkAllowance');
+      if (this.isFromTon || this.isToncoinTransfer || !this.isInputsValid) {
         return;
       }
-      this.isBurningInProgress = true;
-      const fromAddress = this.provider.myAddress;
-      const toAddress = this.toAddress;
-
-      const addressTon = new TonWeb.utils.Address(toAddress);
-      const wc = addressTon.wc;
-      if (wc !== 0) throw new Error('Only basechain wallets supported');
-      const hashPart = TonWeb.utils.bytesToHex(addressTon.hashPart);
-
-      let receipt;
-      let amountUnits: string;
+      console.log('checkAllowance2');
 
       try {
-        const erc20Contract = new ERC20Contract(this.provider);
+        if (!Web3.utils.isAddress(this.tokenAddress)) {
+          this.hasApprove = false;
+        } else {
+          const erc20Contract = new ERC20Contract(this.ethereumProvider);
+          const decimals = await erc20Contract.decimals({
+            address: this.tokenAddress
+          });
+          const amountUnits = parseUnits(amount.toString(), decimals).toString();
+          const allowanceUnits = await erc20Contract.allowance({
+            address: this.tokenAddress,
+            spender: this.params.tonBridgeV2EVMAddress,
+            owner: this.ethereumProvider.myAddress,
+          });
+          console.log(allowanceUnits.toString());
+          console.log(amountUnits.toString());
+          this.hasApprove = new BN(allowanceUnits.toString()).gte(new BN(amountUnits.toString()));
+        }
+      } catch (e) {
+        console.error(e);
+        this.hasApprove = false;
+      }
 
-        const decimals = await erc20Contract.decimals({
+    },
+    /**
+     * Approve ERC-20 token for token bridge in EVM network
+     */
+    async onApproveClick(): Promise<void> {
+      if (this.isApprovingInProgress) {
+        return;
+      }
+
+      if (!this.isInputsValid) return;
+
+      if (!(await this.validateEthereumProvider())) {
+        return;
+      }
+
+      this.isApprovingInProgress = true;
+
+      const maxAmount = MaxInt256.toString();
+      try {
+        const erc20Contract = new ERC20Contract(this.ethereumProvider);
+        const tx = await erc20Contract.approve({
           address: this.tokenAddress,
+          spender: this.params.tonBridgeV2EVMAddress,
+          amount: maxAmount,
         });
+        await tx.wait();
+        this.hasApprove = true;
+        this.isApprovingInProgress = false;
+      } catch (e: any) {
+        console.error(e);
+        this.isApprovingInProgress = false;
 
-        amountUnits = parseUnits(this.amount.toString(), decimals).toString();
+        this.setAlert({
+          title: this.$t("errors.alertTitleError"),
+          message: e.message,
+          buttonLabel: this.$t("errors.alertButtonClose"),
+        });
+      }
+    },
+    /**
+     * Lock ERC-20 token in EVM network
+     */
+    async lockToken(amountUnits: BN): Promise<void> {
+      if (this.isBurningInProgress) {
+        return;
+      }
 
-        const bridgeContract = new BridgeContract(this.provider);
-        receipt = await bridgeContract.lock({
-          address: this.params.tonBridgeV2EVMAddress,
+      if (!(await this.validateEthereumProvider())) {
+        return;
+      }
+
+      const fromAddress = this.ethereumProvider.myAddress;
+      const toAddress = this.toAddress;
+      let wc: number;
+      let hashPart: string;
+
+      this.isBurningInProgress = true;
+
+      let receipt;
+      try {
+
+        const addressTon = new TonWeb.utils.Address(toAddress);
+        wc = addressTon.wc;
+        if (wc !== 0) throw new Error('Only basechain wallets supported');
+        hashPart = bytesToHex(addressTon.hashPart);
+
+        receipt = await this.providerDataForJettons!.bridgeContract.methods.lock({
           token: this.tokenAddress,
-          amount: amountUnits,
+          amount: amountUnits.toString(),
           to_address_hash: "0x" + hashPart
-        });
-        receipt = await receipt.wait();
-
-        this.state.fromCurrencySent = true;
+        })
+            .send({from: fromAddress})
+            .on("transactionHash", () => {
+              this.state.fromCurrencySent = true;
+            });
       } catch (e) {
         this.isBurningInProgress = false;
         console.error(e);
@@ -1253,16 +1286,15 @@ export default defineComponent({
       }
 
       if (receipt.status) {
-        this.isBurningInProgress = false;
-
         console.log("receipt", receipt);
 
         this.state.blockNumber = receipt.blockNumber;
 
         const logIndex = receipt?.events?.find(
-          (v: any) => v.event === "Lock"
+            (v: any) => v.event === "Lock"
         )?.logIndex;
 
+        this.state.blockNumber = receipt.blockNumber;
         this.ethToTon = {
           type: 'SwapEthToTon',
           transactionHash: receipt.transactionHash,
@@ -1275,107 +1307,77 @@ export default defineComponent({
             workchain: wc,
             address_hash: hashPart,
           },
-          value: amountUnits,
+          value: amountUnits.toString(),
 
           rawData: receipt.rawData,
           topics: receipt.topics,
           transactionIndex: receipt.transactionIndex
         };
 
+        this.isBurningInProgress = false;
         this.state.step = 2;
+      } else {
+        this.isBurningInProgress = false;
+        console.error("transaction fail", receipt);
+      }
+    },
+    /**
+     * Unlock ERC-20 token in EVM network
+     */
+    async unlockToken(): Promise<void> {
+      if (this.isMintingInProgress) return;
+
+      if (!(await this.validateEthereumProvider())) return;
+
+      this.isMintingInProgress = true;
+
+      let receipt;
+      try {
+        const signatures = prepareEthSignatures(this.state.votes as EvmSignature[]);
+
+        if (!this.state.burnData) throw new Error('No burn data');
+
+        receipt =
+            await this.providerDataForJettons!.bridgeContract.methods.unlock({
+              ...this.state.burnData,
+              signatures,
+            })
+                .send({from: this.ethereumProvider.myAddress})
+                .on("transactionHash", () => {
+                  this.state.toCurrencySent = true;
+                  this.isMintingInProgress = false;
+                  this.deleteState();
+                });
+      } catch (error) {
+        console.error(error);
+        this.isMintingInProgress = false;
+        return;
+      }
+
+      this.isMintingInProgress = false;
+
+      if (receipt.status) {
+        this.state.step = 5;
+        this.deleteState();
       } else {
         console.error("transaction fail", receipt);
       }
     },
-    async burnJetton() {
-      if (!this.providerDataForJettons) return;
-      try {
-        this.isBurningInProgress = true;
-        const wallets =
-          (await this.providerDataForJettons.tonwebWallet.provider.send(
-            "ton_requestWallets",
-            []
-          )) as any;
-
-        const wallet = wallets[0];
-
-        const userTonAddress = new TonWeb.Address(wallet.address);
-        if (userTonAddress.wc !== 0) throw new Error('Only basechain wallets supported');
-
-        const tokenAddress = this.tokenAddress;
-
-        const jettonWalletAddress = await getJettonWalletAddress({
-          tonweb: this.providerDataForJettons.tonweb,
-          userTonAddress,
-          tokenAddress,
-        });
-
-        const destinationAddress = new TonWeb.utils.BN(
-          this.provider.myAddress.slice(2),
-          16
-        );
-        const { decimals, tokenAddress: jettonEvmAddress } =
-          await getWrappedTokenData(
-            this.providerDataForJettons.tonweb,
-            this.tokenAddress
-          );
-
-        const { balance } = await getJettonWalletData(
-          this.providerDataForJettons.tonweb,
-          jettonWalletAddress!.toString(true, true, true)
-        );
-
-        const jettonAmountWithDecimals = new BN(
-          parseUnits(this.amount.toString(), decimals).toString()
-        );
-
-        if (!balance.gte(jettonAmountWithDecimals)) {
-          this.$emit("error", {
-            input: "amount",
-            message: this.$t("errors.toncoinBalance", {
-              coin: this.tokenSymbol,
-              balance: (+formatUnits(balance.toString(), decimals)).toFixed(0),
-            }),
-          });
-          this.isBurningInProgress = false;
-          return;
-        }
-
-        this.state.jettonEvmAddress = jettonEvmAddress;
-
-        this.state.step = 1;
-        await burnJetton({
-          tonwebWallet: this.providerDataForJettons.tonwebWallet,
-          destinationAddress,
-          userTonAddress,
-          jettonWalletAddress,
-          jettonAmountWithDecimals,
-        });
-        this.isBurningInProgress = false;
-      } catch (error) {
-        this.isBurningInProgress = false;
-
-        console.error(error);
-        this.resetState();
+    /**
+     * Pay mint jetton in TON Network
+     */
+    async mintJetton(): Promise<void> {
+      if (this.isBurningInProgress) {
+        return;
       }
-    },
-    async mintJetton() {
+
       if (!this.providerDataForJettons) return;
+
+      this.isBurningInProgress = true;
+
       try {
-        this.isBurningInProgress = true;
-        const wallets =
-            (await this.providerDataForJettons.tonwebWallet.provider.send(
-                "ton_requestWallets",
-                []
-            )) as any;
-
-        const wallet = wallets[0];
-
-        const userTonAddress = new TonWeb.Address(wallet.address);
-        if (userTonAddress.wc !== 0) throw new Error('Only basechain wallets supported');
-
         await mintJetton({
-          tonwebWallet: this.providerDataForJettons.tonwebWallet,
+          tonWallet: this.providerDataForJettons.tonWallet,
           queryId: this.state.queryId,
           bridgeTonAddress: this.params.tonBridgeAddressV2
         });
@@ -1387,19 +1389,50 @@ export default defineComponent({
         this.resetState();
       }
     },
-    async initProviderForTON(): Promise<ProviderDataForTON | null> {
-      const isProviderReady = await this.checkProviderIsReady();
+    /**
+     * Burn jetton in TON network
+     */
+    async burnJetton(amountUnits: BN, jettonWalletAddress: Address): Promise<void> {
+      if (this.isBurningInProgress) {
+        return;
+      }
 
-      if (!isProviderReady) {
+      if (!this.providerDataForJettons) return;
+
+      this.isBurningInProgress = true;
+
+      try {
+        const destinationAddress = hexToBN(this.ethereumProvider.myAddress);
+        await burnJetton({
+          tonWallet: this.providerDataForJettons.tonWallet,
+          destinationAddress,
+          userTonAddress: this.providerDataForJettons.myAddreess,
+          jettonWalletAddress,
+          jettonAmountWithDecimals: amountUnits
+        });
+        this.isBurningInProgress = false;
+      } catch (error) {
+        this.isBurningInProgress = false;
+
+        console.error(error);
+        this.resetState();
+      }
+    },
+    /**
+     * Prepare for Toncoin transfer
+     * Create wrappers for Ethereum and TON bridge smart contracts, get bridge configuration
+     */
+    async initProviderForToncoin(): Promise<ProviderDataForToncoin | null> {
+      if (!(await this.validateEthereumProvider())) {
         return null;
       }
 
-      const wtonContract = new this.provider.web3!.eth.Contract(
-        WTON_BRIDGE as AbiItem[],
-        this.params.wTonAddress
+      const wtonContract = new this.ethereumProvider.web3!.eth.Contract(
+          WTON_BRIDGE as AbiItem[],
+          this.params.wTonAddress
       );
       const oraclesTotal = (
-        await wtonContract.methods.getFullOracleSet().call()
+          await wtonContract.methods.getFullOracleSet().call()
       ).length;
 
       if (!(oraclesTotal > 0)) {
@@ -1407,17 +1440,17 @@ export default defineComponent({
       }
 
       const tonweb = new TonWeb(
-        new TonWeb.HttpProvider(this.params.tonCenterUrl, {
-          apiKey: this.params.tonCenterApiKey,
-        })
+          new TonWeb.HttpProvider(this.params.tonCenterUrl, {
+            apiKey: this.params.tonCenterApiKey,
+          })
       );
 
       const bridgeData = (
-        await tonweb.provider.call(
-          this.params.tonBridgeAddress,
-          "get_bridge_data",
-          []
-        )
+          await tonweb.provider.call(
+              this.params.tonBridgeAddress,
+              "get_bridge_data",
+              []
+          )
       ).stack;
 
       if (bridgeData.length !== 8) {
@@ -1430,12 +1463,12 @@ export default defineComponent({
       // const collectorWc = getNumber(bridgeData[2]);
       // const collectorAddr = bridgeData[3][1]; // string
 
-      const feeFlat = new BN(bridgeData[4][1].slice(2), 16);
-      const feeNetwork = new BN(bridgeData[5][1].slice(2), 16);
-      const feeFactor = new BN(bridgeData[6][1].slice(2), 16);
-      const feeBase = new BN(bridgeData[7][1].slice(2), 16);
+      const feeFlat = hexToBN(bridgeData[4][1]);
+      const feeNetwork = hexToBN(bridgeData[5][1]);
+      const feeFactor = hexToBN(bridgeData[6][1]);
+      const feeBase = hexToBN(bridgeData[7][1]);
 
-      const res: ProviderDataForTON = {
+      const res: ProviderDataForToncoin = {
         blockNumber: 0,
         wtonContract,
         tonweb,
@@ -1447,81 +1480,120 @@ export default defineComponent({
 
       return res;
     },
+    /**
+     * Prepare for Token transfer
+     * Connect TON Extension
+     * Create wrappers for Ethereum and TON bridge smart contracts, get bridge configuration
+     */
     async initProviderForJettons(): Promise<ProviderDataForJettons | null> {
-      const isProviderReady = await this.checkProviderIsReady();
-
-      if (!isProviderReady) {
+      if (!(await this.validateEthereumProvider())) {
         return null;
       }
 
-      const tonWalletProvider = (window as any).ton;
+      const tonWallet = (window as any).ton;
 
-      if (!tonWalletProvider.isTonWallet) {
-        console.error("isTonWallet=", tonWalletProvider.isTonWallet);
+      if (!tonWallet) {
+        this.setAlert({
+          title: this.$t("errors.alertTitleError"),
+          message: "Please install TON Google Chrome Extension",
+          buttonLabel: this.$t("errors.alertButtonClose"),
+        });
         return null;
       }
 
-      const tonwebWallet = new TonWeb(tonWalletProvider);
+      const wallets =
+          (await tonWallet.send(
+              "ton_requestWallets",
+              []
+          )) as any;
 
-      const bridgeContract = new this.provider.web3!.eth.Contract(
-        BRIDGE.abi as AbiItem[],
-        this.params.tonBridgeV2EVMAddress
+      const walletAddress = wallets[0].address;
+      console.log('wallet', walletAddress)
+      const userTonAddress = new TonWeb.Address(walletAddress);
+      if (userTonAddress.wc !== 0) {
+        this.setAlert({
+          title: this.$t("errors.alertTitleError"),
+          message: "Only basechain wallets supported",
+          buttonLabel: this.$t("errors.alertButtonClose"),
+        });
+        return;
+      }
+
+      const bridgeContract = new this.ethereumProvider.web3!.eth.Contract(
+          BRIDGE.abi as AbiItem[],
+          this.params.tonBridgeV2EVMAddress
       );
 
       const oraclesTotal = (await bridgeContract.methods.getFullOracleSet().call())
-        .length;
+          .length;
 
       if (!(oraclesTotal > 0)) {
         return null;
       }
 
       const tonweb = new TonWeb(
-        new TonWeb.HttpProvider(this.params.tonCenterUrl, {
-          apiKey: this.params.tonCenterApiKey,
-        })
+          new TonWeb.HttpProvider(this.params.tonCenterUrl, {
+            apiKey: this.params.tonCenterApiKey,
+          })
       );
+
+      const userTonBalance: string = await tonweb.provider.getBalance(walletAddress);
+      console.log('userTonBalance', userTonBalance.toString())
+      if (new TonWeb.utils.BN(userTonBalance).lt(toNano("1"))) {
+        this.setAlert({
+          title: this.$t("errors.alertTitleError"),
+          message: "You need at least 1 TON on wallet balance",
+          buttonLabel: this.$t("errors.alertButtonClose"),
+        });
+        return;
+      }
 
       const res: ProviderDataForJettons = {
         blockNumber: 0,
         bridgeContract,
         tonweb,
-        tonwebWallet,
         oraclesTotal,
+        myAddress: walletAddress,
+        tonWallet,
       };
 
       return res;
     },
+    /**
+     * Start transfer
+     * Check that user has enough balance
+     * Toncoin TON->EVM - ask user to send Toncoins to bridge in TON network
+     * Toncoin EVM->TON - burn wrapped ERC-20 Toncoins in EVM network
+     * Tokens EVM->TON - lock ERC-20 token in EVM network
+     * Token TON->EVM - burn jetton in TON Network
+     */
     async onTransferClick(): Promise<void> {
-      if (this.isInitInProgress) {
-        return;
-      }
+      if (this.isInitInProgress) return;
+
+      if (!this.isInputsValid) return;
 
       this.isInitInProgress = true;
 
-      if (!this.isInputsValid) {
+      // Prepare
+
+      if (!(await this.initProvider(this.isToncoinTransfer))) {
         this.isInitInProgress = false;
         return;
       }
 
-      if (this.token === "ton" && !this.providerDataForTon) {
-        this.providerDataForTon = await this.initProviderForTON();
-      } else if (!this.providerDataForJettons) {
-        this.providerDataForJettons = await this.initProviderForJettons();
-      }
+      // Start transfer
 
-      if (!(this.providerDataForTon || this.providerDataForJettons)) {
-        this.isInitInProgress = false;
-        return;
-      }
+      if (this.isToncoinTransfer) {
 
-      if (this.token === "ton" && this.providerDataForTon) {
-        if (!this.isFromTon) {
+        // Check balances
+
+        if (!this.isFromTon) { // EVM->TON Toncoin Transfer, check that user have `amount` of ERC-20 wrapped toncoins before Burn
           const userErcBalance = new BN(
-            await this.providerDataForTon.wtonContract.methods
-              .balanceOf(this.provider.myAddress)
-              .call()
+              await this.providerDataForToncoin.wtonContract.methods
+                  .balanceOf(this.ethereumProvider.myAddress)
+                  .call()
           );
-          if (this.amount.gt(userErcBalance)) {
+          if (toNano(this.amount).gt(userErcBalance)) {
             this.$emit("error", {
               input: "amount",
               message: this.$t("errors.toncoinBalance", {
@@ -1529,62 +1601,108 @@ export default defineComponent({
                 balance: fromNano(userErcBalance).toString(),
               }),
             });
-            this.isInitInProgress = false;
 
+            this.isInitInProgress = false;
             return;
           }
         }
         this.isInitInProgress = false;
+
+        // Go
 
         this.state.createTime = Date.now();
         this.state.step = 1;
 
         if (this.isFromTon) {
-          this.saveState();
+          this.saveState(); // ask user to send Toncoins to bridge in TON network
         } else {
-          await this.burnForTON();
+          await this.burnWrappedToncoin(); // invoke Ethereum wallet to burn ERC-20 wrapped toncoins
         }
-      } else if (this.providerDataForJettons) {
-        this.isInitInProgress = false;
-        if (!this.isFromTon) {
-          this.isLockingInProgress = true;
+      } else { // Token transfer
 
-          const erc20Contract = new ERC20Contract(this.provider);
+        // Check balances
+
+        let amountUnits: BN;
+        let jettonWalletAddress: Address;
+
+        if (!this.isFromTon) { // EVM->TON Token transfer, check that user have `amount` of ERC-20 tokens before Lock
+          const erc20Contract = new ERC20Contract(this.ethereumProvider);
           const decimals = await erc20Contract.decimals({
             address: this.tokenAddress,
           });
+          amountUnits = new BN(
+              parseUnits(this.amount, decimals).toString()
+          );
           const balance = new BN(
-            (
-              await erc20Contract.balanceOf({
-                address: this.tokenAddress,
-                account: this.provider.myAddress,
-              })
-            ).toString()
+              (
+                  await erc20Contract.balanceOf({
+                    address: this.tokenAddress,
+                    account: this.ethereumProvider.myAddress,
+                  })
+              ).toString()
           );
-          const tokenAmountWithDecimals = new BN(
-            parseUnits(this.amount.toString(), decimals).toString()
-          );
-          if (!balance.gte(tokenAmountWithDecimals)) {
+          if (!balance.gte(amountUnits)) {
             this.$emit("error", {
               input: "amount",
               message: this.$t("errors.toncoinBalance", {
                 coin: this.tokenSymbol,
-                balance: (+formatUnits(balance.toString(), decimals)).toFixed(
-                  0
-                ),
+                balance: formatUnits(balance.toString(), decimals),
               }),
             });
-            this.isLockingInProgress = false;
+
+            this.isInitInProgress = false;
             return;
           }
+        } else { // TON->EVM Token transfer, check that user have `amount` of Jettons before Burn
 
-          await this.lockToken();
-          this.isLockingInProgress = false;
+          jettonWalletAddress = await getJettonWalletAddress({
+            tonweb: this.providerDataForJettons.tonweb,
+            userTonAddress: this.providerDataForJettons.myAddreess,
+            tokenAddress: this.tokenAddress,
+          });
+
+          const {decimals, tokenAddress: jettonEvmAddress} =
+              await getWrappedTokenData(
+                  this.providerDataForJettons.tonweb,
+                  this.tokenAddress
+              );
+          this.state.jettonEvmAddress = jettonEvmAddress;
+
+          const balance = await getJettonWalletBalance(
+              this.providerDataForJettons.tonweb,
+              jettonWalletAddress!.toString(true, true, true)
+          );
+
+          amountUnits = new BN(parseUnits(this.amount, decimals).toString());
+
+          if (!balance.gte(amountUnits)) {
+            this.$emit("error", {
+              input: "amount",
+              message: this.$t("errors.toncoinBalance", {
+                coin: this.tokenSymbol,
+                balance: formatUnits(balance.toString(), decimals),
+              }),
+            });
+
+            this.isInitInProgress = false;
+            return;
+          }
+        }
+
+        this.isInitInProgress = false;
+
+        // Go
+
+        this.state.createTime = Date.now();
+        this.state.step = 1;
+
+        if (this.isFromTon) { // TON->EVM token transfer - Burn jettons
           this.saveState();
-        } else {
-          this.isInitInProgress = false;
+          await this.burnJetton(amountUnits, jettonWalletAddress); // invoke TON wallet to burn jettons
 
-          await this.burnJetton();
+        } else { // EVM->TON token transfer - Lock ERC-20 Tokens
+          this.saveState();
+          await this.lockToken(amountUnits); // invoke Ethereum wallet to lock ERC-20 tokens
         }
       }
     },

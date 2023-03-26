@@ -1,35 +1,43 @@
 <template>
   <div class="Bridge">
+
+    <!-- Header -->
+
     <Header
-      :is-testnet="isTestnet"
-      :show-menu="isConnected && walletsPopupState === 'closed'"
-      :provider="provider"
-      :is-history-shown="history.isShown"
-      :disable-disconnect="isTransferInProgress"
+        :is-testnet="isTestnet"
+        :show-menu="isEthereumWalletConnected && walletsPopupState === 'closed'"
+        :ethereumProvider="ethereumProvider"
+        :disable-disconnect="isTransferInProgress"
     >
     </Header>
 
-    <div class="Bridge-content" :style="contentStyle">
+    <div class="Bridge-content">
       <div></div>
       <main>
+
+        <!-- Image -->
+
         <div class="Bridge-img" :class="{ isFromTon }">
           <div class="Bridge-imgAspect"></div>
         </div>
+
+        <!-- Network Switcher Left -->
+
         <div class="Bridge-form">
           <div class="Bridge-switchers" :class="{ isFromTon }">
             <div class="Bridge-switcher" :class="{ disabled: isPairsBlocked }">
               <div class="Bridge-switcherTitle">
                 <span
-                  >{{ $t(`networks.ton.${netTypeName}.nameSwitcher`) }}<em></em
+                >{{ $t(`networks.ton.${netTypeName}.nameSwitcher`) }}<em></em
                 ></span>
                 <ul
-                  class="Bridge-switcherList"
-                  :class="{ left: isFromTon, right: !isFromTon }"
+                    class="Bridge-switcherList"
+                    :class="{ left: isFromTon, right: !isFromTon }"
                 >
                   <li v-for="(item, index) in fromPairs" :key="item">
                     <button
-                      :disabled="index === 0"
-                      @click="onPairClick(true, item)"
+                        :disabled="index === 0"
+                        @click="onPairClick(true, item)"
                     >
                       {{ $t(`networks.${item}.${netTypeName}.name`) }}
                     </button>
@@ -41,26 +49,31 @@
               </div>
             </div>
 
+            <!-- Network Switcher Arrow -->
+
             <button
-              class="Bridge-switcher-arrow"
-              :disabled="isPairsBlocked"
-              @click="toggleFromTon"
+                class="Bridge-switcher-arrow"
+                :disabled="isPairsBlocked"
+                @click="toggleFromTon"
             ></button>
+
+            <!-- Network Switcher Right -->
 
             <div class="Bridge-switcher" :class="{ disabled: isPairsBlocked }">
               <div class="Bridge-switcherTitle">
                 <span
-                  >{{ $t(`networks.${pair}.${netTypeName}.nameSwitcher`)
+                >{{
+                    $t(`networks.${pair}.${netTypeName}.nameSwitcher`)
                   }}<em></em
-                ></span>
+                  ></span>
                 <ul
-                  class="Bridge-switcherList"
-                  :class="{ left: !isFromTon, right: isFromTon }"
+                    class="Bridge-switcherList"
+                    :class="{ left: !isFromTon, right: isFromTon }"
                 >
                   <li v-for="(item, index) in toPairs" :key="item">
                     <button
-                      :disabled="index === 0"
-                      @click="
+                        :disabled="index === 0"
+                        @click="
                         onPairClick(
                           item === 'ton',
                           item === 'ton' ? pair : item
@@ -74,179 +87,181 @@
               </div>
               <div v-if="token === 'ton'" class="Bridge-switcherAnno">
                 <a :href="pairNetworkCoinUrl" target="_blank">{{
-                  $t(`networks.${pair}.${netTypeName}.coin`)
-                }}</a>
+                    $t(`networks.${pair}.${netTypeName}.coin`)
+                  }}</a>
               </div>
             </div>
           </div>
 
-          <CustomInput
-            key="token"
-            :disabled="isInputsBlocked || !this.isTestnet"
-            :label="$t('sendToken')"
-            type="text"
-            :dropdown="[
-              { label: 'Toncoin', value: 'ton' },
-              { label: 'Other tokens', value: 'otherTokens' },
-            ]"
-            v-model="token"
-          ></CustomInput>
-          <CustomInput
-            v-if="token !== 'ton'"
-            key="tokenAddress"
-            :disabled="isInputsBlocked"
-            :label="$t('tokenAddress')"
-            type="text"
-            :error="errors.tokenAddress"
-            @changed="errors.tokenAddress = ''"
-            @blur="checkInputs"
-            v-model="tokenAddress"
-          ></CustomInput>
-          <CustomInput
-            key="amountInput"
-            :disabled="isInputsBlocked"
-            :label="
-              $t('amountOfTon', {
-                tokenSymbol,
-              })
-            "
-            type="number"
-            :error="errors.amount"
-            @changed="errors.amount = ''"
-            @blur="checkInputs"
-            v-model="amountInput"
-          ></CustomInput>
+          <!-- Toncoin/Other Tokens selector -->
 
           <CustomInput
-            key="toAddress"
-            :disabled="isInputsBlocked"
-            :label="$t(`addressInputLabel`)"
-            type="text"
-            :error="errors.toAddress"
-            @changed="errors.toAddress = ''"
-            @blur="checkInputs"
-            v-model="toAddress"
+              key="token"
+              :disabled="isInputsBlocked || !this.isTestnet"
+              :label="$t('sendToken')"
+              type="text"
+              :dropdown="[
+              { label: 'Toncoin', value: 'ton' },
+              { label: $t('otherTokens'), value: 'otherTokens' },
+            ]"
+              v-model="token"
           ></CustomInput>
+
+          <!-- Token Address input -->
+
+          <CustomInput
+              v-if="!isToncoinTransfer"
+              key="tokenAddress"
+              :disabled="isInputsBlocked"
+              :label="$t('tokenAddress', {network: isFromTon ? 'TON' : pair.toUpperCase()})"
+              type="text"
+              :error="errors.tokenAddress"
+              @changed="errors.tokenAddress = ''"
+              @blur="checkInputs"
+              v-model="tokenAddress"
+          ></CustomInput>
+
+          <!-- Amount input -->
+
+          <CustomInput
+              key="amountInput"
+              :disabled="isInputsBlocked"
+              :label="$t('amountOfTon', {tokenSymbol})"
+              type="text"
+              :error="errors.amount"
+              @changed="errors.amount = ''"
+              @blur="checkInputs"
+              v-model="amountInput"
+          ></CustomInput>
+
+          <!-- To Address input -->
+
+          <CustomInput
+              key="toAddress"
+              :disabled="isInputsBlocked"
+              :label="$t(`addressInputLabel`, {network: isFromTon ? pair.toUpperCase() : 'TON'})"
+              type="text"
+              :error="errors.toAddress"
+              @changed="errors.toAddress = ''"
+              @blur="checkInputs"
+              v-model="toAddress"
+          ></CustomInput>
+
+          <!-- "You will receive {fee} {coin}" -->
 
           <div
-            class="Bridge-willReceive"
-            v-show="
-              (!isTransferInProgress ||
-                !isConnected ||
-                bridgeProcessorIsLoading) &&
-              willReceive
-            "
-            :class="{ isFromTon }"
+              class="Bridge-willReceive"
+              v-show="!isTransferInProgress && willReceive"
+              :class="{ isFromTon }"
           >
             {{ willReceive }}
           </div>
 
           <div class="Bridge-bridgeWrapper">
+
+            <!-- Connect wallet button -->
+
             <button
-              v-if="!isConnected"
-              class="Bridge-connect"
-              @click="walletsPopupState = 'opened'"
+                v-if="!isEthereumWalletConnected"
+                class="Bridge-connect"
+                @click="walletsPopupState = 'opened'"
             >
               {{ $t("connectWallet") }}
             </button>
 
+            <!-- Loading -->
+
             <div
-              class="Bridge-bridgeLoader"
-              v-if="isConnected && bridgeProcessorIsLoading"
+                class="Bridge-bridgeLoader"
+                v-if="isEthereumWalletConnected && bridgeProcessorIsLoading"
             ></div>
 
+            <!-- BridgeProcessor -->
+
             <BridgeProcessor
-              v-if="isConnected"
-              ref="bridgeProcessor"
-              :key="pair"
-              :is-testnet="isTestnet"
-              :is-recover="isRecover"
-              :lt="lt"
-              :hash="hash"
-              :is-from-ton="isFromTon"
-              :pair="pair"
-              :tokenAddress="tokenAddress"
-              :amount="amount"
-              :to-address="toAddress"
-              :tokenSymbol="tokenSymbol"
-              :provider="provider"
-              :token="token"
-              :is-inputs-valid="isInputsValid"
-              @transfer-in-progress="onTransferInProgress"
-              @state-changed="getPairGasFee__debounced"
-              @reset-state="resetState"
-              @save-state="saveState"
-              @delete-state="deleteState"
-              @ready="onBridgeProcessorReady"
-              @error="onBridgeTransferError"
+                v-if="isEthereumWalletConnected"
+                ref="bridgeProcessor"
+                :key="pair"
+                :is-testnet="isTestnet"
+                :is-recover="isRecover"
+                :lt="lt"
+                :hash="hash"
+                :is-from-ton="isFromTon"
+                :pair="pair"
+                :tokenAddress="tokenAddress"
+                :amount="amountInput"
+                :to-address="toAddress"
+                :tokenSymbol="tokenSymbol"
+                :ethereumProvider="ethereumProvider"
+                :token="token"
+                :is-inputs-valid="isInputsValid"
+                @transfer-in-progress="onTransferInProgress"
+                @state-changed="getPairGasFee__debounced"
+                @reset-state="resetState"
+                @save-state="saveState"
+                @delete-state="deleteState"
+                @ready="onBridgeProcessorReady"
+                @error="onBridgeTransferError"
             ></BridgeProcessor>
           </div>
 
+          <!-- "Ethereum gas fee ~ {fee} ETH" -->
+
           <div
-            class="Bridge-pairFee"
-            v-show="
-              !isTransferInProgress || !isConnected || bridgeProcessorIsLoading
-            "
+              class="Bridge-pairFee"
+              v-show="!isTransferInProgress"
           >
             {{ pairFee }}
           </div>
+
+          <!-- "Bridge fee - 5 TON + 0.25% of amount" -->
+
           <div
-            class="Bridge-bridgeFee"
-            v-show="
-              !isTransferInProgress || !isConnected || bridgeProcessorIsLoading
-            "
+              class="Bridge-bridgeFee"
+              v-show="!isTransferInProgress"
           >
             {{ bridgeFee }}
           </div>
         </div>
       </main>
 
+      <!-- Footer -->
+
       <Footer></Footer>
     </div>
 
+    <!-- Connect Wallet Popup -->
+
     <WalletsPopup
-      v-if="walletsPopupState !== 'closed'"
-      :params="params"
-      :uncancellable="walletsPopupState === 'opened-uncancellable'"
-      @wallet-connected="onWalletConnected"
-      @cancel="walletsPopupState = 'closed'"
+        v-if="walletsPopupState !== 'closed'"
+        :params="params"
+        :uncancellable="walletsPopupState === 'opened-uncancellable'"
+        @wallet-connected="onWalletConnected"
+        @cancel="walletsPopupState = 'closed'"
     >
     </WalletsPopup>
 
-    <!-- <History
-      v-if="history.isShown"
-      :provider="provider"
-      :is-testnet="isTestnet"
-      :token="token"
-      :network="history.network"
-      :address="history.address"
-      @open-wallets-popup="walletsPopupState = 'opened'"
-    >
-    </History> -->
   </div>
 </template>
 
 <script lang="ts">
 import BN from "bn.js";
 import lodashDebounce from "lodash.debounce";
-import debounce from "lodash.debounce";
 import TonWeb from "tonweb";
-import { defineComponent, markRaw, StyleValue } from "vue";
+import {defineComponent, markRaw} from "vue";
 import Web3 from "web3";
 
-import { getWrappedTokenData } from "@/ton-bridge-lib/BridgeJettonUtils";
 import BridgeProcessor from "@/components/BridgeProcessor/index.vue";
 import CustomInput from "@/components/CustomInput/index.vue";
 import Footer from "@/components/Footer/index.vue";
 import Header from "@/components/Header/index.vue";
-// import History from "@/components/History/index.vue";
 import WalletsPopup from "@/components/WalletsPopup/index.vue";
-import { PARAMS } from "@/utils/constants";
-import { supportsLocalStorage } from "@/utils/helpers";
-import { Provider } from "@/utils/providers/provider";
-import { ERC20Contract } from "@/utils/services/ERC20.contract";
+import {MINIMUM_TONCOIN_AMOUNT, PARAMS} from "@/utils/constants";
+import {supportsLocalStorage} from "@/utils/helpers";
+import {Provider} from "@/utils/providers/provider";
 
-import { ComponentData } from "./types";
+import {ComponentData} from "./types";
+import {decToBN} from "@/ton-bridge-lib/Paranoid";
 
 const PAIRS = ["eth", "bsc"];
 const fromNano = TonWeb.utils.fromNano;
@@ -261,7 +276,6 @@ export default defineComponent({
     CustomInput,
     Header,
     Footer,
-    // History,
   },
 
   head(): object {
@@ -273,34 +287,30 @@ export default defineComponent({
   data(): ComponentData {
     return {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
-      getPairGasFee__debounced: () => {},
+      getPairGasFee__debounced: () => {
+      },
       gasPrice: 0,
 
-      isTestnet: false,
-      isRecover: false,
-      lt: 0,
-      hash: "",
+      isTestnet: false, // immutable parameter from url
+      isRecover: false, // immutable parameter from url
+      lt: 0, // immutable parameter from url
+      hash: "", // immutable parameter from url
 
-      isFromTon: true,
-      pair: "eth",
-      token: "ton",
-      amountInput: "",
-      toAddress: "",
-      tokenAddress: "",
-      provider: null,
+      isFromTon: true, // transfer direction - to-ton-network or from-ton-network
+      pair: "eth", // "eth" or "bsc"
+      token: "ton", // "ton" or "otherTokens"
+      amountInput: "", // float as string, "" if no value
+      toAddress: "", // Ethereum or TON to address
+      tokenAddress: "", // Ethereum or TON token address
 
       tokenSymbol: "TON",
 
-      isTransferInProgress: false,
-      isConnected: false,
       walletsPopupState: "closed",
-      bridgeProcessorIsLoading: false,
-      history: {
-        address: "",
-        network: "",
-        isShown: false,
-      },
-      mainPageFixedPosition: 0,
+      ethereumProvider: null, // Ethereum provider
+      isEthereumWalletConnected: false, // ethereumProvider !== null
+      bridgeProcessorIsLoading: false, // from connect wallet to BridgeProcessor creation
+      isTransferInProgress: false,
+
       errors: {
         amount: "",
         toAddress: "",
@@ -310,8 +320,11 @@ export default defineComponent({
   },
 
   computed: {
+    isToncoinTransfer(): boolean {
+      return this.token === "ton";
+    },
     isInputsValid(): boolean {
-      return !this.errors.amount && !this.errors.toAddress;
+      return !this.errors.amount && !this.errors.toAddress && (this.isToncoinTransfer || !this.errors.tokenAddress);
     },
     netTypeName(): string {
       return this.isTestnet ? "test" : "main";
@@ -328,60 +341,76 @@ export default defineComponent({
     willReceive(): string {
       if (this.bridgeFeeAmount.isZero()) {
         return "";
-      } else {
+      }
+
+      if (this.isToncoinTransfer) {
         const coin = this.$t(
-          `networks.${this.isFromTon ? this.pair : "ton"}.${
-            this.netTypeName
-          }.coin`
+            `networks.${this.isFromTon ? this.pair : "ton"}.${
+                this.netTypeName
+            }.coin`
         );
         return this.$t("willReceive", {
           coin,
-          fee: fromNano(this.amount.sub(this.bridgeFeeAmount)),
+          fee: fromNano(toNano(this.amountInput).sub(this.bridgeFeeAmount)),
         });
+      } else {
+        return "";
       }
     },
     pairFee(): string {
       const n = this.gasPrice ? this.gasPrice / this.params.defaultGwei : 1;
-      const fee = this.isFromTon
-        ? this.params.coinsPerGweiTo * n
-        : this.params.coinsPerGweiFrom * n;
+      const toncoinFee = this.isFromTon
+          ? this.params.toncoinTransferTo_gasPrice * n
+          : this.params.toncoinTransferFrom_gasPrice * n;
+
+      const tokenFee = this.isFromTon
+          ? this.params.tokenTransferTo_gasPrice * n
+          : this.params.tokenTransferFrom_gasPrice * n;
+
+      const fee = this.isToncoinTransfer ? toncoinFee : tokenFee;
 
       return this.$t(`networks.${this.pair}.gasFee`, {
         fee: fee.toFixed(4),
       });
     },
-    amount(): BN {
-      try {
-        if (this.token === "ton") {
-          return toNano(this.amountInput.toString());
-        } else {
-          return new BN(this.amountInput.toString());
+    bridgeFeeAmount(): BN { // in nanoton
+
+      if (this.isToncoinTransfer) {
+        let amount = undefined;
+        try {
+          amount = toNano(this.amountInput);
+        } catch (e) {
         }
-      } catch (e) {
-        return new BN(0);
-      }
-    },
-    bridgeFeeAmount(): BN {
-      if (this.amount.lt(toNano("10"))) {
-        return new BN(0);
-      } else {
-        const fixedFeeNano = toNano("5");
-        const floatFeeNano = this.amount.sub(fixedFeeNano);
-        //10000 is multiplier to get integer value for 0.2500%
-        //100 is divider to convert percentages to fraction
-        return floatFeeNano
-          .muln(0.25 * 10000)
-          .divn(10000 * 100)
-          .add(fixedFeeNano); //5 + (this.amount - 5) * (0.25 / 100)
+        if (amount === undefined) {
+          return new BN(0);
+        }
+        if (amount.lt(MINIMUM_TONCOIN_AMOUNT)) {
+          return new BN(0);
+        } else {
+          const feeFlat = toNano('5');
+          const feeFactor = decToBN('25');
+          const feeBase = decToBN('10000');
+          const rest = amount.sub(feeFlat);
+          const percentFee = rest
+              .mul(feeFactor)
+              .div(feeBase);
+          return feeFlat.add(percentFee);
+        }
+      } else { // token transfer - fixed 1 TON fee
+        return toNano("1");
       }
     },
     bridgeFee(): string {
-      if (this.bridgeFeeAmount.isZero()) {
-        return this.$t("bridgeFeeBelow10");
+      if (this.token === 'ton') {
+        if (this.bridgeFeeAmount.isZero()) {
+          return this.$t("bridgeFeeBelow10");
+        } else {
+          return this.$t("bridgeFeeAbove10", {
+            fee: fromNano(this.bridgeFeeAmount),
+          });
+        }
       } else {
-        return this.$t("bridgeFeeAbove10", {
-          fee: fromNano(this.bridgeFeeAmount),
-        });
+        return this.$t("tokenBridgeFee")
       }
     },
     fromPairs(): string[] {
@@ -391,43 +420,14 @@ export default defineComponent({
       return [this.pair, ...PAIRS.filter((i) => i !== this.pair), "ton"];
     },
     isPairsBlocked(): boolean {
-      return this.isTransferInProgress /* || this.isConnected*/;
+      return this.isTransferInProgress;
     },
     isInputsBlocked(): boolean {
-      return this.isTransferInProgress || !this.provider;
-    },
-    contentStyle(): StyleValue {
-      if (this.history.isShown) {
-        return {
-          position: "fixed",
-          top: -this.mainPageFixedPosition + "px",
-        };
-      } else {
-        return {};
-      }
+      return this.isTransferInProgress;
     },
   },
 
   watch: {
-    "$route.query": {
-      immediate: true,
-      handler(newVal: any) {
-        if (newVal.historyAddress && newVal.historyNetwork) {
-          this.history.isShown = true;
-          this.history.address = newVal.historyAddress;
-          this.history.network = newVal.historyNetwork;
-        } else {
-          this.history.isShown = false;
-        }
-      },
-    },
-    "history.isShown"(newVal: boolean) {
-      if (newVal) {
-        this.mainPageFixedPosition = window.pageYOffset;
-      } else {
-        this.mainPageFixedPosition = 0;
-      }
-    },
     isFromTon(newVal: boolean, oldVal: boolean) {
       this.getPairGasFee__debounced();
 
@@ -442,27 +442,29 @@ export default defineComponent({
         this.checkInputs();
       }
 
-      if (newVal !== oldVal && this.isConnected && this.provider) {
-        const isChanged = await this.provider.switchChain(this.params.chainId);
-        if (!isChanged) {
-          this.pair = oldVal;
-        }
-      }
+      // if (newVal !== oldVal && this.isEthereumWalletConnected && this.ethereumProvider) {
+      //   const isChanged = await this.ethereumProvider.switchChain(this.params.chainId);
+      //   if (!isChanged) {
+      //     this.pair = oldVal;
+      //   }
+      // }
     },
   },
 
   created() {
     this.getPairGasFee__debounced = lodashDebounce(this.getPairGasFee, 100);
 
+    // Get params from url in case of recovery
+
     if (this.$route.query.testnet) {
       this.isTestnet =
-        this.$route.query.testnet.toString().toLowerCase() === "true";
+          this.$route.query.testnet.toString().toLowerCase() === "true";
     }
     if (this.$route.query.recover || this.$route.query.recovery) {
       const isRecover =
-        (this.$route.query.recover?.toString() || "").toLowerCase() === "true";
+          (this.$route.query.recover?.toString() || "").toLowerCase() === "true";
       const isRecovery =
-        (this.$route.query.recovery?.toString() || "").toLowerCase() === "true";
+          (this.$route.query.recovery?.toString() || "").toLowerCase() === "true";
       this.isRecover = isRecover || isRecovery;
     }
     if (this.$route.query.lt) {
@@ -474,7 +476,7 @@ export default defineComponent({
     }
     if (this.$route.query.amount) {
       try {
-        this.amountInput = fromNano(this.$route.query.amount.toString());
+        this.amountInput = this.$route.query.amount.toString();
       } catch (e) {
         this.amountInput = ""; // for empty string inside input
       }
@@ -484,8 +486,8 @@ export default defineComponent({
     }
     if (this.$route.query.fromNetwork && this.$route.query.toNetwork) {
       const fromNetwork = this.$route.query.fromNetwork
-        .toString()
-        .toLowerCase();
+          .toString()
+          .toLowerCase();
       const toNetwork = this.$route.query.toNetwork.toString().toLowerCase();
 
       if (fromNetwork === "ton" && PAIRS.includes(toNetwork)) {
@@ -498,6 +500,16 @@ export default defineComponent({
         this.pair = fromNetwork;
       }
     }
+    if (this.$route.query.token) {
+      const t = this.$route.query.token.toString().toLowerCase();
+      if (t === 'ton') {
+        this.token = 'ton';
+        this.tokenAddress = '';
+      } else {
+        this.token = 'otherTokens';
+        this.tokenAddress = t;
+      }
+    }
   },
 
   mounted() {
@@ -506,64 +518,79 @@ export default defineComponent({
     this.checkInputs();
 
     this.$watch(
-      () => [this.tokenAddress, this.token, this.isFromTon],
-      debounce(async ([newTokenAddress, newToken]: any) => {
-        if (newToken === "ton") {
-          this.tokenSymbol = "TON";
-        } else {
-          this.tokenSymbol = "";
-          if (this.isFromTon) {
-            if (
-              newTokenAddress &&
-              TonWeb.utils.Address.isValid(newTokenAddress)
-            ) {
-              try {
-                const wrappedTokenData = await getWrappedTokenData(
-                  new TonWeb(new TonWeb.HttpProvider(this.params.tonCenterUrl, {
-                    apiKey: this.params.tonCenterApiKey
-                  })),
-                  this.tokenAddress
-                );
-                // if (wrappedTokenData.symbol) {
-                //   this.tokenSymbol = wrappedTokenData.symbol;
-                // }
-              } catch (error) {
-                console.error(error);
-                this.tokenSymbol = "";
-              }
-            }
+        () => [this.tokenAddress, this.token, this.isFromTon],
+        ([newTokenAddress, newToken]) => {
+          if (newToken === "ton") {
+            this.tokenSymbol = "TON";
           } else {
-            if (
-              newTokenAddress &&
-              Web3.utils.isAddress(newTokenAddress) &&
-              this.provider
-            ) {
-              try {
-                const erc20Contract = new ERC20Contract(this.provider as any);
-                const symbol = await erc20Contract.symbol(newTokenAddress);
-                this.tokenSymbol = symbol;
-              } catch (error) {
-                this.tokenSymbol = "";
-              }
-            } else {
-              this.tokenSymbol = "";
-            }
+            this.tokenSymbol = "";
           }
         }
-      }, 300)
     );
   },
 
   methods: {
     checkInputs() {
+      this.errors.tokenAddress = "";
       this.errors.amount = "";
       this.errors.toAddress = "";
-      this.errors.tokenAddress = "";
+
+      // check tokenAddress input
+
+      if (this.isFromTon) {
+        if (!TonWeb.utils.Address.isValid(this.tokenAddress)) {
+          this.errors.tokenAddress = this.$t(
+              `networks.ton.errors.invalidAddress`
+          );
+        }
+      } else {
+        if (!Web3.utils.isAddress(this.tokenAddress)) {
+          this.errors.tokenAddress = this.$t(
+              `networks.${this.pair}.errors.invalidAddress`
+          );
+        }
+
+        if (this.tokenAddress.toLowerCase() === this.params.wTonAddress.toLowerCase()) {
+          this.errors.tokenAddress = this.$t(
+              `networks.${this.pair}.errors.invalidAddress`
+          );
+        }
+      }
+
+      // check amount input
+
+      if (this.token === "ton") {
+        let amount = undefined;
+        try {
+          amount = toNano(this.amountInput);
+        } catch (e) {
+          this.errors.amount = this.$t("errors.notValidAmount");
+        }
+
+        if (amount !== undefined && amount.lt(MINIMUM_TONCOIN_AMOUNT)) {
+          this.errors.amount = this.$t("errors.amountBelow10");
+        }
+      } else {
+        let amount = undefined;
+        try {
+          if (this.amountInput.trim().startsWith('0x')) throw new Error();
+          amount = Number(this.amountInput);
+          if (isNaN(amount)) throw new Error();
+        } catch (e) {
+          this.errors.amount = this.$t("errors.notValidAmount");
+        }
+
+        if (amount !== undefined && amount <= 0) {
+          this.errors.amount = this.$t("errors.notValidAmount");
+        }
+      }
+
+      // check toAddress input
 
       if (this.isFromTon) {
         if (!Web3.utils.isAddress(this.toAddress)) {
           this.errors.toAddress = this.$t(
-            `networks.${this.pair}.errors.invalidAddress`
+              `networks.${this.pair}.errors.invalidAddress`
           );
         }
       } else {
@@ -571,49 +598,31 @@ export default defineComponent({
           this.errors.toAddress = this.$t(`networks.ton.errors.invalidAddress`);
         }
       }
-      if (this.isFromTon) {
-        if (!TonWeb.utils.Address.isValid(this.tokenAddress)) {
-          this.errors.tokenAddress = this.$t(
-            `networks.ton.errors.invalidAddress`
-          );
-        }
-      } else {
-        if (!Web3.utils.isAddress(this.tokenAddress)) {
-          this.errors.tokenAddress = this.$t(
-            `networks.${this.pair}.errors.invalidAddress`
-          );
-        }
-      }
-      if (this.token === "ton") {
-        if (this.amount.lt(toNano("10"))) {
-          this.errors.amount = this.$t("errors.amountBelow10");
-        }
-        try {
-          toNano(this.amountInput.toString());
-        } catch (e) {
-          this.errors.amount = this.$t("errors.notValidAmount");
-        }
-        if (
-          this.toAddress.toLowerCase() ===
-            this.params.wTonAddress.toLowerCase() ||
-          this.toAddress.toLowerCase() ===
-            this.params.tonBridgeAddress.toLowerCase()
-        ) {
-          this.errors.toAddress = this.$t("errors.needPersonalAddress");
-        }
-      } else {
-        //
+
+      if (
+          this.toAddress.toLowerCase() === this.params.wTonAddress.toLowerCase() ||
+          this.toAddress.toLowerCase() === this.params.tonBridgeAddress.toLowerCase() ||
+          this.toAddress.toLowerCase() === this.params.tonBridgeV2EVMAddress.toLowerCase() ||
+          this.toAddress.toLowerCase() === this.params.tonBridgeAddressV2.toLowerCase() ||
+          (this.tokenAddress && this.toAddress.toLowerCase() === this.tokenAddress.toLowerCase())
+      ) {
+        this.errors.toAddress = this.$t("errors.needPersonalAddress");
       }
     },
     onPairClick(switchDirection: boolean, toPair: string) {
       if (this.isPairsBlocked) {
         return;
       }
-
       if (switchDirection) {
         this.isFromTon = !this.isFromTon;
       }
       this.pair = toPair;
+    },
+    toggleFromTon() {
+      if (this.isPairsBlocked) {
+        return;
+      }
+      this.isFromTon = !this.isFromTon;
     },
     resetState() {
       this.isRecover = false;
@@ -640,9 +649,10 @@ export default defineComponent({
 
         this.amountInput = state.amount;
         this.toAddress = state.toAddress;
-        this.tokenAddress = state.tokenAddress;
         this.pair = state.pair;
-        this.isFromTon = (state.processingState as any).isFromTon;
+        this.isFromTon = state.isFromTon;
+        this.token = state.token;
+        this.tokenAddress = state.tokenAddress;
 
         this.isTransferInProgress = true;
       }
@@ -662,8 +672,6 @@ export default defineComponent({
           return;
         }
 
-        this.token = (state.processingState as any).token;
-        this.tokenAddress = (state.processingState as any).tokenAddress;
         console.log("loadState");
         // TODO vuex
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -680,6 +688,9 @@ export default defineComponent({
         amount: this.amountInput,
         toAddress: this.toAddress,
         pair: this.pair,
+        isFromTon: this.isFromTon,
+        token: this.token,
+        tokenAddress: this.tokenAddress,
         processingState: processingState,
       };
 
@@ -695,12 +706,6 @@ export default defineComponent({
     onTransferInProgress(isActive: boolean) {
       this.isTransferInProgress = isActive;
       this.checkInputs();
-    },
-    toggleFromTon() {
-      if (this.isPairsBlocked) {
-        return;
-      }
-      this.isFromTon = !this.isFromTon;
     },
     async getPairGasFee(): Promise<void> {
       let data;
@@ -732,20 +737,20 @@ export default defineComponent({
 
       this.gasPrice = gasPrice > 0 ? gasPrice : this.params.defaultGwei;
     },
-    onWalletConnected(provider: Provider) {
-      this.provider = markRaw(provider) as any;
+    onWalletConnected(ethereumProvider: Provider) {
+      this.ethereumProvider = markRaw(ethereumProvider) as any;
       // TODO vuex
       this.bridgeProcessorIsLoading = !this.$refs.bridgeProcessor;
-      this.isConnected = true;
+      this.isEthereumWalletConnected = true;
       this.walletsPopupState = "closed";
       (this.$refs?.bridgeProcessor as any)?.onTokenChange(this.token);
 
-      this.provider!.on("disconnect", () => {
+      this.ethereumProvider!.on("disconnect", () => {
         if (this.isTransferInProgress) {
           this.walletsPopupState = "opened-uncancellable";
         } else {
-          this.provider = null;
-          this.isConnected = false;
+          this.ethereumProvider = null;
+          this.isEthereumWalletConnected = false;
           this.bridgeProcessorIsLoading = false;
         }
       });

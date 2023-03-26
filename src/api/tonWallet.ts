@@ -3,13 +3,13 @@ import TonWeb from "tonweb";
 import { Address } from "tonweb/dist/types/utils/address";
 
 async function burnJetton({
-  tonwebWallet,
+  tonWallet,
   destinationAddress,
   userTonAddress,
   jettonWalletAddress,
   jettonAmountWithDecimals,
 }: {
-  tonwebWallet: any;
+  tonWallet: any;
   destinationAddress: BN;
   userTonAddress: Address;
   jettonWalletAddress: Address | null;
@@ -30,9 +30,9 @@ async function burnJetton({
   burnPayload.refs.push(customPayload);
 
 
-  await tonwebWallet.provider.send("ton_sendTransaction", [
+  await tonWallet.send("ton_sendTransaction", [
     {
-      to: jettonWalletAddress?.toString(true, true, true),
+      to: jettonWalletAddress.toString(true, true, true),
       value: TonWeb.utils.toNano("1").toString(),
       data: TonWeb.utils.bytesToBase64(await burnPayload.toBoc()),
       dataType: "boc",
@@ -41,11 +41,11 @@ async function burnJetton({
 }
 
 async function mintJetton({
-  tonwebWallet,
+  tonWallet,
   queryId,
   bridgeTonAddress,
 }: {
-  tonwebWallet: any;
+  tonWallet: any;
   queryId: string;
   bridgeTonAddress: string;
 }) {
@@ -55,7 +55,7 @@ async function mintJetton({
   mintPayload.bits.writeUint(mintOP, 32);
   mintPayload.bits.writeUint(new TonWeb.utils.BN(queryId), 64);
 
-  await tonwebWallet.provider.send("ton_sendTransaction", [
+  await tonWallet.send("ton_sendTransaction", [
     {
       to: bridgeTonAddress,
       value: TonWeb.utils.toNano("1").toString(),

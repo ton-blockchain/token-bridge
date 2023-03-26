@@ -2,13 +2,14 @@ import {EvmTransaction, getQueryId} from "./BridgeCommon";
 import TonWeb from "tonweb";
 import {sendInternal, getNumber} from "./BridgeTonUtils";
 import {WalletContract} from "tonweb/dist/types/contract/wallet/wallet-contract";
+import {decToBN} from "./Paranoid";
 
 export function getMultisigWalletId(chainId: number): number {
     switch (chainId) {
         case 56: // BSC mainnet
             return 3;
         case 97: // BSC testnet
-            return 3;
+            return 97;
         case 1: // ETH mainnet
             return 4;
         case 5: // ETH testnet Goerli
@@ -58,11 +59,11 @@ export async function sendToMultisig(tonweb: TonWeb, wallet: WalletContract, sec
     const msgToBridge = TonWeb.Contract.createCommonMsgInfo(orderHeader, undefined, payload);
 
     const cell = new TonWeb.boc.Cell();
-    cell.bits.writeUint(tonMultisigIndex, 8);
+    cell.bits.writeUint(decToBN(tonMultisigIndex), 8);
     cell.bits.writeBit(0); // null signatures dict
-    cell.bits.writeUint(WALLET_ID, 32);
+    cell.bits.writeUint(decToBN(WALLET_ID), 32);
     cell.bits.writeUint(queryId, 64);
-    cell.bits.writeUint(3, 8); // send mode 3
+    cell.bits.writeUint(decToBN(3), 8); // send mode 3
     cell.refs.push(msgToBridge);
 
     const rootHash: Uint8Array = await cell.hash();

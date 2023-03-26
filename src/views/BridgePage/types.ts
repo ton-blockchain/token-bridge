@@ -17,18 +17,12 @@ type ComponentData = {
   amountInput: string;
   toAddress: string;
   tokenAddress: string;
-  provider: Provider | null;
+  ethereumProvider: Provider | null;
 
   isTransferInProgress: boolean;
-  isConnected: boolean;
+  isEthereumWalletConnected: boolean;
   walletsPopupState: string;
   bridgeProcessorIsLoading: boolean;
-  history: {
-    address: string;
-    network: string;
-    isShown: boolean;
-  };
-  mainPageFixedPosition: number;
   errors: {
     amount: string;
     toAddress: string;

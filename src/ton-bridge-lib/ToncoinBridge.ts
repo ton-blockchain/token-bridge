@@ -13,8 +13,7 @@ import {
     parseWc
 } from "./BridgeEvmUtils";
 import {findLogOutMsg, getMessageBytes, makeAddress} from "./BridgeTonUtils";
-
-const BN = TonWeb.utils.BN;
+import {base64ToBytes, bytesToHex, calculateToncoinFee, checkNull, decToBN, hexToBN} from "./Paranoid";
 
 const BURN_INPUT_LENGTH = 202;
 const BURN_INPUT_PREFIX = '0xe057fbff';
@@ -47,16 +46,16 @@ export interface SwapTonToEth extends TonTransaction {
 export class ToncoinBridge {
 
     static getFeeAmount(amount: any /* BN */) /* BN */ {
-        const feeFlat = new BN(5000000000);
-        const feeFactor = new BN(25);
-        const feeBase = new BN(10000);
-
-        const rest = amount.sub(feeFlat);
-        const percentFee = rest.mul(feeFactor).div(feeBase);
-        return feeFlat.add(percentFee);
+        return calculateToncoinFee(amount)
     }
 
     static getDataId(web3: Web3, d: SwapTonToEth, target?: string): string {
+        checkNull(d.receiver);
+        checkNull(d.amount);
+        checkNull(d.tx.address_.workchain);
+        checkNull(d.tx.address_.address_hash);
+        checkNull(d.tx.tx_hash);
+        checkNull(d.tx.lt);
         if (target) {
             return hash(
                 web3.eth.abi.encodeParameters(
@@ -133,13 +132,13 @@ export class ToncoinBridge {
 
     static createMultisigMsgBody(ethToTon: SwapEthToTonEvent) /* Cell */ {
         const payload = new TonWeb.boc.Cell();
-        payload.bits.writeUint(4, 32); // op
-        payload.bits.writeUint(0, 8); // vote op
-        payload.bits.writeUint(new TonWeb.utils.BN(ethToTon.transactionHash.substr(2), 16), 256);
-        payload.bits.writeInt(ethToTon.logIndex, 16);
+        payload.bits.writeUint(decToBN(4), 32); // op
+        payload.bits.writeUint(decToBN(0), 8); // vote op
+        payload.bits.writeUint(hexToBN(ethToTon.transactionHash), 256);
+        payload.bits.writeInt(decToBN(ethToTon.logIndex), 16);
         payload.bits.writeInt(ethToTon.to.workchain, 8);
-        payload.bits.writeUint(new TonWeb.utils.BN(ethToTon.to.address_hash, 16), 256);
-        payload.bits.writeUint(new TonWeb.utils.BN(ethToTon.value), 64);
+        payload.bits.writeUint(hexToBN(ethToTon.to.address_hash), 256);
+        payload.bits.writeUint(decToBN(ethToTon.value), 64);
         return payload;
     }
 
@@ -243,19 +242,21 @@ export class ToncoinBridge {
 
         // parse log message
 
-        const destinationAddress = makeAddress('0x' + TonWeb.utils.bytesToHex(bytes.slice(0, 20)));
-        const amountHex = TonWeb.utils.bytesToHex(bytes.slice(20, 28));
-        const amount = new BN(amountHex, 16);
+        const destinationAddress = makeAddress('0x' + bytesToHex(bytes.slice(0, 20)));
+        const amountHex = bytesToHex(bytes.slice(20, 28));
+        const amount = hexToBN(amountHex);
         const senderAddress = new TonWeb.utils.Address(t.in_msg.source);
 
         // validate log message
 
-        const addressFromInMsg = new TextDecoder().decode(TonWeb.utils.base64ToBytes(t.in_msg.msg_data.text)).slice('swapTo#'.length);
+        const msgText = new TextDecoder().decode(base64ToBytes(t.in_msg.msg_data.text));
+        if (!msgText.startsWith('swapTo#')) throw new Error('need swapTo#');
+        const addressFromInMsg = msgText.slice('swapTo#'.length);
         if (destinationAddress.toLowerCase() !== addressFromInMsg.toLowerCase()) {
             console.error('address from in_msg doesnt match ', addressFromInMsg, destinationAddress);
             return null;
         }
-        const amountFromInMsg = new BN(t.in_msg.value);
+        const amountFromInMsg = decToBN(t.in_msg.value);
         const amountFromInMsgAfterFee = amountFromInMsg.sub(ToncoinBridge.getFeeAmount(amountFromInMsg));
         if (!amount.eq(amountFromInMsgAfterFee)) {
             console.error('amount from in_msg doesnt match ', amount.toString(), amountFromInMsgAfterFee.toString(), amountFromInMsg.toString());
@@ -269,9 +270,9 @@ export class ToncoinBridge {
             tx: {
                 address_: {
                     workchain: senderAddress.wc,
-                    address_hash: '0x' + TonWeb.utils.bytesToHex(senderAddress.hashPart),
+                    address_hash: '0x' + bytesToHex(senderAddress.hashPart),
                 },
-                tx_hash: '0x' + TonWeb.utils.bytesToHex(TonWeb.utils.base64ToBytes(t.transaction_id.hash)),
+                tx_hash: '0x' + bytesToHex(base64ToBytes(t.transaction_id.hash)),
                 lt: t.transaction_id.lt,
             },
             time: Number(t.utime)

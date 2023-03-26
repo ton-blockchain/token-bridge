@@ -1,5 +1,6 @@
 import Web3 from "web3";
-import {EvmTransaction, hash, TonTransaction, TonTxID} from "./BridgeCommon";
+import {base64ToBytes, bytesToHex, checkNull, decToBN, hexToBN} from "./Paranoid";
+import {hash, EvmTransaction, TonTransaction, TonTxID} from "./BridgeCommon";
 import TonWeb from "tonweb";
 import {Log, TransactionReceipt} from "web3-core";
 import {
@@ -11,13 +12,11 @@ import {
 } from "./BridgeEvmUtils";
 import {findLogOutMsg, getMessageBytes, makeAddress} from "./BridgeTonUtils";
 
-const BN = TonWeb.utils.BN;
-
 const LOCK_INPUT_LENGTH = 202;
 const LOCK_INPUT_PREFIX = '0xca3369c6';
 
-// uint256 value, uint8 decimals
-export const lockEventDataTypes = ['uint256', 'uint8'];
+// uint256 value, uint256 new_balance, uint8 decimals
+export const lockEventDataTypes = ['uint256', 'uint256', 'uint8'];
 
 export interface LockEvent extends EvmTransaction {
     type: 'Lock';
@@ -45,6 +44,7 @@ export interface BurnEvent extends TonTransaction { // ton event
     token: string; // EVM-address, 160bit
     tx: TonTxID;
     time: number;
+    jettonMinterAddress: string;
 }
 
 export interface PayJettonMintEvent extends TonTransaction {
@@ -62,6 +62,14 @@ export class TokenBridge {
         target: string,
         chainId: number
     ): string {
+        checkNull(target);
+        checkNull(chainId);
+        checkNull(event.ethReceiver);
+        checkNull(event.token);
+        checkNull(event.jettonAmount);
+        checkNull(event.tx.address_.address_hash);
+        checkNull(event.tx.tx_hash);
+        checkNull(event.tx.lt);
         return hash(
             web3.eth.abi.encodeParameters(
                 [
@@ -118,6 +126,10 @@ export class TokenBridge {
                 log.topics[2].toLowerCase().endsWith(token.substr(2)) &&
                 log.topics[3] === '0x' + addressHash
             ) {
+                if (log.data.length !== 194) {
+                    throw new Error('invalid Lock event data length');
+                }
+
                 const decoded = web3.eth.abi.decodeParameters(
                     lockEventDataTypes,
                     log.data
@@ -132,31 +144,35 @@ export class TokenBridge {
         return result;
     }
 
-    static createMultisigMsgBody(lockEvent: LockEvent, queryId: any /* BN */, chainId: number): any /* BitString */ {
-        const payload = new TonWeb.boc.Cell();
-        payload.bits.writeUint(4, 32); // op
-        payload.bits.writeUint(queryId, 64); //query id for execute voting
-        payload.bits.writeUint(0, 8); // execute voting op
-        payload.bits.writeUint(
-            new TonWeb.utils.BN(lockEvent.transactionHash.slice(2), 16),
-            256
-        );
-        payload.bits.writeInt(lockEvent.logIndex, 16);
-        payload.bits.writeUint(
-            new TonWeb.utils.BN(lockEvent.to_address_hash, 16),
-            256
-        );
-        payload.bits.writeCoins(new TonWeb.utils.BN(lockEvent.amount)); // mint_jetton_amount
-        payload.bits.writeCoins(new TonWeb.utils.BN(0)); // forward_coins_amount
-
+    static createWrappedTokenData = (chainId: number, tokenAddress: string, decimals: number) => {
         const wrappedTokenData = new TonWeb.boc.Cell();
-        wrappedTokenData.bits.writeUint(chainId, 32);
+        wrappedTokenData.bits.writeUint(decToBN(chainId), 32);
         wrappedTokenData.bits.writeUint(
-            new TonWeb.utils.BN(lockEvent.token.slice(2), 16),
+            hexToBN(tokenAddress),
             160
         );
-        wrappedTokenData.bits.writeUint(lockEvent.decimals, 8);
-        payload.refs.push(wrappedTokenData);
+        wrappedTokenData.bits.writeUint(decToBN(decimals), 8);
+        return wrappedTokenData;
+    }
+
+    static createMultisigMsgBody(lockEvent: LockEvent, queryId: any /* BN */, chainId: number): any /* BitString */ {
+        const payload = new TonWeb.boc.Cell();
+        payload.bits.writeUint(decToBN(4), 32); // op
+        payload.bits.writeUint(queryId, 64); //query id for execute voting
+        payload.bits.writeUint(decToBN(0), 8); // execute voting op
+        payload.bits.writeUint(
+            hexToBN(lockEvent.transactionHash),
+            256
+        );
+        payload.bits.writeInt(decToBN(lockEvent.logIndex), 16);
+        payload.bits.writeUint(
+            hexToBN(lockEvent.to_address_hash),
+            256
+        );
+        payload.bits.writeCoins(decToBN(lockEvent.amount)); // mint_jetton_amount
+        payload.bits.writeCoins(decToBN(0)); // forward_coins_amount
+
+        payload.refs.push(this.createWrappedTokenData(chainId, lockEvent.token, lockEvent.decimals));
         return payload;
     }
 
@@ -218,7 +234,7 @@ export class TokenBridge {
         }
 
         const decoded = web3.eth.abi.decodeParameters(lockEventDataTypes, log.data);
-        const decimals = parseDecimals(decoded, 1);
+        const decimals = parseDecimals(decoded, 2);
 
         return {
             type: 'Lock',
@@ -257,13 +273,17 @@ export class TokenBridge {
             return null;
         }
 
+        if (bytes.length !== 88) { // (160 + 128 + 160 + 256) / 8
+            return null;
+        }
+
         // parse log message
 
-        const destinationAddress = makeAddress('0x' + TonWeb.utils.bytesToHex(bytes.slice(0, 20)));
-        const amountHex = TonWeb.utils.bytesToHex(bytes.slice(20, 36));
-        const amount = new BN(amountHex, 16);
-        const tokenAddress = makeAddress('0x' + TonWeb.utils.bytesToHex(bytes.slice(36, 56)));
-        const userSenderAddressHex = TonWeb.utils.bytesToHex(bytes.slice(56, 56 + 32))
+        const destinationAddress = makeAddress('0x' + bytesToHex(bytes.slice(0, 20)));
+        const amountHex = bytesToHex(bytes.slice(20, 36));
+        const amount = hexToBN(amountHex);
+        const tokenAddress = makeAddress('0x' + bytesToHex(bytes.slice(36, 56)));
+        const userSenderAddressHex = bytesToHex(bytes.slice(56, 56 + 32))
         const minterSenderAddress = new TonWeb.utils.Address(t.in_msg.source);
 
         return {
@@ -278,12 +298,13 @@ export class TokenBridge {
                 },
                 tx_hash:
                     '0x' +
-                    TonWeb.utils.bytesToHex(
-                        TonWeb.utils.base64ToBytes(t.transaction_id.hash),
+                    bytesToHex(
+                        base64ToBytes(t.transaction_id.hash),
                     ),
                 lt: t.transaction_id.lt,
             },
             time: Number(t.utime),
+            jettonMinterAddress: minterSenderAddress.toString()
         };
     }
 
@@ -304,9 +325,13 @@ export class TokenBridge {
             return null;
         }
 
+        if (bytes.length !== 8) { // 64 bit
+            return null;
+        }
+
         // parse log message
-        const queryIdHex = TonWeb.utils.bytesToHex(bytes.slice(0, 8));
-        const queryId = new BN(queryIdHex, 16);
+        const queryIdHex = bytesToHex(bytes.slice(0, 8));
+        const queryId = hexToBN(queryIdHex);
         const userSenderAddress = new TonWeb.utils.Address(t.in_msg.source);
 
         return {
@@ -315,12 +340,12 @@ export class TokenBridge {
             tx: {
                 address_: {
                     workchain: userSenderAddress.wc,
-                    address_hash: '0x' + TonWeb.utils.bytesToHex(userSenderAddress.hashPart)
+                    address_hash: '0x' + bytesToHex(userSenderAddress.hashPart)
                 },
                 tx_hash:
                     '0x' +
-                    TonWeb.utils.bytesToHex(
-                        TonWeb.utils.base64ToBytes(t.transaction_id.hash),
+                    bytesToHex(
+                        base64ToBytes(t.transaction_id.hash),
                     ),
                 lt: t.transaction_id.lt,
             },

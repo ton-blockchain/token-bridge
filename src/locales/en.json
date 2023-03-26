@@ -51,14 +51,14 @@
         "name": "Ethereum Network",
         "nameSwitcher": "Ethereum\nNetwork",
         "nameShort": "ETH",
-        "coin": "TONCOIN (ERC20)",
+        "coin": "TONCOIN (ERC-20)",
         "coinShort": "TONCOIN"
       },
       "test": {
         "name": "Ethereum Goerli",
         "nameSwitcher": "Ethereum\nGoerli",
         "nameShort": "ETH",
-        "coin": "TONCOIN (ERC20)",
+        "coin": "TONCOIN (ERC-20)",
         "coinShort": "TONCOIN"
       }
     },
@@ -90,13 +90,14 @@
       }
     }
   },
-  "tokenAddress": "Token address",
+  "tokenAddress": "Token address in {network} network",
   "sendToken": "Asset",
   "amountOfTon": "Amount of {tokenSymbol}",
-  "addressInputLabel": "Destination address",
+  "addressInputLabel": "Destination address in {network} network",
   "willReceive": "You will receive {fee} {coin}",
   "bridgeFeeAbove10": "Bridge fee - {fee} TON",
   "bridgeFeeBelow10": "Bridge fee - 5 TON + 0.25% of amount",
+  "tokenBridgeFee": "Bridge fee - 1 TON",
   "sourceCode": "Source Code",
   "howItWorks": "How it works",
   "documentation": "Documentation",
@@ -117,6 +118,8 @@
   "getCoinsByProvider": "Get {toCoin}s by {provider}",
   "coinsSent": "{toCoin}s have been sent to your address",
   "getCoins": "Get {toCoin}s in {toNetwork}",
+
+  "otherTokens": "Other tokens",
 
   "errors": {
     "alertTitleError": "Error",

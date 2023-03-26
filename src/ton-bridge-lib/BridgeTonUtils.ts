@@ -1,11 +1,10 @@
 import TonWeb from "tonweb";
 import {WalletContract} from "tonweb/dist/types/contract/wallet/wallet-contract";
-
-const BN = TonWeb.utils.BN;
+import {hexToBN, base64ToBytes} from "./Paranoid";
 
 export const getNumber = (pair: string[]): number => parseInt(pair[1], 16);
 
-export const getBN = (pair: string[]) /* TonWeb.utils.BN */ => new BN(pair[1].substr(2), 16);
+export const getBN = (pair: string[]) /* TonWeb.utils.BN */ => hexToBN(pair[1]);
 
 export const findLogOutMsg = (outMessages?: any[]): any => {
     if (!outMessages) return null;
@@ -16,13 +15,14 @@ export const findLogOutMsg = (outMessages?: any[]): any => {
 }
 
 export const getRawMessageBytes = (logMsg: any): Uint8Array | null => {
+    if (!logMsg.message.endsWith('\n')) throw new Error('need \\n');
     const message = logMsg.message.substr(0, logMsg.message.length - 1); // remove '\n' from end
-    return TonWeb.utils.base64ToBytes(message);
+    return base64ToBytes(message);
 }
 
 export const getTextMessageBytes = (logMsg: any): Uint8Array | null => {
     const message = logMsg.msg_data?.text;
-    const textBytes = TonWeb.utils.base64ToBytes(message);
+    const textBytes = base64ToBytes(message);
     const bytes = new Uint8Array(textBytes.length + 4);
     bytes.set(textBytes, 4);
     return bytes;

@@ -62,9 +62,9 @@ export class Metamask implements Provider {
 
     this.chainId = parseChainId(window.ethereum.networkVersion);
 
-    if (this.chainId !== params.chainId) {
-      await this.switchChain(params.chainId);
-    }
+    // if (this.chainId !== params.chainId) {
+    //   await this.switchChain(params.chainId);
+    // }
 
     this.isConnected = window.ethereum.isConnected();
     this.web3 = new Web3(window.ethereum);

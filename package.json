@@ -19,7 +19,7 @@
 		"nanoevents": "7.0.1",
 		"node-polyfill-webpack-plugin": "2.0.1",
 		"qr-code-styling": "1.6.0-rc.1",
-		"tonweb": "0.0.54",
+		"tonweb": "0.0.60",
 		"vue": "3.2.41",
 		"vue-i18n": "9.2.2",
 		"vue-router": "4.1.6",

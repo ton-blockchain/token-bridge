@@ -22,7 +22,7 @@
             >{{ $t(`transferHistory`) }}</router-link
           > -->
           <div class="Header-menuWrapper">
-            <div class="Header-menuAddress" :data-icon="provider?.name">
+            <div class="Header-menuAddress" :data-icon="ethereumProvider?.name">
               <span>{{ address }}</span>
             </div>
             <ul class="Header-menuList">
@@ -73,7 +73,7 @@ export default defineComponent({
       type: Boolean,
       required: true,
     },
-    provider: {
+    ethereumProvider: {
       type: Object as PropType<Provider | null>,
       required: true,
     },
@@ -95,13 +95,13 @@ export default defineComponent({
 
   computed: {
     address(): string {
-      if (!this.provider) {
+      if (!this.ethereumProvider) {
         return "";
       }
       return (
-        this.provider.myAddress.slice(0, 6) +
+        this.ethereumProvider.myAddress.slice(0, 6) +
         "…" +
-        this.provider.myAddress.slice(-4)
+        this.ethereumProvider.myAddress.slice(-4)
       );
     },
     parentUrl(): string {
@@ -109,7 +109,7 @@ export default defineComponent({
       return this.generateUrlWithQuery(query);
     },
     historyUrl(): string {
-      if (!this.provider || !this.provider.myAddress) {
+      if (!this.ethereumProvider || !this.ethereumProvider.myAddress) {
         return "";
       }
 
@@ -118,7 +118,7 @@ export default defineComponent({
         const net = PARAMS.networks[netKey as keyof typeof PARAMS.networks];
         Object.keys(net).forEach((subnetKey: string) => {
           const subnet = net[subnetKey as keyof typeof net];
-          if (subnet.chainId === this.provider?.chainId) {
+          if (subnet.chainId === this.ethereumProvider?.chainId) {
             network = netKey;
           }
         });
@@ -126,7 +126,7 @@ export default defineComponent({
 
       const query = {
         ...this.$route.query,
-        historyAddress: this.provider.myAddress,
+        historyAddress: this.ethereumProvider.myAddress,
         historyNetwork: network,
       };
       return this.generateUrlWithQuery(query);
@@ -157,7 +157,7 @@ export default defineComponent({
       this.$emit("close");
     },
     onDisconnectClick() {
-      this.provider?.disconnect();
+      this.ethereumProvider?.disconnect();
     },
   },
 });

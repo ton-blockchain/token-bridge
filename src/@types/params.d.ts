@@ -15,8 +15,10 @@ type ParamsNetwork = {
   chainId: number;
   blocksConfirmations: number;
   defaultGwei: number;
-  coinsPerGweiTo: number;
-  coinsPerGweiFrom: number;
+  toncoinTransferTo_gasPrice: number;
+  toncoinTransferFrom_gasPrice: number;
+  tokenTransferTo_gasPrice: number;
+  tokenTransferFrom_gasPrice: number;
 };
 
 type Params = {

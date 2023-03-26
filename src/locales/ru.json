@@ -51,14 +51,14 @@
         "name": "Ethereum Network",
         "nameSwitcher": "Ethereum\nNetwork",
         "nameShort": "ETH",
-        "coin": "TONCOIN (ERC20)",
+        "coin": "TONCOIN (ERC-20)",
         "coinShort": "TONCOIN"
       },
       "test": {
         "name": "Ethereum Goerli",
         "nameSwitcher": "Ethereum\nGoerli",
         "nameShort": "ETH",
-        "coin": "TONCOIN (ERC20)",
+        "coin": "TONCOIN (ERC-20)",
         "coinShort": "TONCOIN"
       }
     },
@@ -92,11 +92,12 @@
   },
   "sendToken": "Токен",
   "amountOfTon": "Количество {tokenSymbol}",
-  "tokenAddress": "Адрес токена",
-  "addressInputLabel": "Адрес получения",
+  "tokenAddress": "Адрес токена в сети {network}",
+  "addressInputLabel": "Адрес получения в сети {network}",
   "willReceive": "Вы получите {fee} {coin}",
   "bridgeFeeAbove10": "Комиссия бриджа - {fee} TON",
-  "bridgeFeeBelow10": "Комиссия бриджа - 5 TON + 0.25% of amount",
+  "bridgeFeeBelow10": "Комиссия бриджа - 5 TON + 0.25% от суммы",
+  "tokenBridgeFee": "Комиссия бриджа - 1 TON",
   "sourceCode": "Исходный код",
   "howItWorks": "Как это работает",
   "documentation": "Документация",
@@ -117,6 +118,8 @@
   "getCoinsByProvider": "Получите {toCoin} в {provider}",
   "coinsSent": "{toCoin} были отправлены на ваш адрес",
   "getCoins": "Получите {toCoin} в {toNetwork}",
+
+  "otherTokens": "Другие токены",
 
   "errors": {
     "alertTitleError": "Ошибка",

@@ -5,7 +5,7 @@ import {SwapEthToTonEvent, SwapTonToEth} from "@/ton-bridge-lib/ToncoinBridge";
 import {EvmSignature} from "@/ton-bridge-lib/BridgeCollector";
 import {BurnEvent} from "@/ton-bridge-lib/TokenBridge";
 
-type ProviderDataForTON = {
+type ProviderDataForToncoin = {
   oraclesTotal: number;
   blockNumber: number;
   wtonContract: Contract;
@@ -20,7 +20,8 @@ type ProviderDataForJettons = {
   blockNumber: number;
   bridgeContract: Contract;
   tonweb: TonWeb;
-  tonwebWallet: TonWeb;
+  myAddress: string;
+  tonWallet: any; // TON Extension
 };
 
 type State = {
@@ -38,9 +39,9 @@ type State = {
 };
 
 type ComponentData = {
-  updateStateIntervalForTon: null | ReturnType<typeof setInterval>;
+  updateStateIntervalForToncoin: null | ReturnType<typeof setInterval>;
   updateStateIntervalForJettons: null | ReturnType<typeof setInterval>;
-  providerDataForTon: ProviderDataForTON | null;
+  providerDataForToncoin: ProviderDataForToncoin | null;
   providerDataForJettons: ProviderDataForJettons | null;
   state: State;
   ethToTon: SwapEthToTonEvent | null;
@@ -56,6 +57,6 @@ type ComponentData = {
 export {
   ComponentData,
   ProviderDataForJettons,
-  ProviderDataForTON,
+  ProviderDataForToncoin,
   State,
 };

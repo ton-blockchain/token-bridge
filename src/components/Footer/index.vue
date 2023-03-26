@@ -4,16 +4,16 @@
     <a href="https://github.com/ton-blockchain/token-bridge" target="_blank">{{
         $t("sourceCode")
       }}</a
-    >,
+    >.
     <!--    <a href="https://ton.org/how-it-works/bridge" target="_blank">{{-->
     <!--      $t("howItWorks")-->
     <!--    }}</a-->
     <!--    >,-->
-    <a
-        href="https://github.com/ton-blockchain/TIPs/issues/24"
-        target="_blank"
-    >{{ $t("documentation") }}</a
-    >.
+<!--    <a-->
+<!--        href="https://github.com/ton-blockchain/TIPs/issues/24"-->
+<!--        target="_blank"-->
+<!--    >{{ $t("documentation") }}</a-->
+<!--    >-->
   </footer>
 </template>
 

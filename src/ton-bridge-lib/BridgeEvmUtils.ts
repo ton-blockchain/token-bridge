@@ -1,4 +1,5 @@
 import TonWeb from "tonweb";
+import {decToBN} from "./Paranoid";
 
 export const BLOCK_CONFIRMATIONS_COUNT = 12;
 
@@ -57,7 +58,7 @@ export function parseDecimals(data: any, field: number): number {
 
 export function parseBN(data: any, field: string): string {
     const s: string = parseField(data, field);
-    const bn = new TonWeb.utils.BN(s);
-    if (bn.lte(new TonWeb.utils.BN(0))) throw new Error('bn is negative ' + s);
+    const bn = decToBN(s);
+    if (bn.lte(decToBN(0))) throw new Error('bn is negative ' + s);
     return s;
 }

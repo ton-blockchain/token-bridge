@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import TonWeb from "tonweb"
+import {calculateQueryId} from "./Paranoid";
 
 export interface TonAddress {
     workchain: number; // int8
@@ -68,9 +68,9 @@ export function getQueryId(evmTransaction: EvmTransaction) /* BN */ {
 
     const queryId = hash(
         getLegacyQueryString(
-        evmTransaction.blockHash + '_' + evmTransaction.transactionHash + '_' + String(evmTransaction.logIndex)
+            evmTransaction.blockHash + '_' + evmTransaction.transactionHash + '_' + String(evmTransaction.logIndex)
         )
     ).substr(2, 8); // get first 32 bit
 
-    return new TonWeb.utils.BN(timeout).mul(new TonWeb.utils.BN(4294967296)).add(new TonWeb.utils.BN(queryId, 16));
+    return calculateQueryId(timeout, queryId);
 }

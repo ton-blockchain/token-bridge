@@ -75,9 +75,9 @@ export class WalletLink implements Provider {
 
     this.chainId = parseChainId(await this.web3.eth.net.getId());
 
-    if (this.chainId !== params.chainId) {
-      await this.switchChain(params.chainId);
-    }
+    // if (this.chainId !== params.chainId) {
+    //   await this.switchChain(params.chainId);
+    // }
 
     this.isConnected = true;
 

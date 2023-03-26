@@ -1,3 +1,7 @@
+import TonWeb from "tonweb";
+
+export const MINIMUM_TONCOIN_AMOUNT = TonWeb.utils.toNano('10');
+
 export const PARAMS: Params = {
   appName: "TON Bridge",
   appLogoUrl: "https://ton.org/bridge/favicon.ico",
@@ -28,8 +32,10 @@ export const PARAMS: Params = {
         chainId: 1,
         blocksConfirmations: 12,
         defaultGwei: 25,
-        coinsPerGweiTo: 0.004,
-        coinsPerGweiFrom: 0.001,
+        toncoinTransferTo_gasPrice: 0.004,
+        toncoinTransferFrom_gasPrice: 0.001,
+        tokenTransferTo_gasPrice: 0.008,
+        tokenTransferFrom_gasPrice: 0.002,
       },
       test: {
         getGasUrl: "https://ethereumgas.toncenter.com",
@@ -52,8 +58,10 @@ export const PARAMS: Params = {
         chainId: 5,
         blocksConfirmations: 12,
         defaultGwei: 25,
-        coinsPerGweiTo: 0.004,
-        coinsPerGweiFrom: 0.001,
+        toncoinTransferTo_gasPrice: 0.004,
+        toncoinTransferFrom_gasPrice: 0.001,
+        tokenTransferTo_gasPrice: 0.008,
+        tokenTransferFrom_gasPrice: 0.002,
       },
     },
     bsc: {
@@ -76,8 +84,10 @@ export const PARAMS: Params = {
         chainId: 56,
         blocksConfirmations: 12,
         defaultGwei: 5,
-        coinsPerGweiTo: 0.0008,
-        coinsPerGweiFrom: 0.0002,
+        toncoinTransferTo_gasPrice: 0.0008,
+        toncoinTransferFrom_gasPrice: 0.0002,
+        tokenTransferTo_gasPrice: 0.0016,
+        tokenTransferFrom_gasPrice: 0.0004,
       },
       test: {
         getGasUrl:
@@ -87,21 +97,23 @@ export const PARAMS: Params = {
         tonBridgeAddress: "Ef_GmJntTDokxfhLGF1jRvMGC8Jav2V5keoNj4El2jzhHsID",
         tonCollectorAddress: "EQDBNfV4DQzSyzNMw6BCTSZSoUi-CzWcYNsfhKxoDqfrwFtS",
         tonMultisigAddress: "kf83VnnXuaqQV1Ts2qvUr6agacM0ydOux5NNa1mcU-cEO693",
-        tonBridgeV2EVMAddress: "0xA25805A3b25CBa417FCEa44d9A73c4f923415F5B",
-        tonBridgeAddressV2: "Ef9wQwTpfH3zF6L1cNpRQF4bjJE0sqYRrt_JfrQbmeJn_Hh2",
+        tonBridgeV2EVMAddress: "0x677908e3F6A168f3E867471B8896e710dB5e3C7B",
+        tonBridgeAddressV2: "Ef82-8Il0LmJPBDrup0iBrKpSo1gpZXyKOk6aaH0TMXWE_xk",
         tonCollectorAddressV2:
-          "EQDCJE2o5aX0U5YZslZYFChWsgZpRFVml_b9xQPmLmVPegPW",
+          "EQCnfwxIfYXDofjPQxa84IqKi7-H3JCKOXnZDzX2mHvTfI8P",
         tonMultisigAddressV2:
-          "kf8ghwmw3afnQwnGG4W99hMvMxqlkfUm2QtHXiux1ElPO4tG",
+          "kf-xtS9YIpDd8AOomdzDxXHtsH7y3GfrheIdfrJhhFicgYQa",
         tonCenterUrl: "https://testnet.toncenter.com/api/v2/jsonRPC",
         tonCenterApiKey:
-          "d843619b379084d133f061606beecbf72ae2bf60e0622e808f2a3f631673599b",
+          "52993043eb68ddd4dfee9f0f6a2a5d341226c7b5c77c4ae7758c158d6c7e00c4",
         rpcEndpoint: "https://data-seed-prebsc-1-s1.binance.org:8545/",
         chainId: 97,
         blocksConfirmations: 12,
         defaultGwei: 5,
-        coinsPerGweiTo: 0.0008,
-        coinsPerGweiFrom: 0.0002,
+        toncoinTransferTo_gasPrice: 0.0008,
+        toncoinTransferFrom_gasPrice: 0.0002,
+        tokenTransferTo_gasPrice: 0.0016,
+        tokenTransferFrom_gasPrice: 0.0004,
       },
     },
   },

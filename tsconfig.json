@@ -2,7 +2,6 @@
 	"compilerOptions": {
 		"target": "esnext",
 		"module": "esnext",
-		"strict": true,
 		"jsx": "preserve",
 		"moduleResolution": "node",
 		"skipLibCheck": true,
@@ -14,6 +13,7 @@
 		"sourceMap": true,
 		"baseUrl": ".",
 		"types": ["webpack-env"],
+		"allowJs": true,
 		"paths": {
 			"@/*": ["src/*"]
 		},
