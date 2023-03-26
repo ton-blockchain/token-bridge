@@ -387,7 +387,16 @@ export default defineComponent({
                   ? this.$t("networks.ton.scanQRCode")
                   : "",
             };
-          } else return {};
+          } else {
+            return {
+              isOnlyText: true,
+              text: this.state.fromCurrencySent
+                  ? this.$t(`networks.${this.pair}.transactionWait`)
+                  : this.$t(`networks.${this.pair}.transactionSend`, {
+                    provider: "TON Wallet",
+                  }),
+            };
+          }
         } else {
           return {
             isOnlyText: true,
