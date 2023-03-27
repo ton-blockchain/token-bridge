@@ -1065,6 +1065,22 @@ export default defineComponent({
 
       return true;
     },
+    async debugVoteForSwitchLock(): Promise<void> {
+      const unlockSignatures = [
+        {
+          signer: '0xe54CD631C97bE0767172AD16904688962d09d2FE',
+          signature: '0x53d5ede513368f6b01d88520b51cabdbd07a23d8b91614a211962c68165ef7b4726ea200897d8db55861c1e8862289321fc13579027c773572d6248deab761911c'
+        },
+        {
+          signer: '0xeb05E1B6AC0d574eF2CF29FDf01cC0bA3D8F9Bf1',
+          signature: '0xc931c3b089eece0b4cc150d387d4d1fbf65d75eff2e409b8b99738cc08cfe3573b6f16ee6c206ee968b5216dae04526c1a79d83ec025a0b93c733ecbc9f881371b'
+        },
+      ]
+      await this.providerDataForJettons!.bridgeContract.methods
+          .voteForSwitchLock(true, 1, unlockSignatures)
+          .send({from: this.ethereumProvider.myAddress})
+      ;
+    },
     /**
      * Mint Wrapped ERC-20 Toncoin in EVM network
      * Last step in transfer

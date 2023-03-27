@@ -325,12 +325,12 @@ export class TokenBridge {
             return null;
         }
 
-        if (bytes.length !== 8) { // 64 bit
+        if (bytes.length !== 32) { // 256 bit
             return null;
         }
 
         // parse log message
-        const queryIdHex = bytesToHex(bytes.slice(0, 8));
+        const queryIdHex = bytesToHex(bytes.slice(0, 32));
         const queryId = hexToBN(queryIdHex);
         const userSenderAddress = new TonWeb.utils.Address(t.in_msg.source);
 

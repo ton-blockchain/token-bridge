@@ -1,6 +1,7 @@
 import BN from "bn.js";
 import TonWeb from "tonweb";
 import { Address } from "tonweb/dist/types/utils/address";
+import {decToBN} from "@/ton-bridge-lib/Paranoid";
 
 async function burnJetton({
   tonWallet,
@@ -53,7 +54,8 @@ async function mintJetton({
 
   const mintPayload = new TonWeb.boc.Cell();
   mintPayload.bits.writeUint(mintOP, 32);
-  mintPayload.bits.writeUint(new TonWeb.utils.BN(queryId), 64);
+  mintPayload.bits.writeUint(decToBN(queryId), 64);
+  mintPayload.bits.writeUint(decToBN(queryId), 256);
 
   await tonWallet.send("ton_sendTransaction", [
     {
