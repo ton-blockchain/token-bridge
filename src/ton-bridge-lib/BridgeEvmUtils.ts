@@ -56,7 +56,7 @@ export function parseDecimals(data: any, field: number): number {
     return n;
 }
 
-export function parseBN(data: any, field: string): string {
+export function parseBN(data: any, field: string | number): string {
     const s: string = parseField(data, field);
     const bn = decToBN(s);
     if (bn.lte(decToBN(0))) throw new Error('bn is negative ' + s);

@@ -42,16 +42,16 @@ export interface BurnEvent extends TonTransaction { // ton event
     ethReceiver: string; // EVM-address, 160bit
     jettonAmount: string; // VarUint 16
     token: string; // EVM-address, 160bit
-    tx: TonTxID;
-    time: number;
+    tx: TonTxID; // user sender address (ordinary wallet) && tx on bridge
+    time: number; // time of tx on bridge
     jettonMinterAddress: string;
 }
 
 export interface PayJettonMintEvent extends TonTransaction {
     type: 'PayJettonMint',
     queryId: string; // BN
-    tx: TonTxID;
-    time: number;
+    tx: TonTxID; // user sender address (ordinary wallet) && tx on bridge
+    time: number; // time of tx on bridge
 }
 
 export class TokenBridge {
@@ -108,6 +108,10 @@ export class TokenBridge {
     }
 
     static getNewLockStatusId(web3: Web3, newLockStatus: boolean, nonce: number, target: string, chainId: number): string {
+        checkNull(newLockStatus);
+        checkNull(nonce);
+        checkNull(target);
+        checkNull(chainId);
         return hash(
             web3.eth.abi.encodeParameters(
                 ['int', 'address', 'uint256', 'bool', 'int'],
@@ -130,14 +134,8 @@ export class TokenBridge {
                     throw new Error('invalid Lock event data length');
                 }
 
-                const decoded = web3.eth.abi.decodeParameters(
-                    lockEventDataTypes,
-                    log.data
-                );
-                if (decoded[0] === amount) {
-                    result = log;
-                    count++;
-                }
+                result = log;
+                count++;
             }
         }
         if (count > 1) throw new Error('too many logs');
@@ -234,6 +232,8 @@ export class TokenBridge {
         }
 
         const decoded = web3.eth.abi.decodeParameters(lockEventDataTypes, log.data);
+        const finalAmount = parseBN(decoded, 0)
+        const newBalance = parseBN(decoded, 1);
         const decimals = parseDecimals(decoded, 2);
 
         return {
@@ -247,7 +247,7 @@ export class TokenBridge {
             from,
             token,
             to_address_hash: address_hash,
-            amount,
+            amount: finalAmount,
             decimals,
 
             rawData: log.data,
