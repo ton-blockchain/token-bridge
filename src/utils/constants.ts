@@ -20,9 +20,9 @@ export const PARAMS: Params = {
         tonBridgeAddress: "Ef_dJMSh8riPi3BTUTtcxsWjG8RLKnLctNjAM4rw8NN-xWdr",
         tonCollectorAddress: "EQCuzvIOXLjH2tv35gY4tzhIvXCqZWDuK9kUhFGXKLImgxT5",
         tonMultisigAddress: "kf87m7_QrVM4uXAPCDM4DuF9Rj5Rwa5nHubwiQG96JmyAo-S",
-        tonBridgeAddressV2: "",
-        tonBridgeV2EVMAddress: "",
-        tonCollectorAddressV2: "",
+        tonBridgeAddressV2: "0xb323692b6d4DB96af1f52E4499a2bd0Ded9af3C5",
+        tonBridgeV2EVMAddress: "Ef-1JetbPF9ubc1ga-57oHoOyDA1IShJt-BVlJnA9rrVTfrB",
+        tonCollectorAddressV2: "EQDF6fj6ydJJX_ArwxINjP-0H8zx982W4XgbkKzGvceUWvXl",
         tonMultisigAddressV2: "",
         tonCenterUrl: "https://toncenter.com/api/v2/jsonRPC",
         tonCenterApiKey:
@@ -44,12 +44,12 @@ export const PARAMS: Params = {
         tonBridgeAddress: "Ef-56ZiqKUbtp_Ax2Qg4Vwh7yXXJCO8cNJAb229J6XXe4-aC",
         tonCollectorAddress: "EQCA1W_I267-luVo9CzV7iCcrA1OO5vVeXD0QHACvBn1jIVU",
         tonMultisigAddress: "kf-OV1dpgFVEzEmyvAETT8gnhqZ1IqHn8RzT6dmEmvnze-9n",
-        tonBridgeV2EVMAddress: "0x4E1edf0df291308e127F42af57E95519BDd78412",
-        tonBridgeAddressV2: "Ef8KQJu6icsG2p9kEmWvjr7OfXZriklfH07r0Bome7-oj6bq",
+        tonBridgeV2EVMAddress: "0x4Efd8f04B6fb4CFAF0cfaAC11Fb489b97DBebB60",
+        tonBridgeAddressV2: "Ef-lJBALjXSSwSKiedKzriSHixwQUxJ1BxTE05Ur5AXwZVjp",
         tonCollectorAddressV2:
-          "Ef8XgFexQROKv4NSFzV-KC0fb_pFZqkPDgFXHF32WEuniiaC",
+          "EQC1ZeKX1LNrlQ4bwi3je3KVM1AoZ3rkeyHM5hv9pYzmIh4v",
         tonMultisigAddressV2:
-          "Ef_J6OpV-tAdJjby1fvE6oD2-Put6VL4fuFn-g4qDVQDXPAi",
+          "kf9NLH8CsGUkEKGYzCxaLd9Th6T5YkO-MXsCEU9Rw1fiRhf9",
         tonCenterUrl: "https://testnet.toncenter.com/api/v2/jsonRPC",
         tonCenterApiKey:
           "d843619b379084d133f061606beecbf72ae2bf60e0622e808f2a3f631673599b",
