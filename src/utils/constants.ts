@@ -23,7 +23,7 @@ export const PARAMS: Params = {
         tonBridgeAddressV2: "Ef-1JetbPF9ubc1ga-57oHoOyDA1IShJt-BVlJnA9rrVTfrB",
         tonBridgeV2EVMAddress: "0xb323692b6d4DB96af1f52E4499a2bd0Ded9af3C5",
         tonCollectorAddressV2: "EQDF6fj6ydJJX_ArwxINjP-0H8zx982W4XgbkKzGvceUWvXl",
-        tonMultisigAddressV2: "",
+        tonMultisigAddressV2: "Ef8hHxV0v2I9FHh3CMX91WXjKaJav6SQlemEQm8ZvPBJdLde",
         tonCenterUrl: "https://toncenter.com/api/v2/jsonRPC",
         tonCenterApiKey:
           "d843619b379084d133f061606beecbf72ae2bf60e0622e808f2a3f631673599b",
