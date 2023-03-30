@@ -1075,11 +1075,13 @@ export default defineComponent({
           signer: '0xeb05E1B6AC0d574eF2CF29FDf01cC0bA3D8F9Bf1',
           signature: '0xc931c3b089eece0b4cc150d387d4d1fbf65d75eff2e409b8b99738cc08cfe3573b6f16ee6c206ee968b5216dae04526c1a79d83ec025a0b93c733ecbc9f881371b'
         },
-      ]
+      ].sort((a, b) => {
+        return hexToBN(a.signer).cmp(hexToBN(b.signer));
+      });
+
       await this.providerDataForJettons!.bridgeContract.methods
           .voteForSwitchLock(true, 1, unlockSignatures)
-          .send({from: this.ethereumProvider.myAddress})
-      ;
+          .send({from: this.ethereumProvider.myAddress});
     },
     /**
      * Mint Wrapped ERC-20 Toncoin in EVM network

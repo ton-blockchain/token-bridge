@@ -92,7 +92,7 @@
   },
   "tokenAddress": "Token address in {network} network",
   "sendToken": "Asset",
-  "amountOfTon": "Amount of {tokenSymbol}",
+  "amountOfTon": "Amount {tokenSymbol}",
   "addressInputLabel": "Destination address in {network} network",
   "willReceive": "You will receive {fee} {coin}",
   "bridgeFeeAbove10": "Bridge fee - {fee} TON",
