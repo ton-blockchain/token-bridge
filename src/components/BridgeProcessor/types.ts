@@ -49,6 +49,7 @@ type ComponentData = {
   isMintingInProgress: boolean;
   isApprovingInProgress: boolean;
   isGetAllowanceInProcess: boolean;
+  isGetAllowanceError: boolean;
   isBurningInProgress: boolean;
   isLockingInProgress: boolean;
   isQRCodeShown: boolean;

@@ -19,7 +19,7 @@
 
     <button
         class="BridgeProcessor-transfer"
-        :disabled="!isInputsValid"
+        :disabled="!isInputsValid || isGetAllowanceError"
         :class="{ showLoader: isApprovingInProgress || isGetAllowanceInProcess }"
         v-if="state.step === 0 && !isFromTon && !hasApprove && token !== 'ton'"
         @click="onApproveClick"
@@ -203,7 +203,12 @@ import {AbiItem} from "web3-utils";
 
 import BRIDGE from "@/ton-bridge-lib/abi/TokenBridge.json";
 import WTON_BRIDGE from "@/ton-bridge-lib/abi/WTON.json";
-import {getJettonWalletAddress, getJettonWalletBalance, getWrappedTokenData,} from "@/ton-bridge-lib/BridgeJettonUtils";
+import {
+  getJettonMinterAddress,
+  getJettonWalletAddress,
+  getJettonWalletBalance,
+  getWrappedTokenData,
+} from "@/ton-bridge-lib/BridgeJettonUtils";
 import {burnJetton, mintJetton} from "@/api/tonWallet";
 import {onCopyClick} from "@/utils";
 import {PARAMS} from "@/utils/constants";
@@ -295,6 +300,7 @@ export default defineComponent({
       isMintingInProgress: false,
       isApprovingInProgress: false, // approving ERC-20 token in token transfer
       isGetAllowanceInProcess: false, // get allowance of ERC-20 token in token transfer
+      isGetAllowanceError: true,
       isBurningInProgress: false,
       isLockingInProgress: false,
 
@@ -1212,6 +1218,7 @@ export default defineComponent({
       if (this.isFromTon || this.isToncoinTransfer || !this.isInputsValid || !this.ethereumProvider || !Web3.utils.isAddress(this.tokenAddress) || !this.amount) {
         console.log('checkAllowance invalid values');
         this.hasApprove = false;
+        this.isGetAllowanceError = true;
         return;
       }
       const amount = this.amount;
@@ -1235,11 +1242,13 @@ export default defineComponent({
           console.log(amountUnits.toString());
           this.hasApprove = new BN(allowanceUnits.toString()).gte(new BN(amountUnits));
           this.isGetAllowanceInProcess = false;
+          this.isGetAllowanceError = false;
         }
       } catch (e) {
         console.error(e);
         this.hasApprove = false;
         this.isGetAllowanceInProcess = false;
+        this.isGetAllowanceError = true;
       }
     },
     /**
@@ -1717,20 +1726,48 @@ export default defineComponent({
             this.isInitInProgress = false;
             return;
           }
-        } else { // TON->EVM Token transfer, check that user have `amount` of Jettons before Burn
+        } else { // TON->EVM Token transfer, make checks
+
+          // check jetton
+
+          let jettonEvmAddress: string;
+          let decimals: number;
 
           try {
+            const wrappedTokenData = await getWrappedTokenData(
+                    this.providerDataForJettons.tonweb,
+                    this.tokenAddress
+                );
+            const chainId = wrappedTokenData.chainId;
+            if (chainId !== this.ethereumProvider.chainId) {
+              throw new Error("Jetton from different chain")
+            }
+            decimals = wrappedTokenData.decimals;
+            jettonEvmAddress = wrappedTokenData.tokenAddress;
+            const wrappedTokenDataCell = TokenBridge.createWrappedTokenData(chainId, jettonEvmAddress, decimals);
+            const referenceMinterAddress = await getJettonMinterAddress(
+                this.providerDataForJettons.tonweb,
+                this.params.tonBridgeAddressV2,
+                wrappedTokenDataCell
+            );
+            if (referenceMinterAddress.toString(false) !== new TonWeb.Address(this.tokenAddress).toString(false)) {
+              throw new Error("Jetton does not belong to this bridge");
+            }
+          } catch (e) {
+            console.error(e);
+            this.isInitInProgress = false;
+            return;
+          }
+
+          // check that user have `amount` of Jettons before Burn
+          try {
+
             jettonWalletAddress = await getJettonWalletAddress({
               tonweb: this.providerDataForJettons.tonweb,
               userTonAddress: new TonWeb.Address(this.providerDataForJettons.myAddress),
               tokenAddress: this.tokenAddress,
             });
 
-            const {decimals, tokenAddress: jettonEvmAddress} =
-                await getWrappedTokenData(
-                    this.providerDataForJettons.tonweb,
-                    this.tokenAddress
-                );
             this.state.jettonEvmAddress = jettonEvmAddress;
             console.log("myAddress", this.providerDataForJettons.myAddress.toString())
             console.log("decimals", decimals.toString())

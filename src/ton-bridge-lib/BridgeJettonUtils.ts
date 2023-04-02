@@ -1,6 +1,6 @@
 import TonWeb from "tonweb";
 import {Address} from "tonweb/dist/types/utils/address";
-import {bytesToBase64, decToBN} from "./Paranoid";
+import {bytesToBase64, checkNull, decToBN} from "./Paranoid";
 
 const OFFCHAIN_CONTENT_PREFIX = 0x01;
 
@@ -137,9 +137,12 @@ export async function getWrappedTokenData(tonweb: any, jettonWalletAddress: stri
         []
     );
 
-    const chainId = wrappedTokenData[0].toString();
+    const chainId = Number(wrappedTokenData[0].toString());
     const tokenAddress = "0x" + wrappedTokenData[1].toString("hex");
-    const decimals = wrappedTokenData[2].toString();
+    const decimals = Number(wrappedTokenData[2].toString());
+    checkNull(chainId);
+    checkNull(tokenAddress);
+    checkNull(decimals);
     return {chainId, tokenAddress, decimals};
 }
 
