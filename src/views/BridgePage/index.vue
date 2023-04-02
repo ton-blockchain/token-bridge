@@ -189,7 +189,7 @@
                 :is-from-ton="isFromTon"
                 :pair="pair"
                 :tokenAddress="tokenAddress"
-                :amount="amountInput"
+                :amount="amountInput.trim()"
                 :to-address="toAddress"
                 :tokenSymbol="tokenSymbol"
                 :ethereumProvider="ethereumProvider"
@@ -518,9 +518,9 @@ export default defineComponent({
     this.checkInputs();
 
     this.$watch(
-        () => [this.tokenAddress, this.token, this.isFromTon],
-        ([newTokenAddress, newToken]) => {
-          if (newToken === "ton") {
+        () => this.tokenAddress + "_" + this.token + "_" + this.isFromTon,
+        () => {
+          if (this.token === "ton") {
             this.tokenSymbol = "TON";
           } else {
             this.tokenSymbol = "";

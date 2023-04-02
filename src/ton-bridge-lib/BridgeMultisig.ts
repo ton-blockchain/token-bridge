@@ -7,11 +7,11 @@ import {decToBN} from "./Paranoid";
 export function getMultisigWalletId(chainId: number): number {
     switch (chainId) {
         case 56: // BSC mainnet
-            return 3;
+            return 156;
         case 97: // BSC testnet
             return 97;
         case 1: // ETH mainnet
-            return 4;
+            return 101;
         case 5: // ETH testnet Goerli
             return 5;
     }

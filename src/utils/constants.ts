@@ -30,7 +30,7 @@ export const PARAMS: Params = {
         rpcEndpoint:
           "https://mainnet.infura.io/v3/d29ee9db9b7b4bbc8fa5d28047a3ff47",
         chainId: 1,
-        blocksConfirmations: 12,
+        blocksConfirmations: 65,
         defaultGwei: 25,
         toncoinTransferTo_gasPrice: 0.004,
         toncoinTransferFrom_gasPrice: 0.001,
@@ -82,7 +82,7 @@ export const PARAMS: Params = {
           "d843619b379084d133f061606beecbf72ae2bf60e0622e808f2a3f631673599b",
         rpcEndpoint: "https://bsc-dataseed.binance.org/",
         chainId: 56,
-        blocksConfirmations: 12,
+        blocksConfirmations: 65,
         defaultGwei: 5,
         toncoinTransferTo_gasPrice: 0.0008,
         toncoinTransferFrom_gasPrice: 0.0002,

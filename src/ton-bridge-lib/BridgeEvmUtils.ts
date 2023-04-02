@@ -1,7 +1,7 @@
 import TonWeb from "tonweb";
 import {decToBN} from "./Paranoid";
 
-export const BLOCK_CONFIRMATIONS_COUNT = 12;
+export const BLOCK_CONFIRMATIONS_COUNT = 65;
 
 export function parseField(data: any, field: string | number): any {
     const x: any = data[field];

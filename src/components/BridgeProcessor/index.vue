@@ -20,7 +20,7 @@
     <button
         class="BridgeProcessor-transfer"
         :disabled="!isInputsValid"
-        :class="{ showLoader: isApprovingInProgress }"
+        :class="{ showLoader: isApprovingInProgress || isGetAllowanceInProcess }"
         v-if="state.step === 0 && !isFromTon && !hasApprove && token !== 'ton'"
         @click="onApproveClick"
     >
@@ -294,6 +294,7 @@ export default defineComponent({
       isInitInProgress: false,
       isMintingInProgress: false,
       isApprovingInProgress: false, // approving ERC-20 token in token transfer
+      isGetAllowanceInProcess: false, // get allowance of ERC-20 token in token transfer
       isBurningInProgress: false,
       isLockingInProgress: false,
 
@@ -478,12 +479,13 @@ export default defineComponent({
 
   mounted(): void {
     this.$watch(
-        () => [this.amount, this.tokenAddress, this.isFromTon, this.isInputsValid, this.ethereumProvider],
-        debounce(async ([newAmount]: any) => {
-          this.checkAllowance(newAmount);
+        () => this.amount + "_" + this.tokenAddress + "_" + this.ethereumProvider?.myAddress + "_" + this.token + "_" + this.isFromTon  + "_" + this.isInputsValid,
+        debounce(async () => {
+          this.checkAllowance();
         }, 300)
     );
 
+    this.checkAllowance();
     this.$emit("ready");
   },
 
@@ -1205,36 +1207,40 @@ export default defineComponent({
     /**
      * Check allowance of ERC-20 token for token bridge in EVM network
      */
-    async checkAllowance(amount: string): Promise<void> {
+    async checkAllowance(): Promise<void> {
       console.log('checkAllowance');
-      if (this.isFromTon || this.isToncoinTransfer || !this.isInputsValid) {
+      if (this.isFromTon || this.isToncoinTransfer || !this.isInputsValid || !this.ethereumProvider || !Web3.utils.isAddress(this.tokenAddress) || !this.amount) {
+        console.log('checkAllowance invalid values');
+        this.hasApprove = false;
         return;
       }
-      console.log('checkAllowance2');
+      const amount = this.amount;
+      const tokenAddress = this.tokenAddress
+      const myAddress: string = this.ethereumProvider.myAddress;
 
       try {
-        if (!Web3.utils.isAddress(this.tokenAddress)) {
-          this.hasApprove = false;
-        } else {
-          const erc20Contract = new ERC20Contract(this.ethereumProvider);
-          const decimals = await erc20Contract.decimals({
-            address: this.tokenAddress
-          });
-          const amountUnits = parseUnits(amount.toString(), decimals).toString();
-          const allowanceUnits = await erc20Contract.allowance({
-            address: this.tokenAddress,
-            spender: this.params.tonBridgeV2EVMAddress,
-            owner: this.ethereumProvider.myAddress,
-          });
+        this.isGetAllowanceInProcess = true;
+        const erc20Contract = new ERC20Contract(this.ethereumProvider);
+        const decimals = await erc20Contract.decimals({
+          address: tokenAddress
+        });
+        const amountUnits = parseUnits(amount, decimals).toString();
+        const allowanceUnits = await erc20Contract.allowance({
+          address: tokenAddress,
+          spender: this.params.tonBridgeV2EVMAddress,
+          owner: myAddress,
+        });
+        if (this.tokenAddress == tokenAddress && this.amount === amount && this.ethereumProvider?.myAddress === myAddress) {
           console.log(allowanceUnits.toString());
           console.log(amountUnits.toString());
-          this.hasApprove = new BN(allowanceUnits.toString()).gte(new BN(amountUnits.toString()));
+          this.hasApprove = new BN(allowanceUnits.toString()).gte(new BN(amountUnits));
+          this.isGetAllowanceInProcess = false;
         }
       } catch (e) {
         console.error(e);
         this.hasApprove = false;
+        this.isGetAllowanceInProcess = false;
       }
-
     },
     /**
      * Approve ERC-20 token for token bridge in EVM network
@@ -1303,9 +1309,9 @@ export default defineComponent({
         hashPart = bytesToHex(addressTon.hashPart);
 
         receipt = await this.providerDataForJettons!.bridgeContract.methods.lock(
-          this.tokenAddress, // token
-          amountUnits.toString(), // amount
-          "0x" + hashPart // to_address_hash
+            this.tokenAddress, // token
+            amountUnits.toString(), // amount
+            "0x" + hashPart // to_address_hash
         )
             .send({from: fromAddress})
             .on("transactionHash", () => {
@@ -1382,7 +1388,7 @@ export default defineComponent({
                     lt: burnData.tx.lt
                   }
                 },
-              signatures,
+                signatures,
             )
                 .send({from: this.ethereumProvider.myAddress})
                 .on("transactionHash", () => {
