@@ -105,7 +105,6 @@
               { label: 'USDT', value: 'usdt' },
               { label: 'USDC', value: 'usdc' },
               { label: 'DAI', value: 'dai' },
-              { label: $t('otherTokens'), value: 'otherTokens' },
             ]"
               v-model="token"
           ></CustomInput>
