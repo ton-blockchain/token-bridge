@@ -89,15 +89,16 @@ export class Metamask implements Provider {
     console.log("account changed, new address: ", this.myAddress);
 
     // metamask doesn't fire disconnect event if all accounts has been disconnected, so we need to do it explicitly
-    if (!this.myAddress) {
+    // if (!this.myAddress) {
       this.onDisconnect(0, "");
-    }
+    // }
   }
 
   onChainChanged(chainId: number | string) {
     console.log("chain changed, old chain: ", this.chainId);
     this.chainId = parseChainId(chainId);
     console.log("chain changed, new chain: ", this.chainId);
+    this.onDisconnect(0, "");
   }
 
   onDisconnect(code: number, reason: string) {
