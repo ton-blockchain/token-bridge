@@ -271,7 +271,7 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    token: { // "ton" or "otherTokens"
+    token: { // "ton" | "usdt" | "usdc" | "dai" | "otherTokens"
       type: String,
       required: true,
     },
@@ -1214,7 +1214,7 @@ export default defineComponent({
      * Check allowance of ERC-20 token for token bridge in EVM network
      */
     async checkAllowance(): Promise<void> {
-      console.log('checkAllowance');
+      console.log('checkAllowance ' +  this.tokenAddress);
       if (this.isFromTon || this.isToncoinTransfer || !this.isInputsValid || !this.ethereumProvider || !Web3.utils.isAddress(this.tokenAddress) || !this.amount) {
         console.log('checkAllowance invalid values');
         this.hasApprove = false;

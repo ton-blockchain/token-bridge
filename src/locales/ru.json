@@ -99,6 +99,7 @@
   "bridgeFeeBelow10": "Комиссия бриджа - 5 TON + 0.25% от суммы",
   "tokenBridgeFee": "Комиссия бриджа - 1 TON",
   "sourceCode": "Исходный код",
+  "support": "Тех. поддержка",
   "howItWorks": "Как это работает",
   "documentation": "Документация",
 

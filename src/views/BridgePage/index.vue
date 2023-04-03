@@ -97,11 +97,14 @@
 
           <CustomInput
               key="token"
-              :disabled="isInputsBlocked || !this.isTestnet"
+              :disabled="isInputsBlocked || this.pair === 'bsc'"
               :label="$t('sendToken')"
               type="text"
               :dropdown="[
               { label: 'Toncoin', value: 'ton' },
+              { label: 'USDT', value: 'usdt' },
+              { label: 'USDC', value: 'usdc' },
+              { label: 'DAI', value: 'dai' },
               { label: $t('otherTokens'), value: 'otherTokens' },
             ]"
               v-model="token"
@@ -110,7 +113,7 @@
           <!-- Token Address input -->
 
           <CustomInput
-              v-if="!isToncoinTransfer"
+              v-if="token === 'otherTokens'"
               key="tokenAddress"
               :disabled="isInputsBlocked"
               :label="$t('tokenAddress', {network: isFromTon ? 'TON' : pair.toUpperCase()})"
@@ -188,7 +191,7 @@
                 :hash="hash"
                 :is-from-ton="isFromTon"
                 :pair="pair"
-                :tokenAddress="tokenAddress"
+                :tokenAddress="getTokenAddress"
                 :amount="amountInput.trim()"
                 :to-address="toAddress"
                 :tokenSymbol="tokenSymbol"
@@ -256,7 +259,7 @@ import CustomInput from "@/components/CustomInput/index.vue";
 import Footer from "@/components/Footer/index.vue";
 import Header from "@/components/Header/index.vue";
 import WalletsPopup from "@/components/WalletsPopup/index.vue";
-import {MINIMUM_TONCOIN_AMOUNT, PARAMS} from "@/utils/constants";
+import {getTokenAddressByToken, MINIMUM_TONCOIN_AMOUNT, PARAMS} from "@/utils/constants";
 import {supportsLocalStorage} from "@/utils/helpers";
 import {Provider} from "@/utils/providers/provider";
 
@@ -298,7 +301,7 @@ export default defineComponent({
 
       isFromTon: true, // transfer direction - to-ton-network or from-ton-network
       pair: "eth", // "eth" or "bsc"
-      token: "ton", // "ton" or "otherTokens"
+      token: "ton", // "ton" | "usdt" | "usdc" | "dai" | "otherTokens"
       amountInput: "", // float as string, "" if no value
       toAddress: "", // Ethereum or TON to address
       tokenAddress: "", // Ethereum or TON token address
@@ -325,6 +328,13 @@ export default defineComponent({
     },
     isInputsValid(): boolean {
       return !this.errors.amount && !this.errors.toAddress && (this.isToncoinTransfer || !this.errors.tokenAddress);
+    },
+    getTokenAddress(): string {
+      if (this.token === '') {
+        return this.tokenAddress;
+      } else {
+        return getTokenAddressByToken(this.token, this.isFromTon, this.isTestnet, this.pair);
+      }
     },
     netTypeName(): string {
       return this.isTestnet ? "test" : "main";
@@ -436,6 +446,10 @@ export default defineComponent({
       }
     },
     async pair(newVal: string, oldVal: string): Promise<void> {
+      if (newVal === 'bsc') {
+        this.token = 'ton';
+      }
+
       this.getPairGasFee__debounced();
 
       if (newVal !== oldVal) {
@@ -502,9 +516,9 @@ export default defineComponent({
     }
     if (this.$route.query.token) {
       const t = this.$route.query.token.toString().toLowerCase();
-      if (t === 'ton') {
+      if (t === 'ton' || t === "usdt" || t === "usdc" || t === "dai") {
         this.token = 'ton';
-        this.tokenAddress = '';
+        this.tokenAddress = getTokenAddressByToken(this.token, this.isFromTon, this.isTestnet, this.pair);
       } else {
         this.token = 'otherTokens';
         this.tokenAddress = t;
@@ -520,10 +534,10 @@ export default defineComponent({
     this.$watch(
         () => this.tokenAddress + "_" + this.token + "_" + this.isFromTon,
         () => {
-          if (this.token === "ton") {
-            this.tokenSymbol = "TON";
-          } else {
+          if (this.token === 'otherTokens') {
             this.tokenSymbol = "";
+          } else {
+            this.tokenSymbol = this.token.toUpperCase();
           }
         }
     );
@@ -537,20 +551,21 @@ export default defineComponent({
 
       // check tokenAddress input
 
+      const tokenAddress = this.getTokenAddress;
       if (this.isFromTon) {
-        if (!TonWeb.utils.Address.isValid(this.tokenAddress)) {
+        if (!TonWeb.utils.Address.isValid(tokenAddress)) {
           this.errors.tokenAddress = this.$t(
               `networks.ton.errors.invalidAddress`
           );
         }
       } else {
-        if (!Web3.utils.isAddress(this.tokenAddress)) {
+        if (!Web3.utils.isAddress(tokenAddress)) {
           this.errors.tokenAddress = this.$t(
               `networks.${this.pair}.errors.invalidAddress`
           );
         }
 
-        if (this.tokenAddress.toLowerCase() === this.params.wTonAddress.toLowerCase()) {
+        if (tokenAddress.toLowerCase() === this.params.wTonAddress.toLowerCase()) {
           this.errors.tokenAddress = this.$t(
               `networks.${this.pair}.errors.invalidAddress`
           );
