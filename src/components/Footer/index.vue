@@ -1,6 +1,6 @@
 <template>
   <footer class="Footer">
-    v3.0.7,
+    v3.0.8,
     <a href="https://t.me/ton_help_bot" target="_blank">{{
         $t("support")
       }}</a
