@@ -105,6 +105,8 @@
               { label: 'USDT', value: 'usdt' },
               { label: 'USDC', value: 'usdc' },
               { label: 'DAI', value: 'dai' },
+              { label: 'WETH', value: 'weth' },
+              { label: 'WBTC', value: 'wbtc' },
             ]"
               v-model="token"
           ></CustomInput>
@@ -300,7 +302,7 @@ export default defineComponent({
 
       isFromTon: true, // transfer direction - to-ton-network or from-ton-network
       pair: "eth", // "eth" or "bsc"
-      token: "ton", // "ton" | "usdt" | "usdc" | "dai" | "otherTokens"
+      token: "ton", // "ton" | "usdt" | "usdc" | "dai" | "weth" | "wbtc" | "otherTokens"
       amountInput: "", // float as string, "" if no value
       toAddress: "", // Ethereum or TON to address
       tokenAddress: "", // Ethereum or TON token address
@@ -515,7 +517,7 @@ export default defineComponent({
     }
     if (this.$route.query.token) {
       const t = this.$route.query.token.toString().toLowerCase();
-      if (t === 'ton' || t === "usdt" || t === "usdc" || t === "dai") {
+      if (t === 'ton' || t === "usdt" || t === "usdc" || t === "dai" || t === "weth" || t === "wbtc") {
         this.token = 'ton';
         this.tokenAddress = getTokenAddressByToken(this.token, this.isFromTon, this.isTestnet, this.pair);
       } else {

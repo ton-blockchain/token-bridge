@@ -271,7 +271,7 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    token: { // "ton" | "usdt" | "usdc" | "dai" | "otherTokens"
+    token: { // "ton" | "usdt" | "usdc" | "dai" | "weth" | "wbtc" | "otherTokens"
       type: String,
       required: true,
     },

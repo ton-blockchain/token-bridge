@@ -130,6 +130,10 @@ export const getTokenAddressByToken = (token: string, isFromTon: boolean, isTest
           return isFromTon ? '' : '';
         case 'dai':
           return isFromTon ? '' : '';
+        case 'weth':
+          return isFromTon ? '' : '';
+        case 'wbtc':
+          return isFromTon ? '' : '';
       }
     } else if (pair === 'bsc') { // BSC testnet
       switch (token) {
@@ -138,6 +142,10 @@ export const getTokenAddressByToken = (token: string, isFromTon: boolean, isTest
         case 'usdc':
           return isFromTon ? '' : '';
         case 'dai':
+          return isFromTon ? '' : '';
+        case 'weth':
+          return isFromTon ? '' : '';
+        case 'wbtc':
           return isFromTon ? '' : '';
       }
     }
@@ -153,6 +161,10 @@ export const getTokenAddressByToken = (token: string, isFromTon: boolean, isTest
           return isFromTon ? 'EQB-MPwrd1G6WKNkLz_VnV6WqBDd142KMQv-g1O-8QUA3728' : '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
         case 'dai':
           return isFromTon ? 'EQDo_ZJyQ_YqBzBwbVpMmhbhIddKtRP99HugZJ14aFscxi7B' : '0x6B175474E89094C44Da98b954EedeAC495271d0F';
+        case 'weth':
+          return isFromTon ? '' : '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+        case 'wbtc':
+          return isFromTon ? 'EQDcBkGHmC4pTf34x3Gm05XvepO5w60DNxZ-XT4I6-UGG5L5' : '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599';
       }
     }
     return ''; // BSC Mainnet
