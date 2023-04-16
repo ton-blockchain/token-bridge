@@ -1555,7 +1555,9 @@ export default defineComponent({
       if (!tonWallet) {
         this.setAlert({
           title: this.$t("errors.alertTitleError"),
-          message: "Please install TON Google Chrome Extension",
+          message: "Please install MyTonWallet",
+          link: "https://chrome.google.com/webstore/detail/mytonwallet/fldfpgipfncgndfolcbkdeeknbbbnhcc",
+          linkText: 'Install',
           buttonLabel: this.$t("errors.alertButtonClose"),
         });
         return null;

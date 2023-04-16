@@ -5,6 +5,7 @@
       <div class="Alert-panel">
         <h2>{{ title }}</h2>
         <p>{{ message }}</p>
+        <a v-if="link && linkText" :href="link" target="_blank" class="Alert-link">{{ linkText }}</a>
         <button @click="close">{{ buttonLabel }}</button>
       </div>
     </aside>
@@ -19,6 +20,8 @@ export default defineComponent({
     title: { type: String, required: true },
     message: { type: String, required: true },
     buttonLabel: { type: String, required: true },
+    link: { type: String, required: false },
+    linkText: { type: String, required: false },
   },
   created() {
     document.addEventListener("keydown", this.onKeyDown);

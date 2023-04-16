@@ -6,6 +6,8 @@
       :title="alert.title"
       :message="alert.message"
       :buttonLabel="alert.buttonLabel"
+      :link="alert.link"
+      :linkText="alert.linkText"
       @close="setAlert(null)"
     ></Alert>
   </div>
