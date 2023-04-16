@@ -374,12 +374,12 @@ export default defineComponent({
     pairFee(): string {
       const n = this.gasPrice ? this.gasPrice / this.params.defaultGwei : 1;
       const toncoinFee = this.isFromTon
-          ? this.params.toncoinTransferTo_gasPrice * n
-          : this.params.toncoinTransferFrom_gasPrice * n;
+          ? this.params.toncoinTransferFrom_gasPrice * n
+          : this.params.toncoinTransferTo_gasPrice * n;
 
       const tokenFee = this.isFromTon
-          ? this.params.tokenTransferTo_gasPrice * n
-          : this.params.tokenTransferFrom_gasPrice * n;
+          ? this.params.tokenTransferFrom_gasPrice * n
+          : this.params.tokenTransferTo_gasPrice * n;
 
       const fee = this.isToncoinTransfer ? toncoinFee : tokenFee;
 

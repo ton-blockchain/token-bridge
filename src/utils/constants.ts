@@ -34,8 +34,8 @@ export const PARAMS: Params = {
         defaultGwei: 25,
         toncoinTransferTo_gasPrice: 0.004,
         toncoinTransferFrom_gasPrice: 0.001,
-        tokenTransferTo_gasPrice: 0.008,
-        tokenTransferFrom_gasPrice: 0.002,
+        tokenTransferTo_gasPrice: 0.00173,
+        tokenTransferFrom_gasPrice: 0.0036,
       },
       test: {
         getGasUrl: "https://ethereumgas.toncenter.com",
@@ -60,8 +60,8 @@ export const PARAMS: Params = {
         defaultGwei: 25,
         toncoinTransferTo_gasPrice: 0.004,
         toncoinTransferFrom_gasPrice: 0.001,
-        tokenTransferTo_gasPrice: 0.008,
-        tokenTransferFrom_gasPrice: 0.002,
+        tokenTransferTo_gasPrice: 0.00173,
+        tokenTransferFrom_gasPrice: 0.0036,
       },
     },
     bsc: {
