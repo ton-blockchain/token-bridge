@@ -11,6 +11,10 @@
     >
     </Header>
 
+    <div class="Bridge-mobile-label">
+      Please use desktop
+    </div>
+
     <div class="Bridge-content">
       <div></div>
       <main>
