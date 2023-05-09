@@ -243,11 +243,15 @@ export default defineComponent({
       type: Boolean,
       required: true,
     },
-    lt: { // immutable parameter from url
+    lt: { // immutable parameter from url - ton transaction LT (logic time) in TON->EVM transfer
       type: Number,
       required: true,
     },
-    hash: { // immutable parameter from url
+    hash: { // immutable parameter from url - ton transaction hash in TON->EVM transfer
+      type: String,
+      required: true,
+    },
+    evmHash: { // immutable parameter from url - EVM transaction hash in EVM->TON transfer
       type: String,
       required: true,
     },
@@ -1221,6 +1225,12 @@ export default defineComponent({
         this.isGetAllowanceError = true;
         return;
       }
+      if (!this.isFromTon && this.evmHash) { // Recover EVM->TON transfer
+        this.hasApprove = true;
+        this.isGetAllowanceInProcess = false;
+        this.isGetAllowanceError = false;
+        return;
+      }
       const amount = this.amount;
       const tokenAddress = this.tokenAddress
       const myAddress: string = this.ethereumProvider.myAddress;
@@ -1289,6 +1299,61 @@ export default defineComponent({
         });
       }
     },
+    async recoverEvmToTonTransfer(): Promise<void> {
+      if (!(await this.validateEthereumProvider())) {
+        return;
+      }
+
+      const erc20Contract = new ERC20Contract(this.ethereumProvider);
+      const decimals = await erc20Contract.decimals({
+        address: this.tokenAddress,
+      });
+      const amountUnits = new BN(
+          parseUnits(this.amount, decimals).toString()
+      );
+
+      const fromAddress = this.ethereumProvider.myAddress;
+      const toAddress = this.toAddress;
+      const addressTon = new TonWeb.utils.Address(toAddress);
+      const wc = addressTon.wc;
+      if (wc !== 0) throw new Error('Only basechain wallets supported');
+      const hashPart = bytesToHex(addressTon.hashPart);
+
+      const web3 = this.ethereumProvider.web3!;
+      const receipt = await web3.eth.getTransactionReceipt(
+          this.evmHash
+      );
+
+      if (receipt.status) {
+        console.log("receipt", receipt);
+
+        this.state.createTime = Date.now();
+        this.state.fromCurrencySent = true;
+        this.state.blockNumber = receipt.blockNumber;
+
+        this.ethToTon = {
+          type: 'SwapEthToTon',
+          transactionHash: receipt.transactionHash,
+          logIndex: -1,
+          blockNumber: receipt.blockNumber,
+          blockTime: 0,
+          blockHash: "",
+          from: fromAddress,
+          to: {
+            workchain: wc,
+            address_hash: hashPart,
+          },
+          value: amountUnits.toString(),
+
+          rawData: receipt.rawData,
+          topics: receipt.topics,
+          transactionIndex: receipt.transactionIndex
+        };
+
+        this.state.step = 2;
+        this.saveState();
+      }
+    },
     /**
      * Lock ERC-20 token in EVM network
      * First step in transfer
@@ -1338,7 +1403,6 @@ export default defineComponent({
 
         this.state.blockNumber = receipt.blockNumber;
 
-        this.state.blockNumber = receipt.blockNumber;
         this.ethToTon = {
           type: 'SwapEthToTon',
           transactionHash: receipt.transactionHash,
@@ -1640,6 +1704,14 @@ export default defineComponent({
 
       if (!(await this.initProvider(this.isToncoinTransfer))) {
         this.isInitInProgress = false;
+        return;
+      }
+
+      // Recover EVM->TON transfer
+
+      if (!this.isFromTon && this.evmHash) {
+        this.isInitInProgress = false;
+        await this.recoverEvmToTonTransfer();
         return;
       }
 

@@ -8,6 +8,7 @@ type ComponentData = {
   isRecover: boolean;
   lt: number;
   hash: string;
+  evmHash: string;
 
   tokenSymbol: string;
 

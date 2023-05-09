@@ -193,6 +193,7 @@
                 :is-recover="isRecover"
                 :lt="lt"
                 :hash="hash"
+                :evm-hash="evmHash"
                 :is-from-ton="isFromTon"
                 :pair="pair"
                 :tokenAddress="getTokenAddress"
@@ -300,8 +301,9 @@ export default defineComponent({
 
       isTestnet: false, // immutable parameter from url
       isRecover: false, // immutable parameter from url
-      lt: 0, // immutable parameter from url
-      hash: "", // immutable parameter from url
+      lt: 0, // immutable parameter from url - ton transaction LT (logic time) in TON->EVM transfer
+      hash: "", // immutable parameter from url - ton transaction hash in TON->EVM transfer
+      evmHash: "", // immutable parameter from url - EVM transaction hash in EVM->TON transfer
 
       isFromTon: true, // transfer direction - to-ton-network or from-ton-network
       pair: "eth", // "eth" or "bsc"
@@ -492,6 +494,9 @@ export default defineComponent({
     if (this.$route.query.hash) {
       this.hash = this.$route.query.hash.toString();
     }
+    if (this.$route.query.evmHash) {
+      this.evmHash = this.$route.query.evmHash.toString();
+    }
     if (this.$route.query.amount) {
       try {
         this.amountInput = this.$route.query.amount.toString();
@@ -647,6 +652,7 @@ export default defineComponent({
       this.isRecover = false;
       this.lt = 0;
       this.hash = "";
+      this.evmHash = "";
       this.tokenAddress = "";
       this.amountInput = ""; //to reset inside input directly
       this.toAddress = "";
