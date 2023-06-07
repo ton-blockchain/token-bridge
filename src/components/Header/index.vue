@@ -14,6 +14,8 @@
         <span class="Header-logoLabel">{{ $t(`logoLabel`) }}</span>
       </component>
       <div class="Header-menu">
+        <a :href="instructionLink" target="_blank" class="Header-instruction">{{$t(`instruction`)}}</a>
+
         <template v-if="showMenu">
           <!-- <router-link
             :to="historyUrl"
@@ -94,6 +96,9 @@ export default defineComponent({
   },
 
   computed: {
+    instructionLink(): string {
+      return this.$t(`instruction`) === 'Инструкция' ? 'https://tonblockchain.ru/chto-takoie-mosty-v-blokchieinie-i-kak-oni-rabotaiut/' : 'https://blog.ton.org/ton-erc-20-bridge-tutorial'
+    },
     address(): string {
       if (!this.ethereumProvider) {
         return "";

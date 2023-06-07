@@ -123,6 +123,8 @@
   "otherTokens": "Другие токены",
   "tokens": "токены",
 
+  "instruction": "Инструкция",
+
   "errors": {
     "alertTitleError": "Ошибка",
     "alertButtonClose": "Закрыть",

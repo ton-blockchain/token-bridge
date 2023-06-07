@@ -94,6 +94,28 @@
 		}
 	}
 
+	&-instruction, &-instruction:hover, &-instruction:active {
+		-webkit-appearance: none;
+		background-color: @c-primary;
+		border-radius: 25px;
+		font-weight: 700;
+		color: white;
+		font-size: 15px;
+		line-height: 19px;
+		border: none;
+		padding: 16px 35px 15px;
+
+		.isPointer &:hover,
+		.isTouch &:active {
+			background-color: rgba(@c-primary, 0.85);
+		}
+
+		@media (max-width: 800px) {
+			font-size: 14px;
+			padding: 14px 32px 13px;
+		}
+	}
+
 	&-menu {
 		position: relative;
 		display: flex;
@@ -127,6 +149,7 @@
 		}
 
 		&Address {
+			margin-left: 20px;
 			position: relative;
 			color: @c-text-light;
 			cursor: pointer;
@@ -193,7 +216,7 @@
 			padding: 2px 46px;
 			position: absolute;
 			right: -9px;
-			top: calc(100% + 13px);
+			top: calc(100%);
 			white-space: nowrap;
 
 			transition: all 0 ease-in-out;

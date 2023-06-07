@@ -123,6 +123,8 @@
   "otherTokens": "Other tokens",
   "tokens": "token",
 
+  "instruction": "Instruction",
+
   "errors": {
     "alertTitleError": "Error",
     "alertButtonClose": "Close",
