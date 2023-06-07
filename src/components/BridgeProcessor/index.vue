@@ -457,7 +457,7 @@ export default defineComponent({
     },
     getStepInfoText3(): string {
       if (!this.isToncoinTransfer && !this.isFromTon) {
-        return this.getGetCoinsText(3);
+        return this.getGetCoinsText(3, true);
       } else {
         return this.getOraclesText(3);
       }
@@ -466,7 +466,7 @@ export default defineComponent({
       if (!this.isToncoinTransfer && !this.isFromTon) {
         return this.getOraclesText(4);
       } else {
-        return this.getGetCoinsText(4);
+        return this.getGetCoinsText(4, false);
       }
     },
   },
@@ -574,13 +574,13 @@ export default defineComponent({
       }
     },
 
-    getGetCoinsText(getCoinsStep: number): string {
+    getGetCoinsText(getCoinsStep: number, isToncoinWallet: boolean): string {
       const toCoins = this.toCoin || this.$t("tokens")
       if (this.state.step === getCoinsStep) {
         return this.state.toCurrencySent
             ? this.$t(`networks.${this.pair}.transactionWait`)
             : this.$t("getCoinsByProvider", {
-              provider: this.token === 'ton' ? this.ethereumProvider.title : 'TON Wallet',
+              provider: isToncoinWallet ? 'TON Wallet' : this.ethereumProvider.title,
               toCoin: toCoins,
             });
       } else if (this.state.step > getCoinsStep) {
