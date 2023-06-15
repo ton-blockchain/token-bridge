@@ -991,7 +991,7 @@ export default defineComponent({
 
           if (
               event.ethReceiver.toLowerCase() === myToAddress.toLowerCase() &&
-              this.state.jettonEvmAddress.toLocaleLowerCase() === event.token.toLocaleLowerCase()
+              this.state.jettonEvmAddress.toLowerCase() === event.token.toLowerCase()
           ) {
             // const swapId = this.getSwapTonToEthIdForJettons(event);
             // let isVotingFinished = true;
@@ -1448,7 +1448,6 @@ export default defineComponent({
         const burnData: BurnEvent = this.state.burnData;
         if (!burnData) throw new Error('No burn data');
 
-
         receipt =
             await this.providerDataForJettons!.bridgeContract.methods.unlock(
                 {
@@ -1707,9 +1706,12 @@ export default defineComponent({
         return;
       }
 
-      // Recover EVM->TON transfer
+      const isTokenEvmToTonRecover = this.isRecover && !this.isToncoinTransfer && !this.isFromTon && this.evmHash;
+      const isTokenTonToEvmRecover = this.isRecover && !this.isToncoinTransfer && this.isFromTon && this.lt && this.hash;
 
-      if (!this.isFromTon && this.evmHash) {
+      // Recover EVM->TON jetton transfer
+
+      if (isTokenEvmToTonRecover) {
         this.isInitInProgress = false;
         await this.recoverEvmToTonTransfer();
         return;
@@ -1856,7 +1858,7 @@ export default defineComponent({
 
             amountUnits = new BN(parseUnits(this.amount, decimals).toString());
 
-            if (!balance.gte(amountUnits)) {
+            if (!isTokenTonToEvmRecover && !balance.gte(amountUnits)) {
               this.$emit("error", {
                 input: "amount",
                 message: this.$t("errors.toncoinBalance", {
@@ -1883,7 +1885,9 @@ export default defineComponent({
         this.state.step = 1;
 
         if (this.isFromTon) { // TON->EVM token transfer - Burn jettons
-          await this.burnJetton(amountUnits, jettonWalletAddress); // invoke TON wallet to burn jettons
+          if (!isTokenTonToEvmRecover) {
+            await this.burnJetton(amountUnits, jettonWalletAddress); // invoke TON wallet to burn jettons
+          }
 
         } else { // EVM->TON token transfer - Lock ERC-20 Tokens
           await this.lockToken(amountUnits); // invoke Ethereum wallet to lock ERC-20 tokens
