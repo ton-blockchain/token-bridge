@@ -426,7 +426,7 @@ export default defineComponent({
           });
         }
       } else {
-        return this.$t("tokenBridgeFee")
+        return this.isFromTon ? this.$t("tokenBridgeFeeToEvm") : this.$t("tokenBridgeFee");
       }
     },
     fromPairs(): string[] {

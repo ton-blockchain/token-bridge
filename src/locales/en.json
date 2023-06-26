@@ -98,6 +98,7 @@
   "bridgeFeeAbove10": "Bridge fee - {fee} TON",
   "bridgeFeeBelow10": "Bridge fee - 5 TON + 0.25% of amount",
   "tokenBridgeFee": "Bridge fee - 1 TON",
+  "tokenBridgeFeeToEvm": "Bridge fee - 1 TON + 0.1% of token amount",
   "sourceCode": "Source Code",
   "support": "Support",
   "howItWorks": "How it works",

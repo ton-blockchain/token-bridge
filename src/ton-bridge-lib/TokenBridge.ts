@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import {base64ToBytes, bytesToHex, checkNull, decToBN, hexToBN} from "./Paranoid";
+import {base64ToBytes, bytesToHex, checkNull, decToBN, getTokenAmountAfterFee, hexToBN} from "./Paranoid";
 import {hash, EvmTransaction, TonTransaction, TonTxID} from "./BridgeCommon";
 import TonWeb from "tonweb";
 import {Log, TransactionReceipt} from "web3-core";
@@ -8,7 +8,7 @@ import {
     parseEvmAddress,
     parseEvmBlockHash,
     parseEvmTxHash,
-    parseNumber, parseTonAddress, parseWc
+    parseNumber, parseTonAddress, TOKEN_TON_TO_EVM_PERCENT_FEE_START_TIME
 } from "./BridgeEvmUtils";
 import {findLogOutMsg, getMessageBytes, makeAddress} from "./BridgeTonUtils";
 
@@ -40,7 +40,7 @@ export interface LockEvent extends EvmTransaction {
 export interface BurnEvent extends TonTransaction { // ton event
     type: 'Burn';
     ethReceiver: string; // EVM-address, 160bit
-    jettonAmount: string; // VarUint 16
+    jettonAmount: string; // VarUint 16, after fee
     token: string; // EVM-address, 160bit
     tx: TonTxID; // user sender address (ordinary wallet) && tx on bridge
     time: number; // time of tx on bridge
@@ -281,10 +281,14 @@ export class TokenBridge {
 
         const destinationAddress = makeAddress('0x' + bytesToHex(bytes.slice(0, 20)));
         const amountHex = bytesToHex(bytes.slice(20, 36));
-        const amount = hexToBN(amountHex);
+        let amount = hexToBN(amountHex);
         const tokenAddress = makeAddress('0x' + bytesToHex(bytes.slice(36, 56)));
         const userSenderAddressHex = bytesToHex(bytes.slice(56, 56 + 32))
         const minterSenderAddress = new TonWeb.utils.Address(t.in_msg.source);
+
+        if (Number(t.utime) > TOKEN_TON_TO_EVM_PERCENT_FEE_START_TIME) {
+            amount = getTokenAmountAfterFee(amount); // 0.1% fee of token amount
+        }
 
         return {
             type: 'Burn',

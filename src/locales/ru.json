@@ -98,6 +98,7 @@
   "bridgeFeeAbove10": "Комиссия бриджа - {fee} TON",
   "bridgeFeeBelow10": "Комиссия бриджа - 5 TON + 0.25% от суммы",
   "tokenBridgeFee": "Комиссия бриджа - 1 TON",
+  "tokenBridgeFeeToEvm": "Комиссия бриджа - 1 TON + 0.1% от суммы токенов",
   "sourceCode": "Исходный код",
   "support": "Тех. поддержка",
   "howItWorks": "Как это работает",

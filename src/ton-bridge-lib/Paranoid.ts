@@ -139,3 +139,17 @@ export const calculateToncoinFee = (amount: any /* BN */) /* BN */ => {
 
     return bn;
 }
+
+export const getTokenAmountAfterFee = (amount: any /* BN */) /* BN */ => {
+    checkNull(amount);
+    const bn = amount.sub(amount.div(new TonWeb.utils.BN(1000))); // 0.1% fee of token amount
+
+    const amountBigInt = BigInt(amount.toString());
+    const bigInt = amountBigInt - (amountBigInt / BigInt(1000));
+    if (bigInt > amountBigInt) {
+        throw new Error('')
+    }
+    checkBN(bn, bigInt);
+
+    return bn;
+}

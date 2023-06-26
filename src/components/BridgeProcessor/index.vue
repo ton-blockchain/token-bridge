@@ -837,7 +837,7 @@ export default defineComponent({
         }
       }
 
-      // Step 4 - Collect oracles votes for mint jetton in TON network
+      // Step 4 - EVM->TON - Collect oracles votes for mint jetton in TON network
 
       if (this.state.step === 4 && !this.isFromTon) {
         this.state.votes = await this.getTonVoteForJettons(this.state.queryId);

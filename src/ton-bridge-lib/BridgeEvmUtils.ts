@@ -1,6 +1,6 @@
-import TonWeb from "tonweb";
 import {decToBN} from "./Paranoid";
 
+export const TOKEN_TON_TO_EVM_PERCENT_FEE_START_TIME = 1687780800; // 6 June 2023, 12:00:00 UTC
 export const BLOCK_CONFIRMATIONS_COUNT = 65;
 
 export function parseField(data: any, field: string | number): any {
