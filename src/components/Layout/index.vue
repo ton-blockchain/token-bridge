@@ -1,7 +1,7 @@
 <template>
   <div class="LayoutDefault">
     <slot></slot>
-    <Alert
+    <AlertIndex
       v-if="alert"
       :title="alert.title"
       :message="alert.message"
@@ -9,42 +9,34 @@
       :link="alert.link"
       :linkText="alert.linkText"
       @close="setAlert(null)"
-    ></Alert>
+    ></AlertIndex>
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { primaryInput } from "detect-it";
-import { defineComponent } from "vue";
-import { mapGetters, mapMutations } from "vuex";
+import { computed, watch, onMounted} from "vue";
+import { useStore } from "vuex";
+import AlertIndex from "@/components/Alert/AlertIndex.vue";
 
-import Alert from "@/components/Alert/index.vue";
-
-export default defineComponent({
-  name: "LayoutDefault",
-
-  components: { Alert },
-  methods: { ...mapMutations(["setAlert"]) },
-
-  computed: {
-    ...mapGetters(["alert"]),
-  },
-
-  mounted() {
-    // for active/hovers on touch/mouse devices
-    document.documentElement.classList.add(
+onMounted(()=>{
+  document.documentElement.classList.add(
       primaryInput === "touch" ? "isTouch" : "isPointer"
-    );
-  },
+  );
+})
 
-  watch: {
-    alert: function (newVal) {
-      if (newVal !== null) {
-        this.alert = { ...newVal };
-      }
-    },
-  },
-});
+const store = useStore()
+const alert = computed(()=>store.getters.alert)
+
+const setAlert = (alert: string | null)=>{
+  store.commit('setAlert',alert )
+}
+
+watch(alert, (newVal)=>{
+  if (newVal !== null) {
+    setAlert({ ...newVal })
+  }
+})
 </script>
 
 <style lang="less" scoped>
