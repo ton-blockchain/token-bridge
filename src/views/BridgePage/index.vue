@@ -308,9 +308,9 @@ export default defineComponent({
       hash: "", // immutable parameter from url - ton transaction hash in TON->EVM transfer
       evmHash: "", // immutable parameter from url - EVM transaction hash in EVM->TON transfer
 
-      isFromTon: true, // transfer direction - to-ton-network or from-ton-network
+      isFromTon: false, // transfer direction - to-ton-network or from-ton-network
       pair: "eth", // "eth" or "bsc"
-      token: "ton", // "ton" | "usdt" | "usdc" | "dai" | "wbtc" | "otherTokens"
+      token: "usdt", // "ton" | "usdt" | "usdc" | "dai" | "wbtc" | "otherTokens"
       amountInput: "", // float as string, "" if no value
       toAddress: "", // Ethereum or TON to address
       tokenAddress: "", // Ethereum or TON token address
@@ -569,6 +569,8 @@ export default defineComponent({
     this.$watch(
         () => this.tokenAddress + "_" + this.token + "_" + this.isFromTon,
         () => {
+          document.getElementById('tonConnectButton').style.visibility = this.token === "ton" ? 'hidden' : 'visible';
+
           if (this.token === 'otherTokens') {
             this.tokenSymbol = "";
           } else {
