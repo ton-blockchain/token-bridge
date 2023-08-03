@@ -119,7 +119,7 @@ export default defineComponent({
 
         this.$emit("wallet-connected", provider);
       } catch (e: any) {
-        const message = this.$te(e.message) ? this.$t(e.message) : e.message;
+        const message = this.$t(e.message) ? this.$t(e.message) : e.message;
         console.error(message);
         alert(message);
         this.isLoading = false;
