@@ -541,7 +541,7 @@ export default defineComponent({
     // init TON Connect
 
     this.tonConnect = markRaw(new TonConnectUI({
-      manifestUrl: 'https://dns.ton.org/tonconnect-manifest.json',
+      manifestUrl: 'https://bridge.ton.org/tonconnect-manifest.json',
       buttonRootId: 'tonConnectButton'
     }));
 
