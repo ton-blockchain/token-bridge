@@ -229,6 +229,7 @@ import {makeAddress} from "@/ton-bridge-lib/BridgeTonUtils";
 import {getVotesInMultisig} from "@/ton-bridge-lib/BridgeMultisig";
 import {bytesToHex, hexToBN} from "@/ton-bridge-lib/Paranoid";
 import {Address} from "tonweb/dist/types/utils/address";
+import {TonConnectUI} from "@tonconnect/ui";
 
 const fromNano = TonWeb.utils.fromNano;
 const toNano = TonWeb.utils.toNano;
@@ -285,6 +286,10 @@ export default defineComponent({
     },
     ethereumProvider: { // Ethereum provider
       type: Object as PropType<Provider>,
+      required: true,
+    },
+    tonConnect: { // TON Connect
+      type: Object as PropType<TonConnectUI>,
       required: true,
     },
     isInputsValid: {
@@ -1498,7 +1503,7 @@ export default defineComponent({
 
       try {
         await mintJetton({
-          tonWallet: this.providerDataForJettons.tonWallet,
+          tonConnect: this.providerDataForJettons.tonConnect,
           queryId: this.state.queryId,
           bridgeTonAddress: this.params.tonBridgeAddressV2
         });
@@ -1507,7 +1512,7 @@ export default defineComponent({
         this.isBurningInProgress = false;
 
         console.error(error);
-        this.resetState();
+        // this.resetState();
       }
     },
     /**
@@ -1526,7 +1531,7 @@ export default defineComponent({
       try {
         const destinationAddress = hexToBN(this.ethereumProvider.myAddress);
         await burnJetton({
-          tonWallet: this.providerDataForJettons.tonWallet,
+          tonConnect: this.providerDataForJettons.tonConnect,
           destinationAddress,
           userTonAddress: this.providerDataForJettons.myAddreess,
           jettonWalletAddress,
@@ -1613,26 +1618,18 @@ export default defineComponent({
         return null;
       }
 
-      const tonWallet = (window as any).ton;
+      const account = this.tonConnect.account;
 
-      if (!tonWallet) {
+      if (!this.tonConnect.connected || !account) {
         this.setAlert({
           title: this.$t("errors.alertTitleError"),
-          message: "Please install MyTonWallet",
-          link: "https://chrome.google.com/webstore/detail/mytonwallet/fldfpgipfncgndfolcbkdeeknbbbnhcc",
-          linkText: 'Install',
-          buttonLabel: this.$t("errors.alertButtonClose"),
+          message: "Please connect TON Wallet",
         });
         return null;
       }
 
-      const wallets =
-          (await tonWallet.send(
-              "ton_requestWallets",
-              []
-          )) as any;
 
-      const walletAddress = wallets[0].address;
+      const walletAddress = account.address;
       console.log('wallet', walletAddress)
       const userTonAddress = new TonWeb.Address(walletAddress);
       if (userTonAddress.wc !== 0) {
@@ -1679,7 +1676,7 @@ export default defineComponent({
         tonweb,
         oraclesTotal,
         myAddress: walletAddress,
-        tonWallet,
+        tonConnect: this.tonConnect,
       };
 
       return res;

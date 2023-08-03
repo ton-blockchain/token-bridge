@@ -8,12 +8,12 @@
 	z-index: @z-header;
 
 	&.isScrolled &-wrapper {
-		transform: translateY(-10px);
+		//transform: translateY(-10px);
 		border-bottom: 1px solid @c-outline;
 
-		@media (max-width: 560px) {
-			transform: translateY(-10px);
-		}
+		//@media (max-width: 560px) {
+		//	transform: translateY(-10px);
+		//}
 	}
 
 	&-testnet {
@@ -94,25 +94,25 @@
 		}
 	}
 
-	&-instruction, &-instruction:hover, &-instruction:active {
+	&-connectEthereumButton, &-connectEthereumButton:hover, &-connectEthereumButton:active {
 		-webkit-appearance: none;
 		background-color: @c-primary;
 		border-radius: 25px;
-		font-weight: 700;
 		color: white;
 		font-size: 15px;
-		line-height: 19px;
+		line-height: 20px;
 		border: none;
-		padding: 16px 35px 15px;
+		padding: 8px 16px 8px;
+		cursor: pointer;
 
 		.isPointer &:hover,
 		.isTouch &:active {
 			background-color: rgba(@c-primary, 0.85);
 		}
 
-		@media (max-width: 800px) {
-			font-size: 14px;
-			padding: 14px 32px 13px;
+		@media (max-width: 560px) {
+			margin-top: -8px;
+			transform: scale(0.8, 0.8);
 		}
 	}
 

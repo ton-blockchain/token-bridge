@@ -28,3 +28,20 @@ a:active {
 	text-decoration: none;
 	// word-break: break-all;
 }
+
+#tonConnectButton {
+	position: fixed;
+	right: 220px;
+	top: 17px;
+	z-index: 4;
+
+	@media (max-width: 560px) {
+		top: 10px;
+		right: 164px;
+		transform: scale(0.8, 0.8);
+	}
+}
+
+tc-root button {
+	text-align: center !important;
+}

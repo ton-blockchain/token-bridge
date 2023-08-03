@@ -14,7 +14,16 @@
         <span class="Header-logoLabel">{{ $t(`logoLabel`) }}</span>
       </component>
       <div class="Header-menu">
-        <a :href="instructionLink" target="_blank" class="Header-instruction">{{$t(`instruction`)}}</a>
+
+        <!-- TON Connect -->
+
+        <!--  Ethereum wallet -->
+
+        <template v-if="!showMenu">
+          <div @click="onConnectEthereumWalletClick" class="Header-connectEthereumButton">
+            Connect Ethereum
+          </div>
+        </template>
 
         <template v-if="showMenu">
           <!-- <router-link
@@ -96,9 +105,6 @@ export default defineComponent({
   },
 
   computed: {
-    instructionLink(): string {
-      return this.$t(`instruction`) === 'Инструкция' ? 'https://tonblockchain.ru/chto-takoie-mosty-v-blokchieinie-i-kak-oni-rabotaiut/' : 'https://blog.ton.org/ton-erc-20-bridge-tutorial'
-    },
     address(): string {
       if (!this.ethereumProvider) {
         return "";
@@ -157,6 +163,9 @@ export default defineComponent({
     },
     onScroll() {
       this.isScrolled = window.pageYOffset > 0;
+    },
+    onConnectEthereumWalletClick() {
+      this.$emit("connect-ethereum-wallet-click");
     },
     close() {
       this.$emit("close");

@@ -1,10 +1,15 @@
 <template>
   <footer class="Footer">
+    <!-- Version -->
     v3.0.11,
-    <a href="https://t.me/ton_help_bot" target="_blank">{{
-        $t("support")
-      }}</a
-    >.
+
+    <!-- Instruction -->
+    <a :href="instructionLink" target="_blank">{{$t(`instruction`)}}</a>,
+
+    <!-- Support -->
+    <a href="https://t.me/ton_help_bot" target="_blank">{{$t("support")}}</a>
+    .
+
     <!--    <a href="https://ton.org/how-it-works/bridge" target="_blank">{{-->
     <!--      $t("howItWorks")-->
     <!--    }}</a-->
@@ -20,7 +25,14 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 
-export default defineComponent({});
+export default defineComponent({
+  name: "Footer",
+  computed: {
+    instructionLink(): string {
+      return this.$t(`instruction`) === 'Инструкция' ? 'https://tonblockchain.ru/chto-takoie-mosty-v-blokchieinie-i-kak-oni-rabotaiut/' : 'https://blog.ton.org/ton-erc-20-bridge-tutorial'
+    }
+  }
+});
 </script>
 
 <style lang="less" scoped>

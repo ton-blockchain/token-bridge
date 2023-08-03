@@ -1,4 +1,5 @@
 import { Provider } from "@/utils/providers/provider";
+import {TonConnectUI} from "@tonconnect/ui";
 
 type ComponentData = {
   getPairGasFee__debounced: () => void;
@@ -19,6 +20,7 @@ type ComponentData = {
   toAddress: string;
   tokenAddress: string;
   ethereumProvider: Provider | null;
+  tonConnect: TonConnectUI | null;
 
   isTransferInProgress: boolean;
   isEthereumWalletConnected: boolean;

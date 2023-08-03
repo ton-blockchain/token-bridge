@@ -8,6 +8,7 @@
         :show-menu="isEthereumWalletConnected && walletsPopupState === 'closed'"
         :ethereumProvider="ethereumProvider"
         :disable-disconnect="isTransferInProgress"
+        @connect-ethereum-wallet-click="onHeaderConnectEthereumWalletClick"
     >
     </Header>
 
@@ -201,6 +202,7 @@
                 :to-address="toAddress"
                 :tokenSymbol="tokenSymbol"
                 :ethereumProvider="ethereumProvider"
+                :tonConnect="tonConnect"
                 :token="token"
                 :is-inputs-valid="isInputsValid"
                 @transfer-in-progress="onTransferInProgress"
@@ -270,6 +272,7 @@ import {Provider} from "@/utils/providers/provider";
 
 import {ComponentData} from "./types";
 import {decToBN} from "@/ton-bridge-lib/Paranoid";
+import {THEME, TonConnectUI} from '@tonconnect/ui'
 
 const PAIRS = ["eth", "bsc"];
 const fromNano = TonWeb.utils.fromNano;
@@ -316,6 +319,7 @@ export default defineComponent({
 
       walletsPopupState: "closed",
       ethereumProvider: null, // Ethereum provider
+      tonConnect: null, // TON Connect
       isEthereumWalletConnected: false, // ethereumProvider !== null
       bridgeProcessorIsLoading: false, // from connect wallet to BridgeProcessor creation
       isTransferInProgress: false,
@@ -533,6 +537,28 @@ export default defineComponent({
         this.tokenAddress = t;
       }
     }
+
+    // init TON Connect
+
+    this.tonConnect = markRaw(new TonConnectUI({
+      manifestUrl: 'https://dns.ton.org/tonconnect-manifest.json',
+      buttonRootId: 'tonConnectButton'
+    }));
+
+    this.tonConnect.uiOptions = {
+      uiPreferences: {
+        theme: THEME.LIGHT
+      }
+    };
+
+    const tonConnectUnsubscribe = this.tonConnect.onStatusChange(info => {
+      if (info === null) {
+        // onWalletDisconnected();
+      } else if (info.account) {
+        // onWalletConnected(info.account); account.address, account.publicKey
+      }
+    });
+
   },
 
   mounted() {
@@ -761,6 +787,9 @@ export default defineComponent({
       }
 
       this.gasPrice = gasPrice > 0 ? gasPrice : this.params.defaultGwei;
+    },
+    onHeaderConnectEthereumWalletClick() {
+      this.walletsPopupState = 'opened';
     },
     onWalletConnected(ethereumProvider: Provider) {
       this.ethereumProvider = markRaw(ethereumProvider) as any;

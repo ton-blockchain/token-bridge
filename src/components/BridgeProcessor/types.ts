@@ -4,6 +4,7 @@ import { Contract } from "web3-eth-contract";
 import {SwapEthToTonEvent, SwapTonToEth} from "@/ton-bridge-lib/ToncoinBridge";
 import {EvmSignature} from "@/ton-bridge-lib/BridgeCollector";
 import {BurnEvent} from "@/ton-bridge-lib/TokenBridge";
+import {TonConnectUI} from "@tonconnect/ui";
 
 type ProviderDataForToncoin = {
   oraclesTotal: number;
@@ -21,7 +22,7 @@ type ProviderDataForJettons = {
   bridgeContract: Contract;
   tonweb: TonWeb;
   myAddress: string;
-  tonWallet: any; // TON Extension
+  tonConnect: TonConnectUI;
 };
 
 type State = {
