@@ -11,7 +11,8 @@
 		"i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\""
 	},
 	"dependencies": {
-		"@walletconnect/web3-provider": "1.8.0",
+		"@walletconnect/ethereum-provider": "2.9.2",
+		"@walletconnect/modal": "2.6.1",
 		"core-js": "3.26.0",
 		"detect-it": "4.0.1",
 		"ethers": "5.7.2",

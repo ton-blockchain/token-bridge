@@ -30,13 +30,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent, PropType} from "vue";
 
 import { Provider } from "@/utils/providers/provider";
 
 const PROVIDERS = {
   metamask: "Metamask",
-  // walletConnect: "WalletConnect",
+  walletConnect: "WalletConnect",
   // walletLink: "WalletLink",
 };
 
@@ -48,7 +48,7 @@ type ComponentData = {
 export default defineComponent({
   props: {
     params: {
-      type: Object,
+      type: Object as PropType<ParamsNetwork>,
       required: true,
     },
     uncancellable: {
@@ -106,10 +106,7 @@ export default defineComponent({
           providerComponentName
         ]() as Provider;
 
-        const result = await provider.connect({
-          rpcEndpoint: this.params.rpcEndpoint,
-          chainId: this.params.chainId,
-        });
+        const result = await provider.connect(this.params);
 
         this.isLoading = false;
 

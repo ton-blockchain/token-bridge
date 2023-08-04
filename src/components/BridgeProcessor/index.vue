@@ -1056,11 +1056,19 @@ export default defineComponent({
         }
 
         if (this.ethereumProvider.chainId !== this.params.chainId) {
-          const error = this.$t("errors.wrongProviderNetwork", {
-            network: this.$t(`networks.${this.pair}.${this.netTypeName}.name`),
-            provider: this.ethereumProvider.title,
-          });
-          throw new Error(error);
+          let chainSwitched = false;
+
+          if (this.ethereumProvider.name === 'walletConnect') {
+            chainSwitched = await this.ethereumProvider.switchChain(this.params.chainId);
+          }
+
+          if (!chainSwitched) {
+            const error = this.$t("errors.wrongProviderNetwork", {
+              network: this.$t(`networks.${this.pair}.${this.netTypeName}.name`),
+              provider: this.ethereumProvider.title,
+            });
+            throw new Error(error);
+          }
         }
 
         if (

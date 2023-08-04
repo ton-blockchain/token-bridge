@@ -1,11 +1,10 @@
-import WalletConnectProvider from "@walletconnect/web3-provider";
-import { createNanoEvents, Emitter } from "nanoevents";
+import {EthereumProvider} from "@walletconnect/ethereum-provider";
+import {createNanoEvents, Emitter} from "nanoevents";
 import Web3 from "web3";
+import {parseChainId} from "@/utils/helpers";
 
-import { PARAMS } from "@/utils/constants";
-import { parseChainId } from "@/utils/helpers";
-
-import { Provider } from "../provider";
+import {Provider} from "../provider";
+import {Web3Provider} from "@ethersproject/providers";
 
 interface Events {
   disconnect: () => void;
@@ -18,7 +17,8 @@ export class WalletConnect implements Provider {
   public myAddress = "";
   public chainId = 0;
   public isConnected = false;
-  private provider: any = null;
+  private walletConnect?: any;
+  public provider?: Web3Provider;
   private emitter: Emitter;
 
   constructor() {
@@ -33,27 +33,21 @@ export class WalletConnect implements Provider {
     return this.emitter.on(event, callback);
   }
 
-  async connect(params: any): Promise<boolean> {
-    type rpcObject = {
-      [key: number]: string;
-    };
-
-    const rpc: rpcObject = {};
-
-    Object.keys(PARAMS.networks).forEach((netKey: string) => {
-      const net = PARAMS.networks[netKey as keyof typeof PARAMS.networks];
-      Object.keys(net).forEach((subnetKey: string) => {
-        const subnet = net[subnetKey as keyof typeof net];
-        rpc[subnet.chainId] = subnet.rpcEndpoint;
-      });
+  async connect(params: ParamsNetwork): Promise<boolean> {
+    this.walletConnect = await EthereumProvider.init({
+      projectId: '94099fc4aa88338ac0e67f25b47da521',
+      chains: [1, 56],
+      showQrModal: true,
+      rpcMap: {
+        '1' : 'https://mainnet.infura.io/v3/d29ee9db9b7b4bbc8fa5d28047a3ff47',
+        '56': 'https://bsc-dataseed.binance.org/'
+      }
     });
 
-    this.provider = new WalletConnectProvider({
-      qrcode: true,
-      rpc,
-    });
+    this.walletConnect!.on("connect", this.onConnect);
+
     try {
-      await this.provider!.enable();
+      await this.walletConnect!.enable();
     } catch (e: any) {
       if (e.message === "User closed modal") {
         // soft error: User rejected the request.
@@ -63,7 +57,7 @@ export class WalletConnect implements Provider {
       throw new Error(e.message);
     }
 
-    this.web3 = new Web3(this.provider!);
+    this.web3 = new Web3(this.walletConnect!);
 
     const accounts = await this.web3.eth.getAccounts();
     this.myAddress = accounts[0];
@@ -71,15 +65,17 @@ export class WalletConnect implements Provider {
     this.chainId = parseChainId(await this.web3.eth.net.getId());
 
     // if (this.chainId !== params.chainId) {
-    //   await this.switchChain(params.chainId);
+    //     this.disconnect();
+    //     throw new Error('errors.invalidChain')
     // }
+
+    this.provider = new Web3Provider(this.web3.currentProvider! as any);
 
     this.isConnected = true;
 
-    this.provider!.on("accountsChanged", this.onAccountsChanged);
-    this.provider!.on("chainChanged", this.onChainChanged);
-    this.provider!.on("disconnect", this.onDisconnect);
-    this.provider!.on("connect", this.onConnect);
+    this.walletConnect!.on("accountsChanged", this.onAccountsChanged);
+    this.walletConnect!.on("chainChanged", this.onChainChanged);
+    this.walletConnect!.on("disconnect", this.onDisconnect);
 
     return true;
   }
@@ -92,6 +88,8 @@ export class WalletConnect implements Provider {
       this.myAddress = "";
     }
     console.log("account changed, new address: ", this.myAddress);
+
+    this.onDisconnect(0, "");
   }
 
   onChainChanged(chainId: number | string) {
@@ -100,14 +98,18 @@ export class WalletConnect implements Provider {
     console.log("chain changed, new chain: ", this.chainId);
   }
 
+  removeListeners() {
+    this.walletConnect!.off("accountsChanged", this.onAccountsChanged);
+    this.walletConnect!.off("chainChanged", this.onChainChanged);
+    this.walletConnect!.off("disconnect", this.onDisconnect);
+    this.walletConnect!.off("connect", this.onConnect);
+  }
+
   onDisconnect(code: number, reason: string) {
     this.isConnected = false;
     console.log("disconnected");
 
-    this.provider!.off("accountsChanged", this.onAccountsChanged);
-    this.provider!.off("chainChanged", this.onChainChanged);
-    this.provider!.off("disconnect", this.onDisconnect);
-    this.provider!.off("connect", this.onConnect);
+    this.removeListeners();
 
     this.emitter.emit("disconnect");
     this.emitter.events = {};
@@ -119,21 +121,18 @@ export class WalletConnect implements Provider {
   }
 
   async switchChain(chainId: number): Promise<boolean> {
-    // try {
-    //     await this.provider
-    //         .request({
-    //           method: 'wallet_switchEthereumChain',
-    //           params: [{ chainId: '0x' + chainId.toString(16) }]
-    //         })
-    // } catch (e) {
-    //     console.log(e.message);
-    //     return false;
-    // }
-    // TODO currently wallet_switchEthereumChain is not supported
+    try {
+      await this.walletConnect.switchEthereumChain(chainId);
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+    // `this.chainId` will set be set on `onChainChanged`
     return true;
   }
 
   disconnect() {
-    this.provider!.disconnect();
+    this.walletConnect!.disconnect();
+    this.onDisconnect(0, '');
   }
 }
