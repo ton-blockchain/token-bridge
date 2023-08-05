@@ -107,6 +107,7 @@
               { label: 'USDC', value: 'usdc' },
               { label: 'DAI', value: 'dai' },
               { label: 'WBTC', value: 'wbtc' },
+              { label: $t('otherTokens'), value: 'otherTokens' },
             ]"
               v-model="token"
           ></CustomInput>
@@ -336,7 +337,7 @@ export default defineComponent({
       return !this.errors.amount && !this.errors.toAddress && (this.isToncoinTransfer || !this.errors.tokenAddress);
     },
     getTokenAddress(): string {
-      if (this.token === '') {
+      if (this.token === 'otherTokens') {
         return this.tokenAddress;
       } else {
         return getTokenAddressByToken(this.token, this.isFromTon, this.isTestnet, this.pair);
