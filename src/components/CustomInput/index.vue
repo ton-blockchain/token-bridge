@@ -24,7 +24,7 @@
     <div class="CustomInput-arrow" v-if="hasDropdown"></div>
     <ul class="CustomInput-dropdown" v-if="hasDropdown">
       <li v-for="(item, index) in dropdown" :key="index">
-        <button @click="onOptionClick(item.value)">{{ item.label }}</button>
+        <button @mousedown="onOptionClick(item.value)">{{ item.label }}</button>
       </li>
     </ul>
   </div>

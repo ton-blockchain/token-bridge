@@ -75,7 +75,7 @@
                     class="Bridge-switcherList"
                     :class="{ left: !isFromTon, right: isFromTon }"
                 >
-                  <li v-for="(item, index) in toPairs" :key="item">
+                  <li v-for="(item, index) in toPairs" :key="index">
                     <button
                         :disabled="index === 0"
                         @click="
