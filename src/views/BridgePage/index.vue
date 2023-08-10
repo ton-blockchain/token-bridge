@@ -606,6 +606,10 @@ export default defineComponent({
         }
       }
 
+      if (this.tokenAddress.toLowerCase() === '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'.toLowerCase()) {
+        this.errors.tokenAddress = 'WETH not supported';
+      }
+
       // check amount input
 
       if (this.token === "ton") {
