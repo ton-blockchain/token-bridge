@@ -91,6 +91,10 @@
 			@media (max-width: 560px) {
 				font-size: 14px;
 			}
+
+			@media (max-width: 414px) {
+				display: none;
+			}
 		}
 	}
 
@@ -100,7 +104,7 @@
 		border-radius: 25px;
 		color: white;
 		font-size: 15px;
-		line-height: 20px;
+		line-height: 24px;
 		border: none;
 		padding: 8px 16px 8px;
 		cursor: pointer;
@@ -149,6 +153,7 @@
 		}
 
 		&Address {
+			margin-top: 8px;
 			margin-left: 20px;
 			position: relative;
 			color: @c-text-light;
@@ -161,6 +166,10 @@
 			.isPointer &:hover,
 			.isTouch &:active {
 				color: @c-primary;
+			}
+
+			@media (max-width: 560px) {
+				margin-top: 4px;
 			}
 
 			span {

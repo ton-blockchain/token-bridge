@@ -28,7 +28,7 @@ export const PARAMS: Params = {
         tonCenterApiKey:
           "d843619b379084d133f061606beecbf72ae2bf60e0622e808f2a3f631673599b",
         rpcEndpoint:
-          "https://mainnet.infura.io/v3/d29ee9db9b7b4bbc8fa5d28047a3ff47",
+          "https://bridge.ton.org/mainnet/",
         chainId: 1,
         blocksConfirmations: 65,
         defaultGwei: 25,
