@@ -114,7 +114,7 @@ export class ToncoinBridge {
         let result: Log | null = null;
         for (const log of logs) {
             if (log.topics.length === 3 &&
-                log.topics[1].toLowerCase().endsWith(from.substr(2)) &&
+                log.topics[1].toLowerCase().endsWith(from.substr(2).toLowerCase()) &&
                 log.topics[2] === '0x' + addressHash) {
                 const decoded = web3.eth.abi.decodeParameters(
                     ['int256', 'uint256'],

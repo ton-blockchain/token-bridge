@@ -126,8 +126,8 @@ export class TokenBridge {
         for (const log of logs) {
             if (
                 log.topics.length === 4 &&
-                log.topics[1].toLowerCase().endsWith(from.substr(2)) &&
-                log.topics[2].toLowerCase().endsWith(token.substr(2)) &&
+                log.topics[1].toLowerCase().endsWith(from.substr(2).toLowerCase()) &&
+                log.topics[2].toLowerCase().endsWith(token.substr(2).toLowerCase()) &&
                 log.topics[3] === '0x' + addressHash
             ) {
                 if (log.data.length !== 194) {

@@ -534,6 +534,7 @@ export default defineComponent({
         this.tokenAddress = t;
       }
     }
+    document.getElementById('tonConnectButton').style.visibility = this.token === "ton" ? 'hidden' : 'visible';
 
     // init TON Connect
 
@@ -608,6 +609,10 @@ export default defineComponent({
 
       if (this.tokenAddress.toLowerCase() === '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'.toLowerCase()) {
         this.errors.tokenAddress = 'WETH not supported';
+      }
+
+      if (this.tokenAddress.toLowerCase() === '0x582d872A1B094FC48F5DE31D3B73F2D9bE47def1'.toLowerCase()) {
+        this.errors.tokenAddress = 'Use Toncoin transfer';
       }
 
       // check amount input
