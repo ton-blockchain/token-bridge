@@ -9,6 +9,9 @@
   },
   "networks": {
     "ton": {
+      "transactionWait": "Пожалуйста, подождите пока обрабатывается транзакция TON",
+      "transactionSend": "Пожалуйста, подтвердите TON транзакцию в {provider}",
+
       "currency": "Toncoin",
       "transactionCompleted": "Транзакция TON успешно завершена",
       "transactionSend1": "Пожалуйста, отправьте ",

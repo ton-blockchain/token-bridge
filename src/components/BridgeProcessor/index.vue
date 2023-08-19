@@ -407,8 +407,8 @@ export default defineComponent({
             return {
               isOnlyText: true,
               text: this.state.fromCurrencySent
-                  ? this.$t(`networks.${this.pair}.transactionWait`)
-                  : this.$t(`networks.${this.pair}.transactionSend`, {
+                  ? this.$t(`networks.ton.transactionWait`)
+                  : this.$t(`networks.ton.transactionSend`, {
                     provider: "TON Wallet",
                   }),
             };

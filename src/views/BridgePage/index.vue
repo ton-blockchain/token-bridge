@@ -317,7 +317,7 @@ export default defineComponent({
       toAddress: "", // Ethereum or TON to address
       tokenAddress: "", // Ethereum or TON token address
 
-      tokenSymbol: "TON",
+      tokenSymbol: "USDT",
 
       walletsPopupState: "closed",
       ethereumProvider: null, // Ethereum provider

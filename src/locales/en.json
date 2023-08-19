@@ -9,6 +9,9 @@
   },
   "networks": {
     "ton": {
+      "transactionWait": "Please wait for the TON transaction to be processed",
+      "transactionSend": "Please send TON transaction in {provider}",
+
       "currency": "Toncoin",
       "transactionCompleted": "TON transaction completed successfully",
       "transactionSend1": "Please send ",
