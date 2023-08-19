@@ -36,7 +36,7 @@ import { Provider } from "@/utils/providers/provider";
 
 const PROVIDERS = {
   metamask: "Metamask",
-  // walletConnect: "WalletConnect",
+  walletConnect: "WalletConnect",
   // walletLink: "WalletLink",
 };
 

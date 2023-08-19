@@ -494,7 +494,7 @@ export default defineComponent({
 
   mounted(): void {
     this.$watch(
-        () => this.amount + "_" + this.tokenAddress + "_" + this.ethereumProvider?.myAddress + "_" + this.token + "_" + this.isFromTon  + "_" + this.isInputsValid,
+        () => this.amount + "_" + this.tokenAddress + "_" + this.ethereumProvider?.myAddress + "_" + this.token + "_" + this.isFromTon + "_" + this.isInputsValid,
         debounce(async () => {
           this.checkAllowance();
         }, 300)
@@ -1040,10 +1040,12 @@ export default defineComponent({
       this.resetState();
     },
     /**
-     * Validate that Ethereum provider connected, has valid chain and ETH balance > 0
+     * Validate that EVM provider connected, has valid chain and ETH balance > 0
      */
     async validateEthereumProvider(): Promise<boolean> {
       try {
+        // check connected
+
         if (!this.ethereumProvider.isConnected) {
           const error = this.$t("errors.providerIsDisconnected", {
             provider: this.ethereumProvider.title,
@@ -1055,21 +1057,31 @@ export default defineComponent({
           throw new Error(this.$t("errors.cantGetAddress"));
         }
 
-        if (this.ethereumProvider.chainId !== this.params.chainId) {
-          let chainSwitched = false;
+        // check chain
 
-          if (this.ethereumProvider.name === 'walletConnect') {
-            chainSwitched = await this.ethereumProvider.switchChain(this.params.chainId);
-          }
+        const showChainError = () => {
+          const error = this.$t("errors.wrongProviderNetwork", {
+            network: this.$t(`networks.${this.pair}.${this.netTypeName}.name`),
+            provider: this.ethereumProvider.title,
+          });
+          throw new Error(error);
+        }
+
+        if (this.ethereumProvider.name === 'walletConnect') {
+          const chainSwitched = await this.ethereumProvider.switchChain(this.params.chainId);
 
           if (!chainSwitched) {
-            const error = this.$t("errors.wrongProviderNetwork", {
-              network: this.$t(`networks.${this.pair}.${this.netTypeName}.name`),
-              provider: this.ethereumProvider.title,
-            });
-            throw new Error(error);
+            showChainError();
           }
+        } else { // metamask
+
+          if (this.ethereumProvider.chainId !== this.params.chainId) {
+            showChainError();
+          }
+
         }
+
+        // check balance
 
         if (
             !new BN(
@@ -1231,7 +1243,7 @@ export default defineComponent({
      * Check allowance of ERC-20 token for token bridge in EVM network
      */
     async checkAllowance(): Promise<void> {
-      console.log('checkAllowance ' +  this.tokenAddress);
+      console.log('checkAllowance ' + this.tokenAddress);
       if (this.isFromTon || this.isToncoinTransfer || !this.isInputsValid || !this.ethereumProvider || !Web3.utils.isAddress(this.tokenAddress) || !this.amount) {
         console.log('checkAllowance invalid values');
         this.hasApprove = false;
@@ -1816,9 +1828,9 @@ export default defineComponent({
 
           try {
             const wrappedTokenData = await getWrappedTokenData(
-                    this.providerDataForJettons.tonweb,
-                    this.tokenAddress
-                );
+                this.providerDataForJettons.tonweb,
+                this.tokenAddress
+            );
             const chainId = wrappedTokenData.chainId;
             if (chainId !== this.ethereumProvider.chainId) {
               throw new Error("Jetton from different chain")

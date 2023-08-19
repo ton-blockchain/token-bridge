@@ -307,8 +307,8 @@ export default defineComponent({
       isTestnet: false, // immutable parameter from url
       isRecover: false, // immutable parameter from url
       lt: 0, // immutable parameter from url - ton transaction LT (logic time) in TON->EVM transfer
-      hash: "", // immutable parameter from url - ton transaction hash in TON->EVM transfer
-      evmHash: "", // immutable parameter from url - EVM transaction hash in EVM->TON transfer
+      hash: "", // immutable parameter from url - ton transaction hash in TON->EVM transfer - HEX without 0x
+      evmHash: "", // immutable parameter from url - EVM transaction hash in EVM->TON transfer - HEX with 0x
 
       isFromTon: false, // transfer direction - to-ton-network or from-ton-network
       pair: "eth", // "eth" or "bsc"
