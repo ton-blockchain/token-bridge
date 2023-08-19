@@ -24,7 +24,7 @@
         v-if="state.step === 0 && !isFromTon && !hasApprove && token !== 'ton'"
         @click="onApproveClick"
     >
-      Approve
+      {{ isApprovingInProgress ? $t('confirmInWallet', {provider: ethereumProvider.title}) : $t("approve") }}
     </button>
 
     <!-- Cancel Transfer Button -->
