@@ -120,6 +120,7 @@
   "getCoinsByProvider": "Получите {toCoin} в {provider}",
   "coinsSent": "{toCoin} были отправлены",
   "getCoins": "Получите {toCoin} в {toNetwork}",
+  "confirmInWallet": "Подтвердите в {provider}",
 
   "otherTokens": "Другие токены",
   "tokens": "токены",

@@ -120,6 +120,7 @@
   "getCoinsByProvider": "Get {toCoin}s by {provider}",
   "coinsSent": "{toCoin}s have been sent",
   "getCoins": "Get {toCoin}s in {toNetwork}",
+  "confirmInWallet": "Confirm in {provider}",
 
   "otherTokens": "Other tokens",
   "tokens": "token",

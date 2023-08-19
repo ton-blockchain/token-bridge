@@ -174,7 +174,7 @@
         :class="{ showLoader: isMintingInProgress }"
         @click="mint"
     >
-      {{ $t("getToncoin", {coin: toCoin}) }}
+      {{ isMintingInProgress ? $t('confirmInWallet', {provider: ethereumProvider.title}) : $t("getToncoin", {coin: toCoin}) }}
     </button>
 
     <!-- Done Button -->
