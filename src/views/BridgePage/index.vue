@@ -529,9 +529,11 @@ export default defineComponent({
       if (t === 'ton' || t === "usdt" || t === "usdc" || t === "dai" || t === "wbtc") {
         this.token = t;
         this.tokenAddress = getTokenAddressByToken(this.token, this.isFromTon, this.isTestnet, this.pair);
+        this.tokenSymbol = t.toUpperCase();
       } else {
         this.token = 'otherTokens';
         this.tokenAddress = t;
+        this.tokenSymbol = '';
       }
     }
     document.getElementById('tonConnectButton').style.visibility = this.token === "ton" ? 'hidden' : 'visible';

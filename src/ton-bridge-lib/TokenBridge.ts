@@ -120,6 +120,14 @@ export class TokenBridge {
         );
     }
 
+    /**
+     * @param web3
+     * @param from  Ethereum address of sender who invokes lock
+     * @param amount Amount of Tokens to transfer
+     * @param addressHash Recipient address (workchain always 0) in TON network
+     * @param token Ethereum address of ERC-20 token
+     * @param logs
+     */
     static findLog = (web3: Web3, from: string, amount: string, addressHash: string, token: string, logs: Log[]): Log | null => {
         let count = 0;
         let result: Log | null = null;

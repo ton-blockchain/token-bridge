@@ -1549,7 +1549,10 @@ export default defineComponent({
       this.isBurningInProgress = true;
 
       try {
-        const destinationAddress = hexToBN(this.ethereumProvider.myAddress);
+        const toAddress = this.toAddress;
+        if (!toAddress || !Web3.utils.isAddress(toAddress)) throw new Error('invalid to address');
+
+        const destinationAddress = hexToBN(toAddress);
         await burnJetton({
           tonConnect: this.providerDataForJettons.tonConnect,
           destinationAddress,

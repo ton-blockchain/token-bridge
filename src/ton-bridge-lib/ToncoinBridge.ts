@@ -109,6 +109,14 @@ export class ToncoinBridge {
         }
     }
 
+    /**
+     * @param web3
+     * @param from  Ethereum address of sender who invokes burn
+     * @param amount    Amount of Toncoin to transfer
+     * @param workchain  TON recipient address workchain
+     * @param addressHash TON recipient address
+     * @param logs
+     */
     static findLog = (web3: Web3, from: string, amount: string, workchain: string, addressHash: string, logs: Log[]): Log | null => {
         let count = 0;
         let result: Log | null = null;
