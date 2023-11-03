@@ -525,14 +525,15 @@ export default defineComponent({
       }
     }
     if (this.$route.query.token) {
-      const t = this.$route.query.token.toString().toLowerCase();
+      const tokenFromUrl = this.$route.query.token.toString();
+      const t = tokenFromUrl.toLowerCase();
       if (t === 'ton' || t === "usdt" || t === "usdc" || t === "dai" || t === "wbtc") {
         this.token = t;
         this.tokenAddress = getTokenAddressByToken(this.token, this.isFromTon, this.isTestnet, this.pair);
         this.tokenSymbol = t.toUpperCase();
       } else {
         this.token = 'otherTokens';
-        this.tokenAddress = t;
+        this.tokenAddress = tokenFromUrl;
         this.tokenSymbol = '';
       }
     }

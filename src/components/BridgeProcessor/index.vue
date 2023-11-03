@@ -996,7 +996,7 @@ export default defineComponent({
 
           if (
               event.ethReceiver.toLowerCase() === myToAddress.toLowerCase() &&
-              this.state.jettonEvmAddress.toLowerCase() === event.token.toLowerCase()
+              makeAddress(this.state.jettonEvmAddress.toLowerCase()) === makeAddress(event.token.toLowerCase())
           ) {
             // const swapId = this.getSwapTonToEthIdForJettons(event);
             // let isVotingFinished = true;
