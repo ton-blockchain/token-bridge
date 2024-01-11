@@ -271,7 +271,7 @@ import {ComponentData} from "./types";
 import {decToBN} from "@/ton-bridge-lib/Paranoid";
 import {THEME, TonConnectUI} from '@tonconnect/ui'
 
-const PAIRS = ["eth", "bsc"];
+const PAIRS = ["eth"/*, "bsc"*/];
 const fromNano = TonWeb.utils.fromNano;
 const toNano = TonWeb.utils.toNano;
 
