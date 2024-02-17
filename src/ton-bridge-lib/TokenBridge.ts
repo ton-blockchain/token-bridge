@@ -47,6 +47,17 @@ export interface BurnEvent extends TonTransaction { // ton event
     jettonMinterAddress: string;
 }
 
+export interface SolidityBurnData {
+    receiver: string; // EVM-address, 160bit, user's EVM-address to receive tokens
+    token: string; // EVM-address, 160bit, ERC-20 token address
+    amount: string; // uint256, token amount in units to receive in EVM-network
+    tx: {
+       address_hash: string, // sender user address
+       tx_hash: string, // transaction hash on bridge smart contract
+       lt: string // uint64
+    };
+}
+
 export interface PayJettonMintEvent extends TonTransaction {
     type: 'PayJettonMint',
     queryId: string; // BN

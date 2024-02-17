@@ -224,7 +224,7 @@ import {ERC20Contract} from "@/utils/services/ERC20.contract";
 
 import {ComponentData, ProviderDataForJettons, ProviderDataForToncoin,} from "./types";
 import {SwapTonToEth, ToncoinBridge} from "@/ton-bridge-lib/ToncoinBridge";
-import {BurnEvent, TokenBridge} from "@/ton-bridge-lib/TokenBridge";
+import {BurnEvent, SolidityBurnData, TokenBridge} from "@/ton-bridge-lib/TokenBridge";
 import {makeAddress} from "@/ton-bridge-lib/BridgeTonUtils";
 import {getVotesInMultisig} from "@/ton-bridge-lib/BridgeMultisig";
 import {bytesToHex, hexToBN} from "@/ton-bridge-lib/Paranoid";
@@ -1473,21 +1473,58 @@ export default defineComponent({
         const burnData: BurnEvent = this.state.burnData;
         if (!burnData) throw new Error('No burn data');
 
+        const swapId = TokenBridge.getDataId(this.ethereumProvider.web3!, burnData, this.params.tonBridgeV2EVMAddress, this.params.chainId);
+        console.log({swapId});
+
+        const isFinished = await this.providerDataForJettons!.bridgeContract.methods.finishedVotings(swapId).call();
+        console.log({isFinished});
+
+        if ((isFinished !== true) && (isFinished !== false)) {
+          alert('isFinished unexpected result');
+          throw new Error('isFinished unexpected result');
+        }
+
+        if (isFinished) {
+           alert('Already finished');
+           throw new Error('already finished');
+        }
+
+        const solidityBurnData: SolidityBurnData = {
+          receiver: burnData.ethReceiver,
+          token: burnData.token,
+          amount: burnData.jettonAmount,
+          tx: {
+            address_hash: burnData.tx.address_.address_hash,
+            tx_hash: burnData.tx.tx_hash,
+            lt: burnData.tx.lt
+          }
+        };
+
+        const evmTransaction = this.providerDataForJettons!.bridgeContract.methods.unlock(
+            solidityBurnData,
+            signatures,
+        );
+
+        // NOTE: invalid transaction will fail on estimateGas
+        // https://web3js.readthedocs.io/en/v1.8.0/web3-eth-contract.html#methods-mymethod-estimategas
+        const estimatedGas = await evmTransaction.estimateGas({from: this.ethereumProvider.myAddress});
+        console.log({estimatedGas});
+
+        let bn = null;
+        try {
+          bn = BigInt(estimatedGas);
+        } catch (e) {
+        }
+
+        if (bn === null) {
+          alert(`"${estimatedGas}" estimate gas wrong number`);
+          throw new Error('estimate gas wrong number');
+        }
+
+        // https://web3js.readthedocs.io/en/v1.8.0/web3-eth-contract.html#methods-mymethod-send
         receipt =
-            await this.providerDataForJettons!.bridgeContract.methods.unlock(
-                {
-                  receiver: burnData.ethReceiver,
-                  token: burnData.token,
-                  amount: burnData.jettonAmount,
-                  tx: {
-                    address_hash: burnData.tx.address_.address_hash,
-                    tx_hash: burnData.tx.tx_hash,
-                    lt: burnData.tx.lt
-                  }
-                },
-                signatures,
-            )
-                .send({from: this.ethereumProvider.myAddress})
+            await evmTransaction
+                .send({from: this.ethereumProvider.myAddress, gas: estimatedGas})
                 .on("transactionHash", () => {
                   this.state.toCurrencySent = true;
                   this.isMintingInProgress = false;
