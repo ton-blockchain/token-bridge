@@ -62,3 +62,37 @@ export function parseBN(data: any, field: string | number): string {
     if (bn.lte(decToBN(0))) throw new Error('bn is negative ' + s);
     return s;
 }
+
+export async function throwIfSwapFinished(evmContract: any, swapId: string): Promise<void> {
+    const isFinished = await evmContract.methods.finishedVotings(swapId).call();
+    console.log({isFinished});
+
+    if ((isFinished !== true) && (isFinished !== false)) {
+        alert('isFinished unexpected result');
+        throw new Error('isFinished unexpected result');
+    }
+
+    if (isFinished) {
+        alert('Already finished');
+        throw new Error('already finished');
+    }
+}
+
+export async function estimateGas(evmTransaction: any, fromEvmAddress: string): Promise<string | number> {
+    // https://web3js.readthedocs.io/en/v1.8.0/web3-eth-contract.html#methods-mymethod-estimategas
+    const estimatedGas = await evmTransaction.estimateGas({from: fromEvmAddress});
+    console.log({estimatedGas});
+
+    let bn = null;
+    try {
+        bn = BigInt(estimatedGas);
+    } catch (e) {
+    }
+
+    if (bn === null) {
+        alert(`"${estimatedGas}" estimate gas wrong number`);
+        throw new Error('estimate gas wrong number');
+    }
+
+    return estimatedGas;
+}
