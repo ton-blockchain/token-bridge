@@ -1150,12 +1150,12 @@ export default defineComponent({
         );
 
         // NOTE: invalid transaction will fail on estimateGas
-        const estimatedGas = await estimateGas(evmTransaction, this.ethereumProvider.myAddress);
+        // const estimatedGas = await estimateGas(evmTransaction, this.ethereumProvider.myAddress);
 
         // https://web3js.readthedocs.io/en/v1.8.0/web3-eth-contract.html#methods-mymethod-send
         receipt =
             await evmTransaction
-                .send({from: this.ethereumProvider.myAddress, gas: estimatedGas})
+                .send({from: this.ethereumProvider.myAddress})
                 .on("transactionHash", () => {
                   this.state.toCurrencySent = true;
                   this.isMintingInProgress = false;
@@ -1511,12 +1511,12 @@ export default defineComponent({
 
         // NOTE: invalid transaction will fail on estimateGas
         // https://web3js.readthedocs.io/en/v1.8.0/web3-eth-contract.html#methods-mymethod-estimategas
-        const estimatedGas = await estimateGas(evmTransaction, this.ethereumProvider.myAddress);
+        // const estimatedGas = await estimateGas(evmTransaction, this.ethereumProvider.myAddress);
 
         // https://web3js.readthedocs.io/en/v1.8.0/web3-eth-contract.html#methods-mymethod-send
         receipt =
             await evmTransaction
-                .send({from: this.ethereumProvider.myAddress, gas: estimatedGas})
+                .send({from: this.ethereumProvider.myAddress})
                 .on("transactionHash", () => {
                   this.state.toCurrencySent = true;
                   this.isMintingInProgress = false;
