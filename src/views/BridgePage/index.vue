@@ -103,7 +103,7 @@
               type="text"
               :dropdown="[
               { label: 'Toncoin', value: 'ton' },
-              { label: 'USDT', value: 'usdt' },
+              { label: 'USDT (jUSDT in TON network)', value: 'usdt' },
               { label: 'USDC', value: 'usdc' },
               { label: 'DAI', value: 'dai' },
               { label: 'WBTC', value: 'wbtc' },
