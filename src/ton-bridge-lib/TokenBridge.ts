@@ -4,11 +4,17 @@ import {hash, EvmTransaction, TonTransaction, TonTxID} from "./BridgeCommon";
 import TonWeb from "tonweb";
 import {Log, TransactionReceipt} from "web3-core";
 import {
-    BLOCK_CONFIRMATIONS_COUNT, parseBN, parseDecimals,
+    BLOCK_CONFIRMATIONS_COUNT,
+    parseBN,
+    parseDecimals,
     parseEvmAddress,
     parseEvmBlockHash,
     parseEvmTxHash,
-    parseNumber, parseTonAddress, TOKEN_TON_TO_EVM_PERCENT_FEE_START_TIME
+    parseNumber,
+    parseTonAddress,
+    TOKEN_TON_TO_EVM_PERCENT_FEE_START_TIME,
+    TOKEN_TON_TO_EVM_PERCENT_FEE_USDT_END_TIME,
+    USDT_ETHEREUM_ADDRESS
 } from "./BridgeEvmUtils";
 import {findLogOutMsg, getMessageBytes, makeAddress} from "./BridgeTonUtils";
 
@@ -305,7 +311,11 @@ export class TokenBridge {
         const userSenderAddressHex = bytesToHex(bytes.slice(56, 56 + 32))
         const minterSenderAddress = new TonWeb.utils.Address(t.in_msg.source);
 
-        if (Number(t.utime) > TOKEN_TON_TO_EVM_PERCENT_FEE_START_TIME) {
+        if ((tokenAddress.toLowerCase() === USDT_ETHEREUM_ADDRESS) && (Number(t.utime) > TOKEN_TON_TO_EVM_PERCENT_FEE_USDT_END_TIME)) {
+
+            // dont apply fee
+
+        } else if (Number(t.utime) > TOKEN_TON_TO_EVM_PERCENT_FEE_START_TIME) {
             amount = getTokenAmountAfterFee(amount); // 0.1% fee of token amount
         }
 

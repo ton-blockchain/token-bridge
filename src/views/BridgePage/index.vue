@@ -270,6 +270,7 @@ import {Provider} from "@/utils/providers/provider";
 import {ComponentData} from "./types";
 import {decToBN} from "@/ton-bridge-lib/Paranoid";
 import {THEME, TonConnectUI} from '@tonconnect/ui'
+import {USDT_ETHEREUM_ADDRESS} from "@/ton-bridge-lib/BridgeEvmUtils";
 
 const PAIRS = ["eth", "bsc"];
 const fromNano = TonWeb.utils.fromNano;
@@ -427,7 +428,7 @@ export default defineComponent({
           });
         }
       } else {
-        return this.isFromTon ? this.$t("tokenBridgeFeeToEvm") : this.$t("tokenBridgeFee");
+        return this.isFromTon && this.tokenAddress?.toLowerCase() !== USDT_ETHEREUM_ADDRESS ? this.$t("tokenBridgeFeeToEvm") : this.$t("tokenBridgeFee");
       }
     },
     fromPairs(): string[] {

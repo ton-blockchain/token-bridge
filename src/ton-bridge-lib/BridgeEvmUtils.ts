@@ -1,6 +1,10 @@
 import {decToBN} from "./Paranoid";
 
-export const TOKEN_TON_TO_EVM_PERCENT_FEE_START_TIME = 1687780800; // 6 June 2023, 12:00:00 UTC
+export const TOKEN_TON_TO_EVM_PERCENT_FEE_START_TIME = 1687780800; // 26 June 2023, 12:00:00 UTC
+export const TOKEN_TON_TO_EVM_PERCENT_FEE_USDT_END_TIME = 1716552000; // 24 May 2024, 12:00:00 UTC
+
+export const USDT_ETHEREUM_ADDRESS = '0xdAC17F958D2ee523a2206206994597C13D831ec7'.toLowerCase();
+
 export const BLOCK_CONFIRMATIONS_COUNT = 65;
 
 export function parseField(data: any, field: string | number): any {
