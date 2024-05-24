@@ -428,7 +428,7 @@ export default defineComponent({
           });
         }
       } else {
-        return this.isFromTon && this.tokenAddress?.toLowerCase() !== USDT_ETHEREUM_ADDRESS ? this.$t("tokenBridgeFeeToEvm") : this.$t("tokenBridgeFee");
+        return this.isFromTon && this.token !== 'usdt' && this.tokenAddress?.toLowerCase() !== USDT_ETHEREUM_ADDRESS ? this.$t("tokenBridgeFeeToEvm") : this.$t("tokenBridgeFee");
       }
     },
     fromPairs(): string[] {
