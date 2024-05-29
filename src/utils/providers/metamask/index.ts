@@ -47,8 +47,10 @@ export class Metamask implements Provider {
         ],
       });
 
-      const accounts = (await window.ethereum.send("eth_requestAccounts"))
-        .result;
+      const accounts = await window.ethereum.request({
+        "method": "eth_requestAccounts",
+        "params": []
+      });
 
       this.myAddress = accounts[0];
     } catch (e: any) {
