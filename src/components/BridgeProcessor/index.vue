@@ -230,7 +230,7 @@ import {getVotesInMultisig} from "@/ton-bridge-lib/BridgeMultisig";
 import {bytesToHex, hexToBN} from "@/ton-bridge-lib/Paranoid";
 import {Address} from "tonweb/dist/types/utils/address";
 import {TonConnectUI} from "@tonconnect/ui";
-import {estimateGas, throwIfSwapFinished} from "@/ton-bridge-lib/BridgeEvmUtils";
+import {estimateGas, throwIfSwapFinished, USDT_ETHEREUM_ADDRESS} from "@/ton-bridge-lib/BridgeEvmUtils";
 
 const fromNano = TonWeb.utils.fromNano;
 const toNano = TonWeb.utils.toNano;
@@ -1315,6 +1315,14 @@ export default defineComponent({
         return;
       }
 
+      if (this.tokenAddress.toLowerCase() === USDT_ETHEREUM_ADDRESS) {
+        this.$emit("error", {
+          input: "amount",
+          message: 'jUSDT can only be sent from TON network',
+        });
+        return;
+      }
+
       this.isApprovingInProgress = true;
 
       const maxAmount = MaxInt256.toString();
@@ -1745,6 +1753,14 @@ export default defineComponent({
       if (this.isInitInProgress) return;
 
       if (!this.isInputsValid) return;
+
+      if (!this.isFromTon && this.tokenAddress.toLowerCase() === USDT_ETHEREUM_ADDRESS) {
+        this.$emit("error", {
+          input: "amount",
+          message: 'jUSDT can only be sent from TON network',
+        });
+        return;
+      }
 
       this.isInitInProgress = true;
 

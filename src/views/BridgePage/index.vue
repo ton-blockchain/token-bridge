@@ -103,10 +103,10 @@
               type="text"
               :dropdown="[
               { label: 'Toncoin', value: 'ton' },
-              { label: 'USDT (jUSDT in TON network)', value: 'usdt' },
               { label: 'USDC', value: 'usdc' },
               { label: 'DAI', value: 'dai' },
               { label: 'WBTC', value: 'wbtc' },
+              { label: 'jUSDT', value: 'usdt' },
               { label: $t('otherTokens'), value: 'otherTokens' },
             ]"
               v-model="token"
@@ -308,12 +308,12 @@ export default defineComponent({
 
       isFromTon: false, // transfer direction - to-ton-network or from-ton-network
       pair: "eth", // "eth" or "bsc"
-      token: "usdt", // "ton" | "usdt" | "usdc" | "dai" | "wbtc" | "otherTokens"
+      token: "ton", // "ton" | "usdt" | "usdc" | "dai" | "wbtc" | "otherTokens"
       amountInput: "", // float as string, "" if no value
       toAddress: "", // Ethereum or TON to address
       tokenAddress: "", // Ethereum or TON token address
 
-      tokenSymbol: "USDT",
+      tokenSymbol: "TON",
 
       walletsPopupState: "closed",
       ethereumProvider: null, // Ethereum provider
