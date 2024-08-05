@@ -1,0 +1,160 @@
+{
+  "logoLabel": "桥接器",
+  "connectWallet": "连接钱包",
+  "testnetMessage": "这是测试网版本，请勿发送真实货币！",
+  "providers": {
+    "metamask": "MetaMask",
+    "walletConnect": "WalletConnect",
+    "walletLink": "Coinbase Wallet"
+  },
+  "networks": {
+    "ton": {
+      "transactionWait": "请等待TON交易处理",
+      "transactionSend": "请使用 {provider} 发送TON交易",
+      "currency": "Toncoin",
+      "transactionCompleted": "TON交易成功",
+      "transactionSend1": "请发送 ",
+      "transactionSend2": "Toncoin到地址",
+      "transactionSendComment": "并附加备注",
+      "openWallet": "打开钱包",
+      "generateQRCode": "生成二维码",
+      "scanQRCode": "或扫描下方二维码",
+      "errors": {
+        "invalidAddress": "无效的TON地址"
+      },
+      "main": {
+        "name": "The Open Network",
+        "nameSwitcher": "The Open\nNetwork",
+        "nameShort": "TON",
+        "coin": "Toncoin",
+        "coinShort": "Toncoin"
+      },
+      "test": {
+        "name": "TON Testnet",
+        "nameSwitcher": "TON\nTestnet",
+        "nameShort": "TON",
+        "coin": "Toncoin",
+        "coinShort": "Toncoin"
+      }
+    },
+    "eth": {
+      "currency": "ETH",
+      "pageTitle": "TON-ETH桥接器",
+      "gasFee": "以太坊Gas费用为 {fee} ETH",
+      "transactionCompleted": "以太坊交易成功",
+      "transactionWait": "请等待以太坊交易处理",
+      "transactionSend": "请使用 {provider} 发送以太坊交易",
+      "blocksConfirmations": "已收集 {count} 个以太坊区块确认",
+      "errors": {
+        "invalidAddress": "无效的ETH地址",
+        "lowBalance": "您需要在钱包中拥有ETH以支付以太坊网络的Gas费用"
+      },
+      "main": {
+        "name": "Ethereum Network",
+        "nameSwitcher": "Ethereum\nNetwork",
+        "nameShort": "ETH",
+        "coin": "TONCOIN (ERC-20)",
+        "coinShort": "TONCOIN"
+      },
+      "test": {
+        "name": "Ethereum Goerli",
+        "nameSwitcher": "Ethereum\nGoerli",
+        "nameShort": "ETH",
+        "coin": "TONCOIN (ERC-20)",
+        "coinShort": "TONCOIN"
+      }
+    },
+    "bsc": {
+      "currency": "BNB",
+      "pageTitle": "TON-BSC桥接器",
+      "gasFee": "BSC Gas费用为 {fee} BNB",
+      "transactionCompleted": "BSC交易成功",
+      "transactionWait": "请等待BSC交易处理",
+      "transactionSend": "请使用 {provider} 发送BSC交易",
+      "blocksConfirmations": "已收集 {count} 个BSC区块确认",
+      "errors": {
+        "invalidAddress": "无效的BSC地址",
+        "lowBalance": "您需要在钱包中拥有BNB以支付BSC网络的Gas费用"
+      },
+      "main": {
+        "name": "Binance Smart Chain",
+        "nameSwitcher": "Binance\nSmart Chain",
+        "nameShort": "BSC",
+        "coin": "TONCOIN (BEP-20)",
+        "coinShort": "TONCOIN"
+      },
+      "test": {
+        "name": "BSC Testnet",
+        "nameSwitcher": "BSC Testnet",
+        "nameShort": "BSC",
+        "coin": "TONCOIN (BEP-20)",
+        "coinShort": "TONCOIN"
+      }
+    }
+  },
+  "tokenAddress": "{network} 网络的代币地址",
+  "sendToken": "资产",
+  "amountOfTon": "数量 {tokenSymbol}",
+  "addressInputLabel": "{network} 网络的目标地址",
+  "willReceive": "您将收到 {fee} {coin}",
+  "bridgeFeeAbove10": "桥接费用 - {fee} TON",
+  "bridgeFeeBelow10": "桥接费用 - 5 TON + 金额的 0.25%",
+  "tokenBridgeFee": "桥接费用 - 1 TON",
+  "tokenBridgeFeeToEvm": "桥接费用 - 1 TON + 代币金额的 0.1%",
+  "sourceCode": "源代码",
+  "support": "支持",
+  "howItWorks": "工作原理",
+  "documentation": "文档",
+
+  "transferHistory": "历史记录",
+  "disconnectWallet": "断开连接",
+
+  "transfer": "转账",
+  "getToncoin": "获取 {coin}",
+  "done": "完成",
+  "cancel": "取消",
+
+  "blocksConfirmationsCollected": "已收集区块确认",
+  "blocksConfirmationsWaiting": "等待区块确认",
+  "oraclesConfirmations": "收集到 {count} 个预言机确认",
+  "oraclesConfirmationsCollected": "已收集预言机确认",
+  "oraclesConfirmationsWaiting": "等待预言机确认",
+  "getCoinsByProvider": "通过 {provider} 获取 {toCoin}",
+  "coinsSent": "{toCoin} 已发送",
+  "getCoins": "在 {toNetwork} 获取 {toCoin}",
+  "confirmInWallet": "在 {provider} 中确认",
+
+  "otherTokens": "其他代币",
+  "tokens": "代币",
+  "approve": "授权",
+
+  "instruction": "说明",
+
+  "errors": {
+    "alertTitleError": "错误",
+    "alertButtonClose": "关闭",
+    "notValidAmount": "数量不是有效数字",
+    "amountBelow10": "数量必须至少为 10 TON",
+    "needPersonalAddress": "请输入您的地址以接收",
+    "toncoinBalance": "您只有 {balance} {coin}",
+    "installMetamask": "请安装 MetaMask",
+    "wrongProviderNetwork": "请在 {provider} 中设置 {network} 链",
+    "cantGetAddress": "无法获取账户地址",
+    "providerIsDisconnected": "{provider} 已断开连接"
+  },
+
+  "history": {
+    "title": "最近记录",
+    "recentHistory": "最近记录",
+    "age": "日期",
+    "amountFrom": "金额 / 来自 (网络)",
+    "amountTo": "收到金额 / 至 (网络)",
+    "fee": "Gas / 桥接费用",
+    "status": "状态",
+    "completed": "已完成",
+    "getToncoin": "获取 {coin}",
+    "connect": "连接",
+    "oracles": "{count} 个预言机",
+    "notFound": "未找到任何转账记录"
+  }
+}
