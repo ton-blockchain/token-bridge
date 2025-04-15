@@ -1,8 +1,13 @@
 <template>
   <header class="Header" :class="{ isScrolled }">
+    <div class="Header-testnet" v-if="!isTestnet">
+      {{ $t(`deprecated`) }} — <a href="https://ton.org/bridges" target="_blank">{{ $t(`read_more`) }}</a>.
+    </div>
+
     <div class="Header-testnet" v-if="isTestnet">
       {{ $t(`testnetMessage`) }}
     </div>
+
     <div class="Header-wrapper">
       <component
         :is="isHistoryShown ? 'NuxtLink' : 'div'"

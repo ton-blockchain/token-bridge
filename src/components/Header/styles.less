@@ -26,6 +26,22 @@
 		width: 100%;
 		color: white;
 
+		a {
+			color: #ffffff;
+			text-decoration: underline;
+
+			&[disabled] {
+				color: #ffffff;
+				text-decoration: underline;
+			}
+
+			.isPointer &:hover,
+			.isTouch &:active {
+				color: #ffffff;
+				text-decoration: underline;
+			}
+		}
+
 		@media (max-width: 560px) {
 			padding: 8px 16px;
 			font-size: 14px;

@@ -2,6 +2,8 @@
   "logoLabel": "Bridge",
   "connectWallet": "Connect Wallet",
   "testnetMessage": "This is the testnet version. Dont send real coins!",
+  "deprecated": "The bridge is obsolete. Please migrate your assets to new solutions",
+  "read_more": "Read more",
   "providers": {
     "metamask": "Metamask",
     "walletConnect": "WalletConnect",
