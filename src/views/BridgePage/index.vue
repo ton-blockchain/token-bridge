@@ -543,7 +543,7 @@ export default defineComponent({
     // init TON Connect
 
     this.tonConnect = markRaw(new TonConnectUI({
-      manifestUrl: 'https://bridge.ton.org/tonconnect-manifest.json',
+      manifestUrl: 'https://bridge-v3.ton.org/tonconnect-manifest.json',
       buttonRootId: 'tonConnectButton'
     }));
 
