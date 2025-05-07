@@ -159,5 +159,10 @@
     "connect": "Подключить",
     "oracles": "{count} оракулов",
     "notFound": "Переводы не найдены"
+  },
+  "permanentBridgeInfo": {
+    "title": "Обновление TON Bridge",
+    "bannerTitle": "TON Bridge Устарел",
+    "bannerDetails": "Поддерживается бессрочно для:\n• Возврат Wrapped Toncoin в TON (EVM → TON)\n• Возврат ERC20 токенов в EVM (TON → EVM)\n\nПодробнее: <a href='https://blog.ton.org/ton-retires-toncoin-bridge' target='_blank' rel='noopener noreferrer' style='color: #007bff; text-decoration: underline;'>blog.ton.org/ton-retires-toncoin-bridge</a>"
   }
 }
