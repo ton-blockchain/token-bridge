@@ -1,0 +1,162 @@
+{
+    "logoLabel": "브릿지",
+    "connectWallet": "지갑 연결",
+    "testnetMessage": "이것은 테스트넷 버전입니다. 실제 코인을 보내지 마세요!",
+    "providers": {
+      "metamask": "Metamask",
+      "walletConnect": "WalletConnect",
+      "walletLink": "Coinbase Wallet"
+    },
+    "networks": {
+      "ton": {
+        "transactionWait": "TON 트랜잭션이 처리될 때까지 기다려주세요",
+        "transactionSend": "{provider}에서 TON 트랜잭션을 보내주세요",
+  
+        "currency": "Toncoin",
+        "transactionCompleted": "TON 트랜잭션이 성공적으로 완료되었습니다",
+        "transactionSend1": " ",
+        "transactionSend2": "Toncoin을 이 주소로 보내세요",
+        "transactionSendComment": "댓글과 함께",
+        "openWallet": "지갑 열기",
+        "generateQRCode": "QR 코드 생성",
+        "scanQRCode": "또는 아래의 QR 코드를 스캔하세요",
+        "errors": {
+          "invalidAddress": "유효하지 않은 TON 주소입니다"
+        },
+        "main": {
+          "name": "The Open Network",
+          "nameSwitcher": "The Open\nNetwork",
+          "nameShort": "TON",
+          "coin": "Toncoin",
+          "coinShort": "Toncoin"
+        },
+        "test": {
+          "name": "TON Testnet",
+          "nameSwitcher": "TON\nTestnet",
+          "nameShort": "TON",
+          "coin": "Toncoin",
+          "coinShort": "Toncoin"
+        }
+      },
+      "eth": {
+        "currency": "ETH",
+        "pageTitle": "TON-ETH 브릿지",
+        "gasFee": "이더리움 가스비 ~ {fee} ETH",
+        "transactionCompleted": "이더리움 트랜잭션이 성공적으로 완료되었습니다",
+        "transactionWait": "이더리움 트랜잭션이 처리될 때까지 기다려주세요",
+        "transactionSend": "{provider}에서 이더리움 트랜잭션을 보내주세요",
+        "blocksConfirmations": "이더리움 블록 컨펌 {count} 개 수집됨",
+        "errors": {
+          "invalidAddress": "유효하지 않은 ETH 주소입니다",
+          "lowBalance": "이더리움 네트워크에서 가스를 지불하려면 지갑에 ETH가 있어야 합니다"
+        },
+        "main": {
+          "name": "Ethereum Network",
+          "nameSwitcher": "Ethereum\nNetwork",
+          "nameShort": "ETH",
+          "coin": "Toncoin (ERC-20)",
+          "coinShort": "Toncoin"
+        },
+        "test": {
+          "name": "Ethereum Goerli",
+          "nameSwitcher": "Ethereum\nGoerli",
+          "nameShort": "ETH",
+          "coin": "Toncoin (ERC-20)",
+          "coinShort": "Toncoin"
+        }
+      },
+      "bsc": {
+        "currency": "BNB",
+        "pageTitle": "TON-BSC 브릿지",
+        "gasFee": "BSC 가스비 ~ {fee} BNB",
+        "transactionCompleted": "BSC 트랜잭션이 성공적으로 완료되었습니다",
+        "transactionWait": "BSC 트랜잭션이 처리될 때까지 기다려주세요",
+        "transactionSend": "{provider}에서 BSC 트랜잭션을 보내주세요",
+        "blocksConfirmations": "BSC 블록 컨펌 {count} 개 수집됨",
+        "errors": {
+          "invalidAddress": "유효하지 않은 BSC 주소입니다",
+          "lowBalance": "BSC 네트워크에서 가스를 지불하려면 지갑에 BNB가 있어야 합니다"
+        },
+        "main": {
+          "name": "Binance Smart Chain",
+          "nameSwitcher": "Binance\nSmart Chain",
+          "nameShort": "BSC",
+          "coin": "Toncoin (BEP-20)",
+          "coinShort": "Toncoin"
+        },
+        "test": {
+          "name": "BSC Testnet",
+          "nameSwitcher": "BSC\nTestnet",
+          "nameShort": "BSC",
+          "coin": "Toncoin (BEP-20)",
+          "coinShort": "Toncoin"
+        }
+      }
+    },
+    "tokenAddress": "{network} 네트워크의 토큰 주소",
+    "sendToken": "자산 전송",
+    "amountOfTon": "Toncoin 수량 {tokenSymbol}",
+    "addressInputLabel": "{network} 네트워크의 수신 주소",
+    "willReceive": "{fee} {coin}을(를) 받게 됩니다",
+    "bridgeFeeAbove10": "브릿지 수수료 - {fee} Toncoin",
+    "bridgeFeeBelow10": "브릿지 수수료 - 5 Toncoin + 금액의 0.25%",
+    "tokenBridgeFee": "브릿지 수수료 - 1 Toncoin",
+    "tokenBridgeFeeToEvm": "브릿지 수수료 - 1 Toncoin + 토큰 금액의 0.1%",
+    "sourceCode": "소스 코드",
+    "support": "지원",
+    "howItWorks": "작동 방식",
+    "documentation": "문서",
+  
+    "transferHistory": "히스토리",
+    "disconnectWallet": "지갑 연결 해제",
+  
+    "transfer": "전송",
+    "getToncoin": "{coin} 받기",
+    "done": "완료",
+    "cancel": "취소",
+  
+    "blocksConfirmationsCollected": "블록 컨펌이 수집되었습니다",
+    "blocksConfirmationsWaiting": "블록 컨펌이 완료될 때까지 기다려주세요",
+    "oraclesConfirmations": "오라클 컨펌 {count} 개 수집됨",
+    "oraclesConfirmationsCollected": "오라클 컨펌이 수집되었습니다",
+    "oraclesConfirmationsWaiting": "오라클이 전송을 확인할 때까지 기다려주세요",
+    "getCoinsByProvider": "{provider}에서 {toCoin}을(를) 받기",
+    "coinsSent": "{toCoin}이(가) 전송되었습니다",
+    "getCoins": "{toNetwork}에서 {toCoin} 받기",
+    "confirmInWallet": "{provider}에서 확인",
+  
+    "otherTokens": "다른 토큰",
+    "tokens": "토큰",
+    "approve": "승인",
+  
+    "instruction": "지침",
+  
+    "errors": {
+      "alertTitleError": "오류",
+      "alertButtonClose": "닫기",
+      "notValidAmount": "금액이 유효하지 않습니다",
+      "amountBelow10": "금액은 최소 10 Toncoin 이상이어야 합니다",
+      "needPersonalAddress": "받을 YOUR 주소를 입력하세요",
+      "toncoinBalance": "보유 중인 {balance} {coin}",
+      "installMetamask": "메타마스크를 설치하세요",
+      "wrongProviderNetwork": "{provider}에서 {network} 체인을 설정하세요",
+      "cantGetAddress": "계정 주소를 가져올 수 없습니다",
+      "providerIsDisconnected": "{provider}이(가) 연결이 끊어졌습니다"
+    },
+  
+    "history": {
+      "title": "최근 기록",
+      "recentHistory": "최근 기록",
+      "age": "날짜",
+      "amountFrom": "금액 / 송신 (네트워크)",
+      "amountTo": "수신 금액 / 수신 (네트워크)",
+      "fee": "가스 / 브릿지 수수료",
+      "status": "상태",
+      "completed": "완료됨",
+      "getToncoin": "{coin} 받기",
+      "connect": "연결",
+      "oracles": "{count} 오라클",
+      "notFound": "전송이 없습니다"
+    }
+  }
+  
