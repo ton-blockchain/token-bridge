@@ -1754,6 +1754,14 @@ export default defineComponent({
 
       if (!this.isInputsValid) return;
 
+      if (this.isFromTon && this.isToncoinTransfer) {
+        this.$emit("error", {
+          input: "amount",
+          message: 'Toncoin transfers from the TON network are no longer supported.',
+        });
+        return;
+      }
+
       if (!this.isFromTon && this.tokenAddress.toLowerCase() === USDT_ETHEREUM_ADDRESS) {
         this.$emit("error", {
           input: "amount",
