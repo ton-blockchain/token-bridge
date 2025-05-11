@@ -901,7 +901,11 @@ export default defineComponent({
         console.log(`Find Toncoin swap - get ${limit} ton txs`);
         transactions = await provider.getTransactions(
             this.params.tonBridgeAddress,
-            limit
+            limit,
+            undefined,
+            undefined,
+            undefined,
+            true
         );
       }
 
@@ -937,7 +941,11 @@ export default defineComponent({
       const transactions: any[] =
           await provider.getTransactions(
               this.params.tonBridgeAddressV2,
-              limit
+              limit,
+              undefined,
+              undefined,
+              undefined,
+              true
           );
 
       console.log(`Find Token paid - got ${transactions.length} ton txs`);
@@ -979,7 +987,11 @@ export default defineComponent({
         console.log(`Find Token swap - get ${limit} ton txs`);
         transactions = await provider.getTransactions(
             this.params.tonBridgeAddressV2,
-            limit
+            limit,
+            undefined,
+            undefined,
+            undefined,
+            true
         );
       }
 
@@ -1629,7 +1641,7 @@ export default defineComponent({
 
       const tonweb = new TonWeb(
           new TonWeb.HttpProvider(this.params.tonCenterUrl, {
-            apiKey: this.params.tonCenterApiKey,
+            apiKey: this.params.tonCenterApiKey
           })
       );
 
@@ -1754,7 +1766,7 @@ export default defineComponent({
 
       if (!this.isInputsValid) return;
 
-      if (this.isFromTon && this.isToncoinTransfer) {
+      if (this.isFromTon && this.isToncoinTransfer && !this.isRecover) {
         this.$emit("error", {
           input: "amount",
           message: 'Toncoin transfers from the TON network are no longer supported.',
