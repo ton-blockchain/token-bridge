@@ -4,6 +4,11 @@
   "testnetMessage": "This is the testnet version. Dont send real coins!",
   "deprecated": "Learn about new cross-chain solutions",
   "read_more": "Read more",
+  "permanentBridgeInfo": {
+    "title": "TON Bridge Update",
+    "bannerTitle": "TON Bridge is Deprecated",
+    "bannerDetails": "Supported indefinitely for:\n• Return of Wrapped Toncoin to TON (EVM → TON)\n• Return of ERC20 tokens to EVM (TON → EVM)\n\nLearn more: <a href='https://blog.ton.org/ton-retires-toncoin-bridge' target='_blank' rel='noopener noreferrer' style='color: #007bff; text-decoration: underline;'>blog.ton.org/ton-retires-toncoin-bridge</a>"
+  },
   "providers": {
     "metamask": "Metamask",
     "walletConnect": "WalletConnect",
