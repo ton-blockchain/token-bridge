@@ -11,7 +11,7 @@ import {
     parseEvmBlockHash,
     parseEvmTxHash,
     parseNumber,
-    parseTonAddress,
+    parseTonAddress, TOKEN_TON_TO_EVM_PERCENT_FEE_END_TIME,
     TOKEN_TON_TO_EVM_PERCENT_FEE_START_TIME,
     TOKEN_TON_TO_EVM_PERCENT_FEE_USDT_END_TIME,
     USDT_ETHEREUM_ADDRESS
@@ -315,7 +315,7 @@ export class TokenBridge {
 
             // dont apply fee
 
-        } else if (Number(t.utime) > TOKEN_TON_TO_EVM_PERCENT_FEE_START_TIME) {
+        } else if ((Number(t.utime) > TOKEN_TON_TO_EVM_PERCENT_FEE_START_TIME) && (Number(t.utime) < TOKEN_TON_TO_EVM_PERCENT_FEE_END_TIME)) {
             amount = getTokenAmountAfterFee(amount); // 0.1% fee of token amount
         }
 

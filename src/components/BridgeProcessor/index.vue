@@ -1317,6 +1317,12 @@ export default defineComponent({
      * Approve ERC-20 token for token bridge in EVM network
      */
     async onApproveClick(): Promise<void> {
+      this.$emit("error", {
+        input: "amount",
+        message: 'Tokens can only be sent from TON network',
+      });
+      return;
+
       if (this.isApprovingInProgress) {
         return;
       }
@@ -1324,14 +1330,6 @@ export default defineComponent({
       if (!this.isInputsValid) return;
 
       if (!(await this.validateEthereumProvider())) {
-        return;
-      }
-
-      if (this.tokenAddress.toLowerCase() === USDT_ETHEREUM_ADDRESS) {
-        this.$emit("error", {
-          input: "amount",
-          message: 'jUSDT can only be sent from TON network',
-        });
         return;
       }
 
@@ -1774,10 +1772,10 @@ export default defineComponent({
         return;
       }
 
-      if (!this.isFromTon && this.tokenAddress.toLowerCase() === USDT_ETHEREUM_ADDRESS) {
+      if (!this.isFromTon && !this.isToncoinTransfer) {
         this.$emit("error", {
           input: "amount",
-          message: 'jUSDT can only be sent from TON network',
+          message: 'Tokens can only be sent from TON network',
         });
         return;
       }
