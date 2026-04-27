@@ -1,5 +1,9 @@
 <template>
-  <div class="Bridge">
+  <div>
+    The bridge is currently under maintenance, with service expected to resume on April 27, 2026, at 16:00 UTC.
+  </div>
+
+  <div class="Bridge" style="visibility: hidden">
 
     <!-- Header -->
 
