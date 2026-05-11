@@ -36,10 +36,10 @@ export class WalletConnect implements Provider {
   async connect(params: ParamsNetwork): Promise<boolean> {
     this.walletConnect = await EthereumProvider.init({
       projectId: '94099fc4aa88338ac0e67f25b47da521',
-      chains: [1, 56],
       showQrModal: true,
+      optionalChains: [1, 56],
       rpcMap: {
-        '1' : 'https://bridge.ton.org/mainnet/',
+        '1' : 'https://ethereum-rpc.publicnode.com',
         '56': 'https://bsc-dataseed.binance.org/'
       }
     });
