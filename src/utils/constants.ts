@@ -28,7 +28,7 @@ export const PARAMS: Params = {
         tonCenterApiKey:
           "d843619b379084d133f061606beecbf72ae2bf60e0622e808f2a3f631673599b",
         rpcEndpoint:
-          "https://bridge.ton.org/mainnet/",
+          "https://mainnet.infura.io/v3/937c7eb192604f02b6a31e18d2dcdcca/",
         chainId: 1,
         blocksConfirmations: 65,
         defaultGwei: 25,
@@ -80,7 +80,7 @@ export const PARAMS: Params = {
         tonCenterUrl: "https://toncenter.com/api/v2/jsonRPC",
         tonCenterApiKey:
           "d843619b379084d133f061606beecbf72ae2bf60e0622e808f2a3f631673599b",
-        rpcEndpoint: "https://bsc-dataseed.binance.org/",
+        rpcEndpoint: "https://bsc-mainnet.infura.io/v3/937c7eb192604f02b6a31e18d2dcdcca/",
         chainId: 56,
         blocksConfirmations: 65,
         defaultGwei: 5,
