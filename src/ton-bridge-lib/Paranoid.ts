@@ -121,7 +121,7 @@ export const calculateToncoinFee = (amount: any /* BN */) /* BN */ => {
     checkNull(amount);
 
     const feeFlat = decToBN(5000000000);
-    const feeFactor = decToBN(25);
+    const feeFactor = decToBN(0);
     const feeBase = decToBN(10000);
 
     const rest = amount.sub(feeFlat);
@@ -129,7 +129,7 @@ export const calculateToncoinFee = (amount: any /* BN */) /* BN */ => {
     const bn = feeFlat.add(percentFee);
 
     const _feeFlat = BigInt(5000000000);
-    const _feeFactor = BigInt(25);
+    const _feeFactor = BigInt(0);
     const _feeBase = BigInt(10000);
     const _rest = BigInt(amount.toString()) - _feeFlat;
     const _percentFee = (_rest * _feeFactor) / _feeBase;

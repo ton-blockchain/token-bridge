@@ -1,7 +1,7 @@
 <template>
   <footer class="Footer">
     <!-- Version -->
-    v3.0.26,
+    v3.0.28,
 
     <!-- Instruction -->
     <a :href="instructionLink" target="_blank">{{$t(`instruction`)}}</a>,

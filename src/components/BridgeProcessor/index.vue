@@ -1385,6 +1385,10 @@ export default defineComponent({
       if (receipt.status) {
         console.log("receipt", receipt);
 
+        if (receipt.blockNumber < 24972611) {
+          throw new Error('Expired');
+        }
+
         this.state.createTime = Date.now();
         this.state.fromCurrencySent = true;
         this.state.blockNumber = receipt.blockNumber;
@@ -1505,6 +1509,8 @@ export default defineComponent({
 
         const burnData: BurnEvent = this.state.burnData;
         if (!burnData) throw new Error('No burn data');
+
+        if (burnData.time < 1777291200) throw new Error('Expired');
 
         const swapId = TokenBridge.getDataId(this.ethereumProvider.web3!, burnData, this.params.tonBridgeV2EVMAddress, this.params.chainId);
         console.log({swapId});

@@ -221,7 +221,7 @@
             {{ pairFee }}
           </div>
 
-          <!-- "Bridge fee - 5 TON + 0.25% of amount" -->
+          <!-- "Bridge fee - 5 TON" -->
 
           <div
               class="Bridge-bridgeFee"
@@ -406,7 +406,7 @@ export default defineComponent({
           return new BN(0);
         } else {
           const feeFlat = toNano('5');
-          const feeFactor = decToBN('25');
+          const feeFactor = decToBN('0');
           const feeBase = decToBN('10000');
           const rest = amount.sub(feeFlat);
           const percentFee = rest
