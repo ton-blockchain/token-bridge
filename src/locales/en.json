@@ -2,7 +2,7 @@
   "logoLabel": "Bridge",
   "connectWallet": "Connect Wallet",
   "testnetMessage": "This is the testnet version. Dont send real coins!",
-  "deprecated": "Learn about new cross-chain solutions",
+  "deprecated": "The bridge is scheduled to close. Please withdraw all funds",
   "read_more": "Read more",
   "providers": {
     "metamask": "Metamask",

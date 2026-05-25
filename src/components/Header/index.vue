@@ -1,7 +1,7 @@
 <template>
   <header class="Header" :class="{ isScrolled }">
     <div class="Header-testnet" v-if="!isTestnet">
-      {{ $t(`deprecated`) }} — <a href="https://ton.org/bridges" target="_blank">{{ $t(`read_more`) }}</a>.
+      <a href="https://t.me/tonstatus/215" target="_blank">{{ $t(`deprecated`) }}</a>.
     </div>
 
     <div class="Header-testnet" v-if="isTestnet">
