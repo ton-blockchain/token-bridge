@@ -39,8 +39,8 @@ export class WalletConnect implements Provider {
       chains: [1, 56],
       showQrModal: true,
       rpcMap: {
-        '1' : 'https://bridge.ton.org/mainnet/',
-        '56': 'https://bsc-dataseed.binance.org/'
+        '1' : 'https://mainnet.infura.io/v3/937c7eb192604f02b6a31e18d2dcdcca/',
+        '56': 'https://bsc-mainnet.infura.io/v3/937c7eb192604f02b6a31e18d2dcdcca/'
       }
     });
 
