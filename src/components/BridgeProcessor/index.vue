@@ -587,7 +587,6 @@ export default defineComponent({
             ? this.$t(`networks.${this.pair}.transactionWait`)
             : this.$t("getCoinsByProvider", {
               provider: isToncoinWallet ? 'TON Wallet' : this.ethereumProvider.title,
-              toCoin: toCoins,
             });
       } else if (this.state.step > getCoinsStep) {
         return this.$t("coinsSent", {toCoin: toCoins});
