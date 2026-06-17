@@ -22,6 +22,8 @@
           <div class="Bridge-imgAspect"></div>
         </div>
 
+        <PermanentBanner :title="$t('permanentBridgeInfo.bannerTitle')" :message="$t('permanentBridgeInfo.bannerDetails')" />
+
         <!-- Network Switcher Left -->
 
         <div class="Bridge-form">
@@ -262,6 +264,7 @@ import BridgeProcessor from "@/components/BridgeProcessor/index.vue";
 import CustomInput from "@/components/CustomInput/index.vue";
 import Footer from "@/components/Footer/index.vue";
 import Header from "@/components/Header/index.vue";
+import PermanentBanner from "@/components/PermanentBanner/index.vue";
 import WalletsPopup from "@/components/WalletsPopup/index.vue";
 import {getTokenAddressByToken, MINIMUM_TONCOIN_AMOUNT, PARAMS} from "@/utils/constants";
 import {supportsLocalStorage} from "@/utils/helpers";
@@ -285,6 +288,7 @@ export default defineComponent({
     CustomInput,
     Header,
     Footer,
+    PermanentBanner,
   },
 
   head(): object {
